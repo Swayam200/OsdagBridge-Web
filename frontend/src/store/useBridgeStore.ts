@@ -19,6 +19,7 @@
 import { create } from 'zustand';
 import { UIFieldSchema, BridgeConstants } from '../types/schema';
 import { LocationData } from '../types/location';
+import { fetchMaterialProperties, memberValues, type CustomMaterial, type MaterialDialogSelection } from '../services/materialInputs';
 import {
   fetchConstants as apiFetchConstants,
   fetchBasicSchema,
@@ -68,6 +69,10 @@ interface BridgeState {
   concreteMaterials: ConcreteMaterial[];
   location: LocationData | null;
   isLocationModalOpen: boolean;
+  isAdditionalInputsOpen: boolean;
+  materialDialog: MaterialDialogSelection | null;
+  customMaterials: Record<string, CustomMaterial>;
+  materialErrors: Record<string, string>;
 
   // ── UI dock visibility ─────────────────────────────────────────────────────
   isDockCollapsed: boolean;
@@ -104,6 +109,10 @@ interface BridgeState {
   fetchConstants: () => Promise<void>;
   fetchSchema: () => Promise<void>;
   updateField: (key: string, value: any) => void;
+  patchInputs: (values: Record<string, unknown>) => void;
+  setMaterialDialog: (selection: MaterialDialogSelection | null) => void;
+  selectMaterial: (member: string, grade: string) => Promise<void>;
+  addCustomMaterial: (member: string, name: string, values: Record<string, unknown>) => void;
   toggleLock: () => void;
   toggleDock: () => void;
   toggleOutputDock: () => void;
@@ -124,7 +133,7 @@ interface BridgeState {
   showInputErrorDialog: (message: string, onOk: () => void) => void;
   dismissInputErrorDialog: () => void;
 
-  // UI-only no-ops (kept so existing JSX references compile)
+  // Input actions and dialog controls (unfinished actions remain no-ops)
   saveInputs: () => void;
   loadInputs: () => void;
   saveLogs: () => void;
@@ -154,6 +163,8 @@ interface BridgeState {
 // ── Store ─────────────────────────────────────────────────────────────────────
 
 let constantsPromise: Promise<BridgeConstants> | null = null;
+// Per-member revisions prevent a slower grade lookup from replacing a newer choice.
+const materialVersions = new Map<string, number>();
 
 export const useBridgeStore = create<BridgeState>((set, get) => ({
   // ── Backend constants ──────────────────────────────────────────────────────
@@ -171,6 +182,10 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   concreteMaterials: [],
   location: null,
   isLocationModalOpen: false,
+  isAdditionalInputsOpen: false,
+  materialDialog: null,
+  customMaterials: {},
+  materialErrors: {},
 
   // ── Dock state ─────────────────────────────────────────────────────────────
   isDockCollapsed: false,
@@ -292,6 +307,10 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
         steelMaterials,
         concreteMaterials,
       });
+      // Desktop also primes member-prefixed properties for the initial grade selections.
+      for (const field of schemaData.filter(field => field.is_material_field)) {
+        void get().selectMaterial(field.key, String(get().inputs[field.key] ?? field.default ?? ''));
+      }
     } catch (err) {
       set({
         schema: [],
@@ -309,6 +328,42 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
       inputs: { ...state.inputs, [key]: value },
     }));
   },
+  patchInputs: (values) => set(state => ({ inputs: { ...state.inputs, ...values } })),
+  // Viewing a material also invalidates grade lookups that predate the opening.
+  setMaterialDialog: (selection) => {
+    if (selection?.custom && get().isLocked) return;
+    if (selection) materialVersions.set(selection.member, (materialVersions.get(selection.member) ?? 0) + 1);
+    set({ materialDialog: selection });
+  },
+  selectMaterial: async (member, grade) => {
+    if (get().isLocked) return;
+    const version = (materialVersions.get(member) ?? 0) + 1;
+    materialVersions.set(member, version);
+    const previous = get().inputs[member];
+    set(state => ({ materialErrors: { ...state.materialErrors, [member]: '' } }));
+    try {
+      const custom = get().customMaterials[grade];
+      const values = custom ? memberValues(member, custom) : (await fetchMaterialProperties(member, grade)).values;
+      // Commit grade and properties together only while the original context holds.
+      if (materialVersions.get(member) !== version || get().isLocked || get().inputs[member] !== previous) return;
+      set(state => ({ inputs: { ...state.inputs, ...values, [member]: grade } }));
+    } catch (error) {
+      if (materialVersions.get(member) === version) set(state => ({ materialErrors: {
+        ...state.materialErrors, [member]: error instanceof Error ? error.message : 'Unable to load material properties.',
+      } }));
+    }
+  },
+  // Keep one suffix-only definition so the steel selectors can share it without
+  // copying another member's prefix into their inputs. Nothing is persisted.
+  addCustomMaterial: (member, name, values) => set(state => ({
+    inputs: { ...state.inputs, ...values, [member]: name },
+    customMaterials: { ...state.customMaterials, [name]: {
+      kind: member === String(state.constants?.KEY_DECK_CONCRETE_GRADE_BASIC) ? 'concrete' : 'steel',
+      values: Object.fromEntries(Object.entries(values).map(([key, value]) => [key.slice(member.length + 1), value])),
+    } },
+    materialErrors: { ...state.materialErrors, [member]: '' },
+    materialDialog: null,
+  })),
 
   toggleLock: () => set((state) => ({ isLocked: !state.isLocked })),
   toggleDock: () => set((state) => ({ isDockCollapsed: !state.isDockCollapsed })),
@@ -417,7 +472,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   toggleCad3dView: () => {},
   togglePlotsView: () => {},
 
-  // ── UI-only no-ops ────────────────────────────────────────────────────────
+  // ── Input actions and dialog controls ─────────────────────────────────────
   saveInputs: () => {},
   loadInputs: () => {},
   saveLogs: () => {},
@@ -425,7 +480,18 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   exportCadImage: () => {},
   runDesign: () => {},
   resetInputs: () => {},
-  setAdditionalInputsOpen: () => {},
+  // Required-field gating runs here so both dialog-opening buttons behave alike.
+  setAdditionalInputsOpen: (open) => {
+    if (open) {
+      const { schema, inputs } = get();
+      const missing = schema.filter(field => field.required && (inputs[field.key] == null || String(inputs[field.key]).trim() === ''));
+      if (!schema.length || missing.length) {
+        get().showInputErrorDialog(missing.length ? `Please enter ${missing.map(field => field.label).join(', ')} before opening Additional Inputs.` : 'Load Basic Inputs first.', () => {});
+        return;
+      }
+    }
+    set({ isAdditionalInputsOpen: open });
+  },
   setSteelDesignModalOpen: () => {},
   setTransverseDesignModalOpen: () => {},
   setDeckDesignModalOpen: () => {},
