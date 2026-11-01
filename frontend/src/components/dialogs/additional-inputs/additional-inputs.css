@@ -1,0 +1,56 @@
+/* Shared input-dialog shell. Existing theme tokens and osdag control classes
+   supply colours, inputs and buttons; these rules add dialog-specific layout. */
+.additional-dialog {
+  width: min(1024px, 94vw); max-height: 90vh; padding: 0; margin: auto;
+  border: 1px solid var(--accent-osdag); border-radius: 6px;
+  background: var(--bg-surface); color: var(--text-main);
+}
+.additional-dialog::backdrop { background: #0006; }
+.additional-titlebar, .additional-footer { display: flex; align-items: center; gap: 12px; padding: 10px 18px; }
+.additional-titlebar { border-bottom: 1px solid var(--border-color); }
+.additional-titlebar h2 { flex: 1; margin: 0; font-size: 16px; }
+.additional-titlebar button { font-size: 24px; line-height: 1; }
+/* Keep button text legible on the existing green hover background. */
+.additional-dialog .osdag-btn-standard:hover:not(:disabled) { color: #000; }
+.additional-body { padding: 12px 16px; overflow: auto; max-height: calc(90vh - 140px); }
+.additional-tabs { display: flex; overflow-x: auto; border-bottom: 1px solid var(--border-color); }
+.additional-tabs button { flex-shrink: 0; padding: 10px 15px; border: 1px solid var(--border-color); border-bottom: 0; border-radius: 5px 5px 0 0; background: var(--bg-grouped); color: var(--text-main); font: inherit; font-weight: 600; }
+.additional-tabs button.selected { background: var(--accent-osdag); color: var(--text-main); }
+[data-theme="dark"] .additional-tabs button.selected { color: #fff; }
+.additional-tabs button:disabled { opacity: .5; cursor: not-allowed; }
+.additional-panel { border: 1px solid var(--border-color); padding: 16px; }
+/* Core schema rows retain Desktop's paired-field layout. */
+.additional-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.additional-field { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(120px, 200px); gap: 16px; align-items: start; margin-bottom: 12px; }
+.additional-field label { padding-top: 7px; font-size: 13px; }
+.additional-field input, .additional-field select { width: 100%; box-sizing: border-box; }
+.additional-field input { text-align: right; }
+.additional-field input:disabled, .additional-field select:disabled { background: var(--bg-grouped); color: var(--text-sub); }
+.additional-subtab { padding-top: 20px; min-height: 180px; }
+.additional-footer { display: grid; grid-template-columns: 1fr auto auto 1fr; border-top: 1px solid var(--border-color); background: var(--bg-grouped); }
+.additional-footer span { flex: 1; font-size: 12px; }
+.additional-footer button { min-width: 120px; }
+.additional-error, .additional-field-error { display: block; color: #b42318; font-size: 12px; margin: 6px 0; }
+[data-theme="dark"] .additional-error, [data-theme="dark"] .additional-field-error { color: var(--danger); }
+.additional-error button { margin-left: 12px; }
+.additional-notice { font-size: 12px; font-style: italic; max-width: 46%; margin: 0 0 12px auto; }
+/* Validation overlays stay inside the native modal's top layer. */
+.additional-warning-backdrop { position: absolute; inset: 0; background: #0006; display: grid; place-items: center; }
+.additional-warning { max-width: 440px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--accent-osdag); border-radius: 6px; }
+.additional-warning h3 { margin-top: 0; }
+.additional-warning button { float: right; }
+/* Material dialogs reuse the frame/fields with a narrower single-column form. */
+.material-dialog { width: min(620px, 94vw); }
+.material-body { padding: 20px; }
+.material-body .additional-field { grid-template-columns: minmax(180px, 280px) minmax(180px, 242px); gap: 18px; }
+.material-body label { font-size: 12px; }
+.material-footer { display: flex; justify-content: flex-end; align-items: center; gap: 12px; padding: 12px 20px; }
+.material-footer span { flex: 1; font-size: 12px; }
+.material-footer button { min-width: 90px; }
+@media (max-width: 600px) {
+  .additional-row { grid-template-columns: 1fr; gap: 0; }
+  .additional-notice { max-width: none; }
+  .additional-field { grid-template-columns: 1fr; gap: 4px; }
+  .material-body .additional-field { grid-template-columns: 1fr; gap: 4px; }
+  .additional-footer button { min-width: 80px; }
+}

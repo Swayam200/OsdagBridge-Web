@@ -19,6 +19,7 @@
 import { create } from 'zustand';
 import { UIFieldSchema, BridgeConstants } from '../types/schema';
 import { LocationData } from '../types/location';
+import type { MaterialDialogSelection } from '../services/materialInputs';
 import {
   fetchConstants as apiFetchConstants,
   fetchBasicSchema,
@@ -68,6 +69,8 @@ interface BridgeState {
   concreteMaterials: ConcreteMaterial[];
   location: LocationData | null;
   isLocationModalOpen: boolean;
+  isAdditionalInputsOpen: boolean;
+  materialDialog: MaterialDialogSelection | null;
 
   // ── UI dock visibility ─────────────────────────────────────────────────────
   isDockCollapsed: boolean;
@@ -104,6 +107,8 @@ interface BridgeState {
   fetchConstants: () => Promise<void>;
   fetchSchema: () => Promise<void>;
   updateField: (key: string, value: any) => void;
+  patchInputs: (values: Record<string, unknown>) => void;
+  setMaterialDialog: (selection: MaterialDialogSelection | null) => void;
   toggleLock: () => void;
   toggleDock: () => void;
   toggleOutputDock: () => void;
@@ -124,7 +129,7 @@ interface BridgeState {
   showInputErrorDialog: (message: string, onOk: () => void) => void;
   dismissInputErrorDialog: () => void;
 
-  // UI-only no-ops (kept so existing JSX references compile)
+  // Input actions and dialog controls (unfinished actions remain no-ops)
   saveInputs: () => void;
   loadInputs: () => void;
   saveLogs: () => void;
@@ -171,6 +176,8 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   concreteMaterials: [],
   location: null,
   isLocationModalOpen: false,
+  isAdditionalInputsOpen: false,
+  materialDialog: null,
 
   // ── Dock state ─────────────────────────────────────────────────────────────
   isDockCollapsed: false,
@@ -309,6 +316,8 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
       inputs: { ...state.inputs, [key]: value },
     }));
   },
+  patchInputs: (values) => set(state => ({ inputs: { ...state.inputs, ...values } })),
+  setMaterialDialog: (selection) => set({ materialDialog: selection }),
 
   toggleLock: () => set((state) => ({ isLocked: !state.isLocked })),
   toggleDock: () => set((state) => ({ isDockCollapsed: !state.isDockCollapsed })),
@@ -417,7 +426,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   toggleCad3dView: () => {},
   togglePlotsView: () => {},
 
-  // ── UI-only no-ops ────────────────────────────────────────────────────────
+  // ── Input actions and dialog controls ─────────────────────────────────────
   saveInputs: () => {},
   loadInputs: () => {},
   saveLogs: () => {},
@@ -425,7 +434,18 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   exportCadImage: () => {},
   runDesign: () => {},
   resetInputs: () => {},
-  setAdditionalInputsOpen: () => {},
+  // Required-field gating runs here so both dialog-opening buttons behave alike.
+  setAdditionalInputsOpen: (open) => {
+    if (open) {
+      const { schema, inputs } = get();
+      const missing = schema.filter(field => field.required && (inputs[field.key] == null || String(inputs[field.key]).trim() === ''));
+      if (!schema.length || missing.length) {
+        get().showInputErrorDialog(missing.length ? `Please enter ${missing.map(field => field.label).join(', ')} before opening Additional Inputs.` : 'Load Basic Inputs first.', () => {});
+        return;
+      }
+    }
+    set({ isAdditionalInputsOpen: open });
+  },
   setSteelDesignModalOpen: () => {},
   setTransverseDesignModalOpen: () => {},
   setDeckDesignModalOpen: () => {},

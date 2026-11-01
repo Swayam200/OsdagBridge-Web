@@ -35,6 +35,7 @@ export const InputDock: React.FC = () => {
     toggleContainer,
     saveInputs,
     runDesign,
+    setAdditionalInputsOpen,
   } = useBridgeStore();
 
   const [showLockTooltip, setShowLockTooltip] = useState(false);
@@ -196,9 +197,10 @@ export const InputDock: React.FC = () => {
                 {/* Additional Inputs Tab */}
                 <button
                   type="button"
-                  disabled
-                  title="Additional inputs will be enabled after basic inputs validation"
-                  aria-label="Additional inputs (available after basic inputs validation)"
+                  disabled={schema.length === 0}
+                  onClick={() => setAdditionalInputsOpen(true)}
+                  title="Additional Inputs"
+                  aria-label="Additional Inputs"
                   className="osdag-btn-standard"
                   style={{
                     flex: '1 1 0',
@@ -208,8 +210,7 @@ export const InputDock: React.FC = () => {
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    opacity: 0.6,
-                    cursor: 'not-allowed',
+                    cursor: 'pointer',
                   }}
                 >
                   Additional Inputs

@@ -92,7 +92,7 @@ function FieldError({ id, error }: { id: string; error?: string }) {
  * button_label comes from the schema provided by the backend; no hardcoded fallbacks.
  */
 const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, location, isLocked, setLocationModalOpen, constants } = useBridgeStore();
+  const { inputs, location, isLocked, setLocationModalOpen, setAdditionalInputsOpen, constants } = useBridgeStore();
 
   const opensLocationDialog =
     field.action === 'show_project_location_dialog' ||
@@ -131,6 +131,8 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
           onClick={() => {
             if (opensLocationDialog) {
               setLocationModalOpen(true);
+            } else if (isAdditionalBtn) {
+              setAdditionalInputsOpen(true);
             }
           }}
           className="osdag-action-btn"
@@ -166,20 +168,23 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
 
 /**
  * SelectField — mirrors the desktop combobox factory.
- * Calls POST /api/v1/validate on change; surfaces backend errors via FieldError.
+ * Standard selections use the existing validation flow. Material information is
+ * read-only; Custom stays disabled until Core provides shared evaluation helpers.
  * Disabled schema options remain visible but cannot be selected.
  */
 const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, updateField, isLocked } = useBridgeStore();
+  const { inputs, updateField, isLocked, setMaterialDialog } = useBridgeStore();
   const value = inputs[field.key] ?? field.default ?? '';
-  const options = field.options || [];
+  const options = field.is_material_field ? [...new Set([...(field.options || []), 'Custom'])] : field.options || [];
   const fieldId = `field-${field.key}`;
   const errorId = `${fieldId}-error`;
 
   const [validationError, setValidationError] = useState<string | undefined>(undefined);
+  const error = validationError;
 
   const handleChange = useCallback(
     async (newValue: string) => {
+      if (field.is_material_field && newValue === 'Custom') return;
       updateField(field.key, newValue);
       setValidationError(undefined);
 
@@ -189,7 +194,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
         setValidationError(result.message ?? 'Invalid value.');
       }
     },
-    [field.key],
+    [field.key, field.is_material_field, updateField],
   );
 
   return (
@@ -202,8 +207,8 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             value={value}
             disabled={isLocked}
             aria-required={field.required || undefined}
-            aria-describedby={validationError ? errorId : undefined}
-            aria-invalid={validationError ? true : undefined}
+            aria-describedby={error ? errorId : undefined}
+            aria-invalid={error ? true : undefined}
             onChange={(e) => handleChange(e.target.value)}
             className="osdag-select-field"
             style={{
@@ -222,7 +227,8 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
               <option
                 key={opt}
                 value={opt}
-                disabled={field.disabled_options?.includes(opt)}
+                disabled={field.disabled_options?.includes(opt) || (field.is_material_field && opt === 'Custom')}
+                title={field.is_material_field && opt === 'Custom' ? 'Custom material entry is not available yet.' : undefined}
               >
                 {opt}
               </option>
@@ -234,6 +240,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
               aria-label={`Material properties for ${field.label}`}
               onClick={(e) => {
                 e.preventDefault();
+                setMaterialDialog({ member: field.key, grade: String(value) });
               }}
               style={{
                 width: '20px',
@@ -254,7 +261,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
           )}
         </div>
       </div>
-      <FieldError id={errorId} error={validationError} />
+      <FieldError id={errorId} error={error} />
     </div>
   );
 };
