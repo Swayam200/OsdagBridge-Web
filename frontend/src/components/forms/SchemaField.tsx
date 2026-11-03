@@ -92,7 +92,7 @@ function FieldError({ id, error }: { id: string; error?: string }) {
  * button_label comes from the schema provided by the backend; no hardcoded fallbacks.
  */
 const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, location, isLocked, setLocationModalOpen, constants } = useBridgeStore();
+  const { inputs, location, isLocked, setLocationModalOpen, setAdditionalInputsOpen, constants } = useBridgeStore();
 
   const opensLocationDialog =
     field.action === 'show_project_location_dialog' ||
@@ -131,6 +131,8 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
           onClick={() => {
             if (opensLocationDialog) {
               setLocationModalOpen(true);
+            } else if (isAdditionalBtn) {
+              setAdditionalInputsOpen(true);
             }
           }}
           className="osdag-action-btn"
@@ -232,6 +234,8 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             <button
               type="button"
               aria-label={`Material properties for ${field.label}`}
+              disabled
+              title="Material properties are not available yet."
               onClick={(e) => {
                 e.preventDefault();
               }}

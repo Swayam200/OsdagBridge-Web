@@ -68,6 +68,7 @@ interface BridgeState {
   concreteMaterials: ConcreteMaterial[];
   location: LocationData | null;
   isLocationModalOpen: boolean;
+  isAdditionalInputsOpen: boolean;
 
   // ── UI dock visibility ─────────────────────────────────────────────────────
   isDockCollapsed: boolean;
@@ -171,6 +172,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   concreteMaterials: [],
   location: null,
   isLocationModalOpen: false,
+  isAdditionalInputsOpen: false,
 
   // ── Dock state ─────────────────────────────────────────────────────────────
   isDockCollapsed: false,
@@ -425,7 +427,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   exportCadImage: () => {},
   runDesign: () => {},
   resetInputs: () => {},
-  setAdditionalInputsOpen: () => {},
+  setAdditionalInputsOpen: (open) => set({ isAdditionalInputsOpen: open }),
   setSteelDesignModalOpen: () => {},
   setTransverseDesignModalOpen: () => {},
   setDeckDesignModalOpen: () => {},

@@ -361,9 +361,10 @@ export async function fetchRolledSections(): Promise<RolledSection[]> {
   }
 }
 
-/** Display-only — no additional inputs content in UI preview mode. */
-export async function fetchAdditionalInputsSchema(): Promise<unknown[]> {
-  return [];
+/** Fetch Core's nested groups/rows; cancellation belongs to the dialog opening. */
+export async function fetchAdditionalInputsSchema(signal?: AbortSignal): Promise<import('../types/additionalInputs').AdditionalTab[]> {
+  const res = await apiClient.get('/schema/additional', { signal });
+  return res.data;
 }
 
 /**
