@@ -15,7 +15,8 @@
  *   └────────────┴──────────────────────┴─────────────┘
  *
  * Modals:
- *   ProjectLocationModal — project location picker (always mounted, hidden until triggered)
+ *   ProjectLocationModal / InputErrorDialog — always mounted, revealed by store state
+ *   AdditionalInputsDialog / MaterialInputsDialog — mounted per opening to isolate drafts
  */
 
 import React, { useEffect } from 'react';
@@ -26,11 +27,15 @@ import { OutputDock } from './components/docks/OutputDock';
 import { LogDock } from './components/docks/LogDock';
 import { ProjectLocationModal } from './components/dialogs/ProjectLocationModal';
 import { InputErrorDialog } from './components/dialogs/InputErrorDialog';
+import { AdditionalInputsDialog } from './components/dialogs/additional-inputs/AdditionalInputsDialog';
+import { MaterialInputsDialog } from './components/dialogs/MaterialInputsDialog';
 
 export default function App() {
   const darkMode = useBridgeStore((s) => s.darkMode);
   const isLogDockOpen = useBridgeStore((s) => s.isLogDockOpen);
   const fetchConstants = useBridgeStore((s) => s.fetchConstants);
+  const additionalInputsOpen = useBridgeStore((s) => s.isAdditionalInputsOpen);
+  const materialDialog = useBridgeStore((s) => s.materialDialog);
 
   // Fetch backend constants once at application initialization
   useEffect(() => {
@@ -92,9 +97,11 @@ export default function App() {
         <OutputDock />
       </div>
 
-      {/* Modals — always mounted, revealed by store flags */}
+      {/* Shared modals stay mounted; input dialogs unmount to discard their drafts. */}
       <ProjectLocationModal />
       <InputErrorDialog />
+      {additionalInputsOpen && <AdditionalInputsDialog />}
+      {materialDialog && <MaterialInputsDialog key={`${materialDialog.member}:${materialDialog.grade}`} />}
     </div>
   );
 }
