@@ -92,7 +92,8 @@ function FieldError({ id, error }: { id: string; error?: string }) {
  * button_label comes from the schema provided by the backend; no hardcoded fallbacks.
  */
 const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, location, isLocked, setLocationModalOpen, constants } = useBridgeStore();
+  const { inputs, location, isLocked, setLocationModalOpen, setAdditionalInputsOpen, constants } = useBridgeStore();
+  const missingRequired = useBridgeStore(s => s.requiredFieldErrors.includes(field.key));
 
   const opensLocationDialog =
     field.action === 'show_project_location_dialog' ||
@@ -128,9 +129,12 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
         <button
           type="button"
           disabled={isLocked}
+          aria-invalid={missingRequired || undefined}
           onClick={() => {
             if (opensLocationDialog) {
               setLocationModalOpen(true);
+            } else if (isAdditionalBtn) {
+              setAdditionalInputsOpen(true);
             }
           }}
           className="osdag-action-btn"
@@ -138,6 +142,8 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             flex: 1,
             cursor: isLocked ? 'not-allowed' : 'pointer',
             opacity: isLocked ? 0.65 : 1,
+            backgroundColor: missingRequired ? 'var(--danger)' : undefined,
+            color: missingRequired ? '#fff' : undefined,
           }}
         >
           {buttonText}
@@ -171,6 +177,7 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
  */
 const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   const { inputs, updateField, isLocked } = useBridgeStore();
+  const missingRequired = useBridgeStore(s => s.requiredFieldErrors.includes(field.key));
   const value = inputs[field.key] ?? field.default ?? '';
   const options = field.options || [];
   const fieldId = `field-${field.key}`;
@@ -203,9 +210,9 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             disabled={isLocked}
             aria-required={field.required || undefined}
             aria-describedby={validationError ? errorId : undefined}
-            aria-invalid={validationError ? true : undefined}
+            aria-invalid={missingRequired || !!validationError || undefined}
             onChange={(e) => handleChange(e.target.value)}
-            className="osdag-select-field"
+            className={`osdag-select-field${missingRequired ? ' has-error' : ''}`}
             style={{
               flex: 1,
               width: '100%',
@@ -331,6 +338,7 @@ const NoteField: React.FC<{ field: UIFieldSchema }> = ({ field }) => (
  */
 const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   const { inputs, updateField, isLocked, showInputErrorDialog, constants } = useBridgeStore();
+  const missingRequired = useBridgeStore(s => s.requiredFieldErrors.includes(field.key));
 
   const value = inputs[field.key] ?? field.default ?? '';
   const [localVal, setLocalVal] = useState<string>(
@@ -438,11 +446,11 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             disabled={isLocked}
             aria-required={field.required || undefined}
             aria-describedby={!isGeometric && validationError ? errorId : undefined}
-            aria-invalid={!isGeometric && validationError ? true : undefined}
+            aria-invalid={missingRequired || (!isGeometric && !!validationError) || undefined}
             onChange={(e) => handleTyping(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            className="osdag-input-field"
+            className={`osdag-input-field${missingRequired ? ' has-error' : ''}`}
             style={{
               width: '100%',
               paddingRight: showTrailingUnit ? '32px' : '7px',

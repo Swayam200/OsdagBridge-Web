@@ -1,0 +1,248 @@
+/* Dialog metrics follow Desktop's CustomTitleBar and UIBuilder. */
+.additional-dialog {
+  --dialog-tab-bg: #e8e8e8;
+  --dialog-tab-border: #b0b0b0;
+  --dialog-tab-disabled: #e6e6e6;
+  --dialog-tab-disabled-text: #bfbfbf;
+  --dialog-action-bg: #ededed;
+  --dialog-action-border: #c8c8c8;
+  width: min(1024px, 94vw);
+  max-height: 90dvh;
+  padding: 0;
+  margin: auto;
+  overflow: hidden;
+  border: 1px solid var(--accent-osdag);
+  border-radius: 0;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+[data-theme="dark"] .additional-dialog {
+  --dialog-tab-bg: var(--bg-grouped);
+  --dialog-tab-border: var(--border-color);
+  --dialog-tab-disabled: var(--bg-grouped);
+  --dialog-tab-disabled-text: var(--text-muted);
+  --dialog-action-bg: var(--bg-grouped);
+  --dialog-action-border: var(--border-color);
+}
+
+.additional-dialog[open] { display: flex; flex-direction: column; }
+.additional-dialog::backdrop { background: transparent; }
+.additional-titlebar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding-left: 8px;
+  border-bottom: 1px solid var(--accent-osdag);
+  background: var(--header-bg);
+  color: var(--header-text);
+  user-select: none;
+}
+
+.additional-titlebar h2 { flex: 1; font-size: 12px; font-weight: 500; }
+.additional-titlebar-movable { cursor: move; touch-action: none; }
+.additional-close {
+  align-self: stretch;
+  width: 46px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.additional-close:hover { background: #e74c3c; color: #fff; }
+.additional-close:active { background: #c0392b; }
+.additional-dialog button:focus-visible { outline-offset: -2px; }
+
+.additional-body { min-height: 0; overflow: auto; }
+.additional-section-body { display: flex; flex-direction: column; padding: 5px; }
+.additional-tabs { display: flex; flex: none; overflow-x: auto; }
+.additional-tabs button {
+  flex-shrink: 0;
+  min-height: 36px;
+  min-width: 80px;
+  padding: 8px 20px;
+  border: 1px solid var(--dialog-tab-border);
+  border-bottom: 0;
+  border-right: 0;
+  background: var(--dialog-tab-bg);
+  color: var(--text-sub);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.additional-tabs button:last-child { border-right: 1px solid var(--dialog-tab-border); }
+.additional-tabs button:hover:not(:disabled):not(.selected) { background: var(--border-color); }
+.additional-tabs button:disabled {
+  background: var(--dialog-tab-disabled);
+  color: var(--dialog-tab-disabled-text);
+  cursor: not-allowed;
+}
+
+.additional-group-tabs button {
+  padding-inline: 22px;
+  border-color: var(--border-color);
+  background: var(--bg-surface);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.additional-group-tabs button:disabled { background: var(--bg-surface); color: var(--text-muted); }
+
+.additional-tabs button.selected {
+  border-color: var(--accent-osdag);
+  background: var(--accent-osdag);
+  color: #fff;
+  font-weight: 700;
+}
+
+.additional-panel {
+  min-height: 0;
+  overflow: auto;
+  padding: 0 4px 6px;
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 6px 6px;
+}
+
+.additional-primary-fields { padding: 16px 16px 14px; }
+.additional-primary-fields h3 { margin-bottom: 10px; font-size: 12px; }
+.additional-row {
+  --dialog-field-width: 200px;
+  --dialog-column-gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, calc(var(--dialog-label-width, 200px) + var(--dialog-column-gap) + var(--dialog-field-width))));
+  gap: 10px var(--dialog-column-gap);
+}
+.additional-row:empty { display: none; }
+.additional-row + .additional-row:not(:empty) { margin-top: 10px; }
+.additional-field {
+  display: grid;
+  grid-template-columns: minmax(0, var(--dialog-label-width, 200px)) minmax(0, var(--dialog-field-width, 200px));
+  gap: var(--dialog-column-gap, 24px);
+  align-items: center;
+}
+
+.additional-field label { font-size: 11px; overflow-wrap: anywhere; }
+.additional-field > div { min-width: 0; }
+.additional-field input, .additional-field select { width: 100%; }
+.additional-field input { padding: 1px 7px; text-align: left; }
+.additional-field select { padding: 1px 32px 1px 7px; background-size: 20px; background-position: right 8px center; }
+.additional-subtab { padding: 6px 18px 12px; border: 1px solid var(--dialog-tab-border); border-radius: 0 6px 6px 6px; }
+
+.additional-footer {
+  flex: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 1px 5px 6px;
+  padding: 10px 22px;
+  border: 1px solid var(--dialog-action-border);
+  border-radius: 6px;
+  background: var(--dialog-action-bg);
+}
+
+.additional-footer button { min-width: 120px; border-color: #8c8c8c; border-radius: 4px; }
+.additional-footer button:hover:not(:disabled) { background: var(--bg-grouped); color: var(--text-main); border-color: #8c8c8c; }
+.additional-footer button:active:not(:disabled) { background: var(--border-color); }
+.additional-error { display: block; color: #b42318; font-size: 12px; margin: 6px 0; }
+[data-theme="dark"] .additional-error { color: var(--danger); }
+.additional-error button { margin-left: 12px; }
+
+.additional-warning-message { display: flex; align-items: center; gap: 10px; }
+.additional-warning-message img { flex: none; }
+
+@media (max-width: 880px) {
+  .additional-row { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 540px) {
+  .additional-field { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .additional-footer { padding-inline: 10px; }
+  .additional-footer button { min-width: 80px; }
+}
+
+/* Read-only member, loading and design panels follow the schema's column order. */
+.additional-reference-panel { display: flex; flex-direction: column; }
+.additional-reference-content { min-height: 0; overflow: auto; padding: 16px 18px; }
+.additional-reference-grid { display: grid; grid-template-columns: var(--reference-columns); gap: 12px; }
+.additional-reference-column { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.additional-reference-wide { grid-column: 1 / -1; }
+.additional-reference-card, .additional-reference-description {
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+.additional-reference-card { display: grid; gap: 10px; }
+.additional-reference-card h3, .additional-reference-description h3 { font-size: 12px; font-weight: 700; }
+.additional-reference-card .additional-field { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; }
+.additional-reference-card .additional-field button { font-size: 11px; white-space: normal; }
+.additional-reference-description { flex: 1; min-height: 300px; background: var(--dialog-tab-bg); }
+.additional-reference-description h3 { margin-bottom: 10px; text-align: center; }
+.additional-reference-description p { white-space: pre-line; font-size: 11px; color: var(--text-sub); }
+.additional-reference-checkbox { display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 11px; }
+.additional-reference-checkbox input { flex: none; accent-color: var(--accent-osdag); }
+.additional-reference-checkbox-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.additional-reference-checkbox-groups fieldset { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; }
+.additional-reference-checkbox-groups legend { padding-inline: 4px; font-size: 11px; }
+.additional-reference-checkbox-groups .additional-reference-checkbox { flex-direction: row-reverse; justify-content: flex-end; }
+.additional-reference-mode { display: grid; gap: 6px; }
+.additional-reference-table { overflow-x: auto; }
+.additional-reference-table table { width: 100%; border-collapse: collapse; font-size: 11px; color: var(--text-muted); }
+.additional-reference-table th, .additional-reference-table td { padding: 8px; border: 1px solid var(--border-color); text-align: left; }
+.additional-reference-table th { background: var(--bg-grouped); font-weight: 600; }
+.additional-reference-table td { height: 48px; text-align: center; }
+.additional-typical-reference { padding: 8px; border-bottom: 1px solid var(--border-color); }
+.additional-static-diagram { display: grid; justify-items: center; gap: 4px; padding: 8px; border-radius: 4px; background: #fff; }
+.additional-static-canvas { width: 100%; min-width: 0; overflow-x: auto; }
+.additional-static-diagram svg { display: block; width: 100%; max-width: 1000px; margin-inline: auto; }
+.additional-static-typical svg { min-width: 700px; }
+.additional-static-girder-overview svg, .additional-static-stiffener svg { min-width: 650px; }
+.additional-static-girder-section svg { max-width: 400px; }
+.additional-static-bracing svg, .additional-static-angle svg { max-width: 340px; }
+.additional-static-diagram figcaption { font-size: 10px; text-align: center; color: #686868; }
+.additional-static-member { font: bold 13px Arial, sans-serif; fill: #90af13; }
+
+@media (max-width: 880px) {
+  .additional-reference-grid, .additional-reference-checkbox-groups { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 540px) {
+  .additional-reference-card .additional-field { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .additional-reference-content { padding: 10px; }
+}
+
+.input-error-dialog {
+  --error-button-bg: #ff9800;
+  --error-button-hover: #fb8c00;
+  --error-button-pressed: #f57c00;
+  width: min(460px, 94vw);
+}
+
+.input-error-critical {
+  --error-button-bg: #f44336;
+  --error-button-hover: #e53935;
+  --error-button-pressed: #d32f2f;
+}
+
+.input-error-content { display: grid; gap: 16px; padding: 20px; overflow: auto; }
+.input-error-content p { white-space: pre-line; }
+.input-error-content button {
+  justify-self: end;
+  min-width: 50px;
+  height: 30px;
+  border: none;
+  background: var(--error-button-bg);
+  color: #fff;
+  font-weight: 500;
+}
+
+.input-error-content button:hover:not(:disabled) { background: var(--error-button-hover); color: #fff; }
+.input-error-content button:active:not(:disabled) { background: var(--error-button-pressed); color: #fff; }

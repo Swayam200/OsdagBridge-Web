@@ -15,7 +15,8 @@
  *   └────────────┴──────────────────────┴─────────────┘
  *
  * Modals:
- *   ProjectLocationModal — project location picker (always mounted, hidden until triggered)
+ *   ProjectLocationModal / InputErrorDialog — always mounted, revealed by store state
+ *   AdditionalInputsDialog — mounted per opening to reset navigation and requests
  */
 
 import React, { useEffect } from 'react';
@@ -26,11 +27,13 @@ import { OutputDock } from './components/docks/OutputDock';
 import { LogDock } from './components/docks/LogDock';
 import { ProjectLocationModal } from './components/dialogs/ProjectLocationModal';
 import { InputErrorDialog } from './components/dialogs/InputErrorDialog';
+import { AdditionalInputsDialog } from './components/dialogs/additional-inputs/AdditionalInputsDialog';
 
 export default function App() {
   const darkMode = useBridgeStore((s) => s.darkMode);
   const isLogDockOpen = useBridgeStore((s) => s.isLogDockOpen);
   const fetchConstants = useBridgeStore((s) => s.fetchConstants);
+  const additionalInputsOpen = useBridgeStore((s) => s.isAdditionalInputsOpen);
 
   // Fetch backend constants once at application initialization
   useEffect(() => {
@@ -92,9 +95,10 @@ export default function App() {
         <OutputDock />
       </div>
 
-      {/* Modals — always mounted, revealed by store flags */}
+      {/* Input dialogs unmount on close to cancel requests and reset navigation. */}
       <ProjectLocationModal />
       <InputErrorDialog />
+      {additionalInputsOpen && <AdditionalInputsDialog />}
     </div>
   );
 }

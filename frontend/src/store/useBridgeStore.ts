@@ -68,6 +68,8 @@ interface BridgeState {
   concreteMaterials: ConcreteMaterial[];
   location: LocationData | null;
   isLocationModalOpen: boolean;
+  isAdditionalInputsOpen: boolean;
+  requiredFieldErrors: string[];
 
   // ── UI dock visibility ─────────────────────────────────────────────────────
   isDockCollapsed: boolean;
@@ -98,7 +100,9 @@ interface BridgeState {
   darkMode: boolean;
 
   // ── Input Error Dialog ─────────────────────────────────────────────────────
-  inputErrorDialog: { message: string; onOk: () => void } | null;
+  inputErrorDialog: {
+    message: string; onOk: () => void; title?: string; tone?: 'warning' | 'critical';
+  } | null;
 
   // ── Actions ────────────────────────────────────────────────────────────────
   fetchConstants: () => Promise<void>;
@@ -124,7 +128,7 @@ interface BridgeState {
   showInputErrorDialog: (message: string, onOk: () => void) => void;
   dismissInputErrorDialog: () => void;
 
-  // UI-only no-ops (kept so existing JSX references compile)
+  // Input actions and dialog controls (unfinished actions remain no-ops)
   saveInputs: () => void;
   loadInputs: () => void;
   saveLogs: () => void;
@@ -171,6 +175,8 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   concreteMaterials: [],
   location: null,
   isLocationModalOpen: false,
+  isAdditionalInputsOpen: false,
+  requiredFieldErrors: [],
 
   // ── Dock state ─────────────────────────────────────────────────────────────
   isDockCollapsed: false,
@@ -307,6 +313,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   updateField: (key, value) => {
     set((state) => ({
       inputs: { ...state.inputs, [key]: value },
+      requiredFieldErrors: state.requiredFieldErrors.filter(fieldKey => fieldKey !== key),
     }));
   },
 
@@ -392,6 +399,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
 
       return {
         location: loc,
+        requiredFieldErrors: state.requiredFieldErrors.filter(key => key !== KEY_PROJECT_LOCATION),
         inputs: {
           ...state.inputs,
           // Preserve the display string and all four environmental parameters
@@ -417,7 +425,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   toggleCad3dView: () => {},
   togglePlotsView: () => {},
 
-  // ── UI-only no-ops ────────────────────────────────────────────────────────
+  // ── Input actions and dialog controls ─────────────────────────────────────
   saveInputs: () => {},
   loadInputs: () => {},
   saveLogs: () => {},
@@ -425,7 +433,30 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   exportCadImage: () => {},
   runDesign: () => {},
   resetInputs: () => {},
-  setAdditionalInputsOpen: () => {},
+  setAdditionalInputsOpen: (open) => {
+    if (!open) {
+      set({ isAdditionalInputsOpen: false });
+      return;
+    }
+    const { schema, inputs } = get();
+    if (!schema.length) {
+      get().showInputErrorDialog('Load Basic Inputs first.', () => {});
+      return;
+    }
+    // Both entry buttons use the schema's required flags; numeric validation stays in the existing field flow.
+    const missing = schema.filter(field => field.required && String(inputs[field.key] ?? '').trim() === '');
+    if (missing.length) {
+      const message = ['Please fill in the required(*) fields before proceeding:',
+        ...missing.map(field => ' - ' + field.label.replace(/\n/g, ' '))].join('\n');
+      set({
+        isAdditionalInputsOpen: false,
+        requiredFieldErrors: missing.map(field => field.key),
+        inputErrorDialog: { title: 'Empty Required Fields', tone: 'critical', message, onOk: () => {} },
+      });
+      return;
+    }
+    set({ requiredFieldErrors: [], isAdditionalInputsOpen: true });
+  },
   setSteelDesignModalOpen: () => {},
   setTransverseDesignModalOpen: () => {},
   setDeckDesignModalOpen: () => {},
