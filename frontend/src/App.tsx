@@ -16,7 +16,7 @@
  *
  * Modals:
  *   ProjectLocationModal / InputErrorDialog — always mounted, revealed by store state
- *   AdditionalInputsDialog — mounted per opening for schema inspection
+ *   AdditionalInputsDialog / MaterialInputsDialog — mounted per opening to reset navigation and requests
  */
 
 import React, { useEffect } from 'react';
@@ -28,12 +28,14 @@ import { LogDock } from './components/docks/LogDock';
 import { ProjectLocationModal } from './components/dialogs/ProjectLocationModal';
 import { InputErrorDialog } from './components/dialogs/InputErrorDialog';
 import { AdditionalInputsDialog } from './components/dialogs/additional-inputs/AdditionalInputsDialog';
+import { MaterialInputsDialog } from './components/dialogs/MaterialInputsDialog';
 
 export default function App() {
   const darkMode = useBridgeStore((s) => s.darkMode);
   const isLogDockOpen = useBridgeStore((s) => s.isLogDockOpen);
   const fetchConstants = useBridgeStore((s) => s.fetchConstants);
   const additionalInputsOpen = useBridgeStore((s) => s.isAdditionalInputsOpen);
+  const materialDialog = useBridgeStore((s) => s.materialDialog);
 
   // Fetch backend constants once at application initialization
   useEffect(() => {
@@ -95,10 +97,11 @@ export default function App() {
         <OutputDock />
       </div>
 
-      {/* Shared modals stay mounted; Additional Inputs loads its schema on opening. */}
+      {/* Input dialogs unmount on close to cancel requests and reset navigation. */}
       <ProjectLocationModal />
       <InputErrorDialog />
       {additionalInputsOpen && <AdditionalInputsDialog />}
+      {materialDialog && <MaterialInputsDialog key={`${materialDialog.member}:${materialDialog.grade}`} />}
     </div>
   );
 }

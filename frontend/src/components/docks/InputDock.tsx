@@ -197,7 +197,6 @@ export const InputDock: React.FC = () => {
                 {/* Additional Inputs Tab */}
                 <button
                   type="button"
-                  disabled={schema.length === 0}
                   onClick={() => setAdditionalInputsOpen(true)}
                   title="Additional Inputs"
                   aria-label="Additional Inputs"
