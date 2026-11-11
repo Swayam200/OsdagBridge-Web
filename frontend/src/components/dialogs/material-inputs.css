@@ -1,0 +1,16 @@
+.material-dialog { width: min(582px, 94vw); }
+.material-body { display: grid; gap: 10px; padding: 16px 20px 0; }
+.material-body .additional-field { grid-template-columns: minmax(0, 280px) minmax(0, 242px); gap: 18px; }
+.material-body .additional-field label { font-size: 12px; }
+.material-body .additional-field input {
+  border-color: var(--input-border);
+  background: var(--input-disabled-bg);
+  color: var(--input-disabled-color);
+}
+
+.material-footer { flex: none; display: flex; justify-content: flex-end; padding: 8px 20px 16px; }
+.material-footer button { min-width: 90px; }
+
+@media (max-width: 540px) {
+  .material-body .additional-field { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}

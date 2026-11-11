@@ -1,6 +1,5 @@
-from fastapi import APIRouter
-
-router = APIRouter(prefix="/materials", tags=["Materials"])
+# Reuse the existing catalogue router so base-values and grade lists share one mount.
+from app.api.routes.materials import router
 
 @router.get("/steel")
 def get_steel_options():

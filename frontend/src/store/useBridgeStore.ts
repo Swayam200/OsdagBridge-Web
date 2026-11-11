@@ -19,6 +19,7 @@
 import { create } from 'zustand';
 import { UIFieldSchema, BridgeConstants } from '../types/schema';
 import { LocationData } from '../types/location';
+import type { MaterialDialogSelection } from '../services/materialInputs';
 import {
   fetchConstants as apiFetchConstants,
   fetchBasicSchema,
@@ -70,6 +71,7 @@ interface BridgeState {
   isLocationModalOpen: boolean;
   isAdditionalInputsOpen: boolean;
   requiredFieldErrors: string[];
+  materialDialog: MaterialDialogSelection | null;
 
   // ── UI dock visibility ─────────────────────────────────────────────────────
   isDockCollapsed: boolean;
@@ -108,6 +110,7 @@ interface BridgeState {
   fetchConstants: () => Promise<void>;
   fetchSchema: () => Promise<void>;
   updateField: (key: string, value: any) => void;
+  setMaterialDialog: (selection: MaterialDialogSelection | null) => void;
   toggleLock: () => void;
   toggleDock: () => void;
   toggleOutputDock: () => void;
@@ -177,6 +180,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   isLocationModalOpen: false,
   isAdditionalInputsOpen: false,
   requiredFieldErrors: [],
+  materialDialog: null,
 
   // ── Dock state ─────────────────────────────────────────────────────────────
   isDockCollapsed: false,
@@ -316,6 +320,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
       requiredFieldErrors: state.requiredFieldErrors.filter(fieldKey => fieldKey !== key),
     }));
   },
+  setMaterialDialog: (selection) => set({ materialDialog: selection }),
 
   toggleLock: () => set((state) => ({ isLocked: !state.isLocked })),
   toggleDock: () => set((state) => ({ isDockCollapsed: !state.isDockCollapsed })),

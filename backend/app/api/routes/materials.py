@@ -1,28 +1,20 @@
+"""Stored material catalogue values from Core; no derived-property calculations."""
+from contextlib import closing
 import sqlite3
-from pathlib import Path
-from fastapi import APIRouter
+
+from fastapi import APIRouter, HTTPException
+from osdagbridge_core import RESOURCE_DIR
 
 router = APIRouter(prefix="/materials", tags=["Materials"])
 
-def _locate_resource_file(file_name: str) -> Path:
-    # Go up from web/backend/app/api/routes/materials.py to root
-    root_dir = Path(__file__).resolve().parents[5]
-    return root_dir / "src" / "osdagbridge" / "core" / "data" / "ResourceFiles" / file_name
-
 def _execute_resource_query(query: str):
-    db_path = _locate_resource_file("Intg_osdag.sqlite")
-    if not db_path.exists():
-        return None
-
-    connection = sqlite3.connect(str(db_path))
-    cursor = connection.cursor()
+    # Resolve the installed Core package, including editable installs; never create a database.
+    db_uri = (RESOURCE_DIR / "Intg_osdag.sqlite").as_uri() + "?mode=ro"
     try:
-        cursor.execute(query)
-        return cursor.fetchall()
-    except sqlite3.Error:
-        return None
-    finally:
-        connection.close()
+        with closing(sqlite3.connect(db_uri, uri=True)) as connection:
+            return connection.execute(query).fetchall()
+    except sqlite3.Error as error:
+        raise HTTPException(status_code=503, detail="Core material catalogue is unavailable.") from error
 
 def _normalize_steel_material_name(name: str) -> str:
     return "".join(str(name or "").upper().split())
@@ -35,43 +27,28 @@ def _load_concrete_grade_values_from_db():
         """
     )
     values = {}
-    if rows is not None:
-        for grade, fck, fctm, ecm in rows:
-            key = str(grade).strip().upper()
-            values[key] = {
-                "fck": float(fck),
-                "fctm": float(fctm),
-                "Ecm": float(ecm),
-            }
+    for grade, fck, fctm, ecm in rows:
+        key = str(grade).strip().upper()
+        values[key] = {
+            "fck": float(fck),
+            "fctm": float(fctm),
+            "Ecm": float(ecm),
+        }
     return values
 
 def _load_steel_material_values_from_db():
     values = {}
     rows = _execute_resource_query(
         '''
-        SELECT [Material Name], [Yield Strength], [Ultimate Tensile Strength]
-        FROM Material
+        SELECT Grade, [Yield Strength], [Ultimate Tensile Strength],
+               [Modulus of Elasticity], [Poisson's Ratio]
+        FROM Steel_Grade_Properties
         '''
     )
-    if rows is None:
-        rows = _execute_resource_query(
-            '''
-            SELECT Grade, [Yield Strength], [Ultimate Tensile Strength]
-            FROM Steel_Grade_Properties
-            '''
-        )
-    if rows is None:
-        return {}
-
-    try:
-        for material_name, fy, fu in rows:
-            key = _normalize_steel_material_name(material_name)
-            if not key:
-                continue
-            values[key] = {"Fy": float(fy), "Fu": float(fu)}
-        return values
-    except (TypeError, ValueError):
-        return {}
+    for material_name, fy, fu, e, poisson in rows:
+        key = _normalize_steel_material_name(material_name)
+        values[key] = {"Fy": float(fy), "Fu": float(fu), "E": float(e), "Poisson": float(poisson)}
+    return values
 
 @router.get("/base-values")
 def get_material_base_values():

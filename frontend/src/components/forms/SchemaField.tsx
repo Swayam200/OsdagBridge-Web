@@ -172,14 +172,15 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
 
 /**
  * SelectField — mirrors the desktop combobox factory.
- * Calls POST /api/v1/validate on change; surfaces backend errors via FieldError.
+ * Standard selections use the existing validation flow. Material information is
+ * read-only; Custom stays disabled until Core provides shared evaluation helpers.
  * Disabled schema options remain visible but cannot be selected.
  */
 const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, updateField, isLocked } = useBridgeStore();
+  const { inputs, updateField, isLocked, setMaterialDialog } = useBridgeStore();
   const missingRequired = useBridgeStore(s => s.requiredFieldErrors.includes(field.key));
   const value = inputs[field.key] ?? field.default ?? '';
-  const options = field.options || [];
+  const options = field.is_material_field ? [...new Set([...(field.options || []), 'Custom'])] : field.options || [];
   const fieldId = `field-${field.key}`;
   const errorId = `${fieldId}-error`;
 
@@ -187,6 +188,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
 
   const handleChange = useCallback(
     async (newValue: string) => {
+      if (field.is_material_field && newValue === 'Custom') return;
       updateField(field.key, newValue);
       setValidationError(undefined);
 
@@ -196,7 +198,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
         setValidationError(result.message ?? 'Invalid value.');
       }
     },
-    [field.key],
+    [field.key, field.is_material_field, updateField],
   );
 
   return (
@@ -229,7 +231,8 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
               <option
                 key={opt}
                 value={opt}
-                disabled={field.disabled_options?.includes(opt)}
+                disabled={field.disabled_options?.includes(opt) || (field.is_material_field && opt === 'Custom')}
+                title={field.is_material_field && opt === 'Custom' ? 'Custom material entry is not available yet.' : undefined}
               >
                 {opt}
               </option>
@@ -241,6 +244,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
               aria-label={`Material properties for ${field.label}`}
               onClick={(e) => {
                 e.preventDefault();
+                setMaterialDialog({ member: field.key, grade: String(value) });
               }}
               style={{
                 width: '20px',
