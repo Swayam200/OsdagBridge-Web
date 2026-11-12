@@ -26,11 +26,19 @@ import { OutputDock } from './components/docks/OutputDock';
 import { LogDock } from './components/docks/LogDock';
 import { ProjectLocationModal } from './components/dialogs/ProjectLocationModal';
 import { InputErrorDialog } from './components/dialogs/InputErrorDialog';
+import { MaterialInputsDialog } from './components/dialogs/MaterialInputsDialog';
 
 export default function App() {
   const darkMode = useBridgeStore((s) => s.darkMode);
   const isLogDockOpen = useBridgeStore((s) => s.isLogDockOpen);
   const fetchConstants = useBridgeStore((s) => s.fetchConstants);
+
+  const materialDialog = useBridgeStore(s => s.materialDialog);
+  const fetchMaterialCatalogue = useBridgeStore(s => s.fetchMaterialCatalogue);
+  useEffect(() => {
+    // Information dialogs surface failures and provide Retry without blocking Basic Inputs.
+    fetchMaterialCatalogue().catch(() => {});
+  }, [fetchMaterialCatalogue]);
 
   // Fetch backend constants once at application initialization
   useEffect(() => {
@@ -95,6 +103,7 @@ export default function App() {
       {/* Modals — always mounted, revealed by store flags */}
       <ProjectLocationModal />
       <InputErrorDialog />
+      {materialDialog && <MaterialInputsDialog key={`${materialDialog.member}:${materialDialog.grade}`} />}
     </div>
   );
 }

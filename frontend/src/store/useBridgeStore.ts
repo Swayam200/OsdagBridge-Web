@@ -19,6 +19,7 @@
 import { create } from 'zustand';
 import { UIFieldSchema, BridgeConstants } from '../types/schema';
 import { LocationData } from '../types/location';
+import { fetchMaterialCatalogue as apiFetchMaterialCatalogue, type MaterialCatalogue, type MaterialDialogSelection } from '../services/materialInputs';
 import {
   fetchConstants as apiFetchConstants,
   fetchBasicSchema,
@@ -68,6 +69,8 @@ interface BridgeState {
   concreteMaterials: ConcreteMaterial[];
   location: LocationData | null;
   isLocationModalOpen: boolean;
+  materialDialog: MaterialDialogSelection | null;
+  materialCatalogue: MaterialCatalogue | null;
 
   // ── UI dock visibility ─────────────────────────────────────────────────────
   isDockCollapsed: boolean;
@@ -104,6 +107,8 @@ interface BridgeState {
   fetchConstants: () => Promise<void>;
   fetchSchema: () => Promise<void>;
   updateField: (key: string, value: any) => void;
+  setMaterialDialog: (selection: MaterialDialogSelection | null) => void;
+  fetchMaterialCatalogue: (refresh?: boolean) => Promise<MaterialCatalogue>;
   toggleLock: () => void;
   toggleDock: () => void;
   toggleOutputDock: () => void;
@@ -154,6 +159,7 @@ interface BridgeState {
 // ── Store ─────────────────────────────────────────────────────────────────────
 
 let constantsPromise: Promise<BridgeConstants> | null = null;
+let materialCataloguePromise: Promise<MaterialCatalogue> | null = null;
 
 export const useBridgeStore = create<BridgeState>((set, get) => ({
   // ── Backend constants ──────────────────────────────────────────────────────
@@ -171,6 +177,8 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   concreteMaterials: [],
   location: null,
   isLocationModalOpen: false,
+  materialDialog: null,
+  materialCatalogue: null,
 
   // ── Dock state ─────────────────────────────────────────────────────────────
   isDockCollapsed: false,
@@ -308,6 +316,20 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
     set((state) => ({
       inputs: { ...state.inputs, [key]: value },
     }));
+  },
+
+  setMaterialDialog: (selection) => set({ materialDialog: selection }),
+  fetchMaterialCatalogue: (refresh = false) => {
+    const catalogue = get().materialCatalogue;
+    if (catalogue && !refresh) return Promise.resolve(catalogue);
+    // One shared request per page load; individual dialog closes must not abort it.
+    if (!materialCataloguePromise) {
+      materialCataloguePromise = apiFetchMaterialCatalogue().then(data => {
+        set({ materialCatalogue: data });
+        return data;
+      }).finally(() => { materialCataloguePromise = null; });
+    }
+    return materialCataloguePromise;
   },
 
   toggleLock: () => set((state) => ({ isLocked: !state.isLocked })),

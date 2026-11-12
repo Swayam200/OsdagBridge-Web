@@ -1,0 +1,62 @@
+/* Shared Desktop-style modal frame and read-only fields. */
+.additional-dialog {
+  width: min(1024px, 94vw);
+  max-height: 90dvh;
+  padding: 0;
+  margin: auto;
+  overflow: hidden;
+  border: 1px solid var(--accent-osdag);
+  border-radius: 0;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.additional-dialog[open] { display: flex; flex-direction: column; }
+.additional-dialog::backdrop { background: transparent; }
+.additional-titlebar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding-left: 8px;
+  border-bottom: 1px solid var(--accent-osdag);
+  background: var(--header-bg);
+  color: var(--header-text);
+  user-select: none;
+}
+
+.additional-titlebar h2 { flex: 1; font-size: 12px; font-weight: 500; }
+.additional-titlebar-movable { cursor: move; touch-action: none; }
+.additional-close {
+  align-self: stretch;
+  width: 46px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.additional-close:hover { background: #e74c3c; color: #fff; }
+.additional-close:active { background: #c0392b; }
+.additional-dialog button:focus-visible { outline-offset: -2px; }
+
+.additional-body { min-height: 0; overflow: auto; }
+.additional-field {
+  display: grid;
+  grid-template-columns: minmax(0, var(--dialog-label-width, 200px)) minmax(0, var(--dialog-field-width, 200px));
+  gap: var(--dialog-column-gap, 24px);
+  align-items: center;
+}
+
+.additional-field label { font-size: 11px; overflow-wrap: anywhere; }
+.additional-field > div { min-width: 0; }
+.additional-field input, .additional-field select { width: 100%; }
+.additional-field input { padding: 1px 7px; text-align: left; }
+.additional-field select { padding: 1px 32px 1px 7px; background-size: 20px; background-position: right 8px center; }
+.additional-error { display: block; color: #b42318; font-size: 12px; margin: 6px 0; }
+[data-theme="dark"] .additional-error { color: var(--danger); }
+.additional-error button { margin-left: 12px; }
