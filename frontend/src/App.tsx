@@ -11,15 +11,23 @@ import { OutputDock } from './components/docks/OutputDock';
 import { LogDock } from './components/docks/LogDock';
 import { ProjectLocationModal } from './components/dialogs/ProjectLocationModal';
 import { InputErrorDialog } from './components/dialogs/InputErrorDialog';
+import { MaterialInputsDialog } from './components/dialogs/MaterialInputsDialog';
 
 export default function App() {
   const darkMode = useBridgeStore((s) => s.darkMode);
   const isLogDockOpen = useBridgeStore((s) => s.isLogDockOpen);
   const fetchConstants = useBridgeStore((s) => s.fetchConstants);
+  const materialDialog = useBridgeStore((s) => s.materialDialog);
+  const fetchMaterialCatalogue = useBridgeStore((s) => s.fetchMaterialCatalogue);
 
   useEffect(() => {
     fetchConstants();
   }, [fetchConstants]);
+
+  useEffect(() => {
+    // The dialog reports errors and offers Retry without blocking Basic Inputs.
+    fetchMaterialCatalogue().catch(() => {});
+  }, [fetchMaterialCatalogue]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
@@ -60,6 +68,7 @@ export default function App() {
       {/* Modals */}
       <ProjectLocationModal />
       <InputErrorDialog />
+      {materialDialog && <MaterialInputsDialog key={`${materialDialog.member}:${materialDialog.grade}`} />}
     </div>
   );
 }

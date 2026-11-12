@@ -115,9 +115,12 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
 };
 
 const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, updateField, isLocked } = useBridgeStore();
+  const { inputs, updateField, isLocked, setMaterialDialog } = useBridgeStore();
   const value = inputs[field.key] ?? field.default ?? '';
-  const options = field.options || [];
+  // Standard grades are available for inspection. Custom entry is deferred.
+  const options = field.is_material_field
+    ? [...new Set([...(field.options || []), 'Custom'])]
+    : field.options || [];
   const fieldId = `field-${field.key}`;
   const errorId = `${fieldId}-error`;
 
@@ -125,6 +128,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
 
   const handleChange = useCallback(
     async (newValue: string) => {
+      if (field.is_material_field && newValue === 'Custom') return;
       updateField(field.key, newValue);
       setValidationError(undefined);
 
@@ -134,7 +138,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
         setValidationError(result.message ?? 'Invalid value.');
       }
     },
-    [field.key, updateField],
+    [field.key, field.is_material_field, updateField],
   );
 
   return (
@@ -163,7 +167,8 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
               <option
                 key={opt}
                 value={opt}
-                disabled={field.disabled_options?.includes(opt)}
+                disabled={field.disabled_options?.includes(opt) || (field.is_material_field && opt === 'Custom')}
+                title={field.is_material_field && opt === 'Custom' ? 'Custom material entry is not available yet.' : undefined}
                 className="bg-input text-main"
               >
                 {opt}
@@ -174,7 +179,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             <button
               type="button"
               aria-label={`Material properties for ${field.label}`}
-              onClick={(e) => e.preventDefault()}
+              onClick={() => setMaterialDialog({ member: field.key, grade: String(value) })}
               className="w-5 h-5 min-w-[20px] shrink-0 p-0 border-0 bg-transparent cursor-pointer flex items-center justify-center"
             >
               <img src="/vectors/msg_about.svg" alt="" width={18} height={18} />
