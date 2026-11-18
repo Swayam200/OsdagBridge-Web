@@ -13,76 +13,35 @@ export const PercentBarWidget: React.FC<PercentBarWidgetProps> = ({ label, value
   const markerLeftPercent = (100.0 / 150.0) * 100; // 66.67%
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '3px',
-      marginBottom: '6px'
-    }}>
+    <div className="flex flex-col gap-0.5 mb-1.5">
       {/* Label above */}
       {label && (
-        <span style={{
-          fontSize: '11px',
-          color: 'var(--text-main)',
-          lineHeight: '1.25',
-          userSelect: 'none'
-        }}>
+        <span className="text-[11px] text-black leading-tight select-none">
           {label}
         </span>
       )}
 
       {/* Bar Row: [ Track with 100% marker ] [ XX% ] */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px'
-      }}>
+      <div className="flex items-center gap-2">
         {/* Track Container */}
-        <div style={{
-          flex: 1,
-          height: '6px',
-          background: '#D8D8D8',
-          borderRadius: '3px',
-          position: 'relative',
-          overflow: 'visible'
-        }}>
+        <div className="flex-1 h-1.5 bg-[#D8D8D8] rounded-[3px] relative overflow-visible">
           {/* Filled Pill */}
           <div
-            style={{
-              width: `${fillRatio * 100}%`,
-              height: '100%',
-              background: fillColor,
-              borderRadius: '3px',
-              transition: 'width 0.25s ease-out, background-color 0.25s ease'
-            }}
+            className={`h-full rounded-[3px] transition-[width] duration-200 ${
+              exceeded ? 'bg-[#CC2222]' : 'bg-[#90AF13]'
+            }`}
+            style={{ width: `${fillRatio * 100}%` }}
           />
 
           {/* 100% Limit Marker Line */}
           <div
-            style={{
-              position: 'absolute',
-              left: `${markerLeftPercent}%`,
-              top: '-2px',
-              bottom: '-2px',
-              width: '2px',
-              background: '#222222',
-              zIndex: 2,
-              pointerEvents: 'none'
-            }}
+            className="absolute -top-0.5 -bottom-0.5 w-0.5 bg-[#222222] left-[66.67%] z-[2] pointer-events-none"
             title="100% Limit"
           />
         </div>
 
         {/* Value Label (fixed 46px width) */}
-        <span style={{
-          width: '46px',
-          textAlign: 'center',
-          fontSize: '11px',
-          fontWeight: 'bold',
-          color: 'var(--text-main)',
-          userSelect: 'none',
-          fontVariantNumeric: 'tabular-nums'
-        }}>
+        <span className="w-[46px] text-center text-[11px] font-bold text-black select-none tabular-nums">
           {Math.round(clampedValue)}%
         </span>
       </div>

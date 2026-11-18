@@ -1,16 +1,6 @@
 /**
  * InputDock.tsx
- *
- * Input dock component for the Highway Bridge Design workbench.
- * Adapts osdagbridge.desktop.ui.docks.input_dock.InputDock for React.
- *
- * Structural organization:
- *   - Top bar: "Basic Inputs" tab, "Additional Inputs" tab, Lock/Unlock toggle.
- *   - Scroll area: Schema-driven containers & groupboxes (.osdag-groupbox).
- *   - Offline / unloaded state: When backend is unreachable, the dock remains
- *     unloaded and presents a clear error state without mock or fallback schemas.
- *   - Bottom action bar: "Save Input" and "Design" dock buttons.
- *   - Toggle strip: Expandable indicator strip on the panel edge.
+ * Input dock component styled with Tailwind CSS utility classes.
  */
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -35,17 +25,17 @@ export const InputDock: React.FC = () => {
     toggleContainer,
     saveInputs,
     runDesign,
+    setAdditionalInputsOpen,
+    validateRequiredInputs,
   } = useBridgeStore();
 
   const [showLockTooltip, setShowLockTooltip] = useState(false);
   const tooltipTimerRef = useRef<number | null>(null);
 
-  // Fetch schema (which internally fetches constants first) on mount
   useEffect(() => {
     fetchSchema();
   }, [fetchSchema]);
 
-  // Floating lock notification on click
   const handleScrollAreaClick = () => {
     if (isLocked) {
       setShowLockTooltip(true);
@@ -56,7 +46,6 @@ export const InputDock: React.FC = () => {
     }
   };
 
-  // Group schema fields by container -> group (mirrors desktop _make_container and _build_field_loop)
   const containers = schema.reduce<Record<string, Record<string, UIFieldSchema[]>>>((acc, item) => {
     const c = item.container || 'main';
     const g = item.group || 'General Details';
@@ -66,20 +55,25 @@ export const InputDock: React.FC = () => {
     return acc;
   }, {});
 
+  const GROUPS_WITH_TITLE = new Set(['Type of Structure', 'Geometric Details', 'Material Inputs']);
+
   const renderGroup = (groupTitle: string, fields: UIFieldSchema[]) => {
-    const showTitle = fields[0]?.show_group_title !== false;
+    const showTitle = GROUPS_WITH_TITLE.has(groupTitle);
     return (
       <div
         key={groupTitle}
-        className="osdag-groupbox"
-        style={!showTitle ? { paddingTop: '8px', marginTop: '10px' } : undefined}
+        className={`relative border border-[#90af13] rounded-[4px] bg-white px-2.5 pb-2.5 ${
+          showTitle ? 'pt-3.5 mt-2' : 'pt-2.5'
+        }`}
       >
         {showTitle && (
-          <div className="osdag-groupbox__title">
-            <span>{groupTitle}</span>
-          </div>
+          <span
+            className="absolute -top-[8px] left-2 px-1 text-[10px] font-bold text-[#555555] tracking-[0.03em] uppercase leading-none select-none z-10 bg-white"
+          >
+            {groupTitle}
+          </span>
         )}
-        <div style={{ marginTop: showTitle ? '4px' : '0' }}>
+        <div className="flex flex-col gap-2">
           {fields.map((f) => (
             <SchemaField key={f.key} field={f} />
           ))}
@@ -88,39 +82,26 @@ export const InputDock: React.FC = () => {
     );
   };
 
-  // Combined loading: constants OR schema
   const isLoading = constantsLoading || schemaLoading;
-  // Combined error: show constants error first (it's more fundamental)
   const errorMessage = constantsError || schemaError;
 
   return (
-    <div
-      className="osdag-input-dock"
-      style={{
-        display: 'flex',
-        height: '100%',
-        position: 'relative',
-        zIndex: 10,
-        flexShrink: 0,
-      }}
-    >
+    <div className="flex h-full relative z-10 shrink-0">
       {isDockCollapsed ? (
-        // ─── Collapsed Indicator (mirrors desktop InputDockIndicator) ─────────
-        <div className="osdag-dock-indicator osdag-dock-indicator--input">
+        <div className="flex items-stretch h-full shrink-0 select-none bg-transparent w-10 flex-row">
           <img
             src="/vectors/inputs_label_light.svg"
             alt="Inputs"
-            style={{ width: '32px', height: '100%', display: 'block', userSelect: 'none' }}
+            className="w-8 h-full block select-none"
           />
           <div
-            className="osdag-toggle-strip"
+            className="w-1.5 min-w-[6px] bg-[#90af13] h-full flex items-center justify-center relative cursor-pointer select-none shrink-0"
             onClick={toggleDock}
             title="Show input panel"
           >
             <button
               type="button"
-              className="osdag-toggle-strip__button"
-              style={{ borderRadius: '0 3px 3px 0' }}
+              className="absolute top-1/2 -translate-y-1/2 left-0 w-1.5 h-[60px] bg-[#6c8408] hover:bg-[#5e7407] text-white text-[10px] font-bold border-0 cursor-pointer p-0 flex items-center justify-center transition-colors rounded-r-[3px]"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleDock();
@@ -133,110 +114,45 @@ export const InputDock: React.FC = () => {
           </div>
         </div>
       ) : (
-        // ─── Expanded Input Panel ─────────────────────────────────────────────
         <>
           <aside
             aria-label="Bridge Input Parameters"
-            style={{
-              width: '340px',
-              minWidth: '340px',
-              background: 'var(--bg-surface)',
-              borderRight: '1px solid var(--border-color)',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-            }}
+            className="w-[340px] min-w-[340px] bg-white border-r border-[#d0d0d0] h-full flex flex-col overflow-hidden"
           >
-            <div
-              style={{
-                padding: '12px 15px 10px 15px',
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
-                minWidth: '310px',
-                boxSizing: 'border-box',
-              }}
-            >
-              {/* ── 1. Top Bar (_build_top_bar) ──────────────────────────────── */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  marginBottom: '12px',
-                  flexWrap: 'nowrap',
-                  minWidth: 0,
-                }}
-              >
-                {/* Basic Inputs Tab (active) */}
+            <div className="p-[12px_15px_10px_15px] flex flex-col h-full min-w-[310px] box-border">
+              {/* ── 1. Top Bar ──────────────────────────────── */}
+              <div className="flex items-center gap-2 mb-3 flex-nowrap min-w-0">
                 <button
                   type="button"
                   aria-current="page"
-                  style={{
-                    flex: '1 1 0',
-                    minWidth: 0,
-                    background: 'var(--accent-osdag)',
-                    color: '#ffffff',
-                    fontWeight: 'bold',
-                    fontSize: '13px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '7px 8px',
-                    cursor: 'default',
-                    textAlign: 'center',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
+                  className="flex-[1_1_0] min-w-0 bg-[#90af13] text-white font-bold text-[13px] border-0 rounded p-[7px_8px] text-center whitespace-nowrap overflow-hidden text-ellipsis select-none cursor-default"
                 >
                   Basic Inputs
                 </button>
 
-                {/* Additional Inputs Tab */}
                 <button
                   type="button"
-                  disabled
-                  title="Additional inputs will be enabled after basic inputs validation"
-                  aria-label="Additional inputs (available after basic inputs validation)"
-                  className="osdag-btn-standard"
-                  style={{
-                    flex: '1 1 0',
-                    minWidth: 0,
-                    padding: '7px 8px',
-                    fontSize: '13px',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    opacity: 0.6,
-                    cursor: 'not-allowed',
+                  title="Open Additional Inputs dialog"
+                  aria-label="Open Additional Inputs dialog"
+                  onClick={() => {
+                    if (validateRequiredInputs()) {
+                      setAdditionalInputsOpen(true);
+                    }
                   }}
+                  className="flex-[1_1_0] min-w-0 bg-white hover:bg-[#90af13] hover:text-white text-black font-bold text-xs border border-[#070707] hover:border-[#90af13] rounded-[5px] p-[6px_8px] text-center whitespace-nowrap overflow-hidden text-ellipsis transition-colors cursor-pointer select-none"
                 >
                   Additional Inputs
                 </button>
 
-                {/* Lock / Unlock Toggle Button */}
                 <button
                   type="button"
                   onClick={toggleLock}
                   title={isLocked ? 'Locked (Click to Unlock)' : 'Unlocked (Click to Lock)'}
                   aria-pressed={isLocked}
                   aria-label={isLocked ? 'Unlock inputs' : 'Lock inputs'}
-                  style={{
-                    flexShrink: 0,
-                    flexGrow: 0,
-                    width: '34px',
-                    height: '34px',
-                    background: isLocked ? '#FFA500' : 'var(--bg-grouped)',
-                    border: `1px solid ${isLocked ? '#fa7a02' : 'var(--border-color)'}`,
-                    padding: '6px',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'background 0.15s ease',
-                  }}
+                  className={`shrink-0 w-[34px] h-[34px] p-1.5 rounded-[4px] flex items-center justify-center cursor-pointer transition-colors border ${
+                    isLocked ? 'bg-[#FFA500] border-[#fa7a02]' : 'bg-[#f4f4f4] border-[#d0d0d0] hover:border-[#90af13]'
+                  }`}
                 >
                   <img
                     src={isLocked ? '/vectors/lock_close.svg' : '/vectors/lock_open.svg'}
@@ -247,61 +163,40 @@ export const InputDock: React.FC = () => {
                 </button>
               </div>
 
-              {/* ── 2. Scroll Area (_build_scroll_area) ────────────────────────── */}
+              {/* ── 2. Scroll Area ────────────────────────── */}
               <div
                 onClick={handleScrollAreaClick}
                 role="region"
                 aria-label="Bridge input parameters form"
-                style={{
-                  flex: 1,
-                  overflowY: 'auto',
-                  borderTop: '1px solid var(--border-color)',
-                  borderBottom: '1px solid var(--border-color)',
-                  padding: '6px 5px 10px 2px',
-                  position: 'relative',
-                  opacity: isLocked ? 0.75 : 1,
-                }}
+                className={`flex-1 overflow-y-auto border-t border-b border-[#d0d0d0] pt-3 pb-2.5 px-0.5 relative ${
+                  isLocked ? 'opacity-75' : ''
+                }`}
               >
                 {/* Floating Lock Tooltip */}
                 {showLockTooltip && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      background: 'var(--bg-surface)',
-                      border: '1px solid var(--accent-osdag)',
-                      borderRadius: '0px',
-                      padding: '4px 8px',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      color: 'var(--text-main)',
-                      boxShadow: 'var(--shadow-md)',
-                      zIndex: 20,
-                    }}
-                  >
+                  <div className="absolute top-3 right-3 bg-white border border-[#90af13] p-[4px_8px] text-xs font-semibold text-black shadow-md z-20">
                     🔒 Unlock to Edit
                   </div>
                 )}
 
-                {/* Loading State (constants or schema) */}
+                {/* Loading State */}
                 {isLoading && (
-                  <div className="osdag-dock-status osdag-dock-status--loading" role="status">
-                    <RefreshCw size={18} className="osdag-spin" aria-hidden="true" />
-                    <span style={{ fontSize: '12px', color: 'var(--text-sub)' }}>
+                  <div className="my-4 p-5 rounded bg-[#f4f4f4] border border-[#d0d0d0] text-xs text-black flex flex-col items-center text-center gap-2" role="status">
+                    <RefreshCw size={18} className="animate-spin" aria-hidden="true" />
+                    <span className="text-xs text-[#333333]">
                       {constantsLoading ? 'Loading constants…' : 'Loading schema definitions…'}
                     </span>
                   </div>
                 )}
 
-                {/* Backend Unavailable / Constants Error State */}
+                {/* Backend Unavailable */}
                 {!isLoading && errorMessage && (
-                  <div role="alert" className="osdag-dock-status osdag-dock-status--error">
-                    <div className="osdag-dock-status__header">
+                  <div role="alert" className="my-4 p-3 rounded bg-[#ffebe9] border border-[#ff0000] text-xs text-[#ff0000] flex flex-col gap-2">
+                    <div className="flex items-center gap-1.5 font-bold text-xs">
                       <AlertCircle size={16} aria-hidden="true" />
                       <span>Backend Unavailable</span>
                     </div>
-                    <p className="osdag-dock-status__message">
+                    <p className="m-0 text-[11px] leading-snug text-black">
                       {constantsError
                         ? 'Could not load backend constants. The input form requires the backend server to be running.'
                         : 'Could not load the bridge input schema. The input dock remains unloaded until the backend service is reachable.'}
@@ -309,102 +204,92 @@ export const InputDock: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => void fetchSchema()}
-                      className="osdag-btn-standard"
-                      style={{ alignSelf: 'flex-start', marginTop: '4px', fontSize: '11px' }}
+                      className="self-start mt-1 bg-white hover:bg-[#90af13] hover:text-white text-black font-bold text-[11px] border border-black hover:border-[#90af13] rounded p-[4px_10px] transition-colors cursor-pointer"
                     >
                       Retry Connection
                     </button>
                   </div>
                 )}
 
-                {/* Empty State when no error and no schema */}
+                {/* Empty State */}
                 {!isLoading && !errorMessage && schema.length === 0 && (
-                  <div className="osdag-dock-status" role="status">
-                    <p className="osdag-dock-status__message">
+                  <div className="my-4 p-3 rounded bg-[#f4f4f4] border border-[#d0d0d0] text-xs text-black" role="status">
+                    <p className="m-0 text-[11px] text-[#333333]">
                       No bridge input schema is currently loaded.
                     </p>
                   </div>
                 )}
 
                 {/* Container & Group Field Loop */}
-                {Object.entries(containers).map(([containerKey, containerGroups]) => {
-                  const isMain = containerKey === 'main';
-                  const isCollapsed = Boolean(collapsedContainers[containerKey]);
-                  const containerTitle =
-                    containerKey.charAt(0).toUpperCase() + containerKey.slice(1).replace(/_/g, ' ');
+                <div className="flex flex-col gap-3 pb-2 pt-1">
+                  {Object.entries(containers).map(([containerKey, containerGroups]) => {
+                    const isMain = containerKey === 'main';
+                    const isCollapsed = Boolean(collapsedContainers[containerKey]);
+                    const containerTitle =
+                      containerKey.charAt(0).toUpperCase() + containerKey.slice(1).replace(/_/g, ' ');
 
-                  if (isMain) {
-                    return (
-                      <React.Fragment key={containerKey}>
-                        {Object.entries(containerGroups).map(([groupTitle, fields]) =>
-                          renderGroup(groupTitle, fields)
-                        )}
-                      </React.Fragment>
-                    );
-                  }
-
-                  return (
-                    <div key={containerKey} className="osdag-container-box">
-                      <div className="osdag-container-box__header">
-                        <span className="osdag-container-box__title">{containerTitle}</span>
-                        <button
-                          type="button"
-                          onClick={() => toggleContainer(containerKey)}
-                          className="osdag-container-box__toggle"
-                          title={isCollapsed ? `Expand ${containerTitle}` : `Collapse ${containerTitle}`}
-                          aria-expanded={!isCollapsed}
-                        >
-                          <img
-                            src={isCollapsed ? '/vectors/arrow_down_light.svg' : '/vectors/arrow_up_light.svg'}
-                            alt={isCollapsed ? 'Expand' : 'Collapse'}
-                            width={18}
-                            height={18}
-                            style={{ objectFit: 'contain' }}
-                          />
-                        </button>
-                      </div>
-
-                      {!isCollapsed && (
-                        <div>
+                    if (isMain) {
+                      return (
+                        <React.Fragment key={containerKey}>
                           {Object.entries(containerGroups).map(([groupTitle, fields]) =>
                             renderGroup(groupTitle, fields)
                           )}
+                        </React.Fragment>
+                      );
+                    }
+
+                    return (
+                      <div key={containerKey} className="border border-[#90af13] rounded-[5px] bg-white mt-2.5 p-[8px_10px_10px_10px]">
+                        <div className="flex items-center justify-between mb-1.5 select-none">
+                          <span className="text-[13px] font-bold text-black">{containerTitle}</span>
+                          <button
+                            type="button"
+                            onClick={() => toggleContainer(containerKey)}
+                            className="bg-transparent border-0 cursor-pointer p-0.5 flex items-center justify-center"
+                            title={isCollapsed ? `Expand ${containerTitle}` : `Collapse ${containerTitle}`}
+                            aria-expanded={!isCollapsed}
+                          >
+                            <img
+                              src={isCollapsed ? '/vectors/arrow_down_light.svg' : '/vectors/arrow_up_light.svg'}
+                              alt={isCollapsed ? 'Expand' : 'Collapse'}
+                              width={18}
+                              height={18}
+                              className="object-contain"
+                            />
+                          </button>
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
+
+                        {!isCollapsed && (
+                          <div className="flex flex-col gap-3">
+                            {Object.entries(containerGroups).map(([groupTitle, fields]) =>
+                              renderGroup(groupTitle, fields)
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* ── 3. Bottom Action Buttons (_build_bottom_buttons) ──────────── */}
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '10px',
-                  marginTop: '12px',
-                  paddingTop: '2px',
-                }}
-              >
-                {/* Save Input Button */}
+              {/* ── 3. Bottom Action Buttons ──────────────── */}
+              <div className="flex gap-2.5 mt-3 pt-0.5">
                 <button
                   type="button"
                   disabled={isLocked || schema.length === 0}
                   onClick={saveInputs}
-                  className="dock-custom-button"
-                  style={{ flex: 1 }}
+                  className="flex-1 h-[34px] min-h-[34px] bg-[#90af13] hover:bg-[#7a9a12] disabled:bg-[#d6e3a3] disabled:text-[#444444] text-white font-semibold text-[11px] rounded px-3 py-2 flex items-center justify-center gap-1.5 transition-colors cursor-pointer select-none disabled:cursor-not-allowed"
                   title={schema.length === 0 ? 'Inputs not loaded' : 'Save Inputs'}
                 >
                   <img src="/vectors/save.svg" alt="" width={18} height={18} />
                   <span>Save Input</span>
                 </button>
 
-                {/* Design Button */}
                 <button
                   type="button"
                   disabled={isLocked || schema.length === 0}
                   onClick={runDesign}
-                  className="dock-custom-button"
-                  style={{ flex: 1 }}
+                  className="flex-1 h-[34px] min-h-[34px] bg-[#90af13] hover:bg-[#7a9a12] disabled:bg-[#d6e3a3] disabled:text-[#444444] text-white font-semibold text-[11px] rounded px-3 py-2 flex items-center justify-center gap-1.5 transition-colors cursor-pointer select-none disabled:cursor-not-allowed"
                   title={schema.length === 0 ? 'Inputs not loaded' : 'Run Bridge Design'}
                 >
                   <img src="/vectors/design.svg" alt="" width={18} height={18} />
@@ -414,16 +299,15 @@ export const InputDock: React.FC = () => {
             </div>
           </aside>
 
-          {/* ── 4. Toggle Strip (_build_toggle_strip) ─────────────────────────── */}
+          {/* ── 4. Toggle Strip ───────────────────────── */}
           <div
-            className="osdag-toggle-strip"
+            className="w-1.5 min-w-[6px] bg-[#90af13] h-full flex items-center justify-center relative cursor-pointer select-none shrink-0"
             onClick={toggleDock}
             title="Hide input panel"
           >
             <button
               type="button"
-              className="osdag-toggle-strip__button"
-              style={{ borderRadius: '3px 0 0 3px' }}
+              className="absolute top-1/2 -translate-y-1/2 left-0 w-1.5 h-[60px] bg-[#6c8408] hover:bg-[#5e7407] text-white text-[10px] font-bold border-0 cursor-pointer p-0 flex items-center justify-center transition-colors rounded-l-[3px]"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleDock();

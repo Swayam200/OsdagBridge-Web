@@ -24,6 +24,9 @@ import {
   fetchBasicSchema,
   fetchSteelMaterials,
   fetchConcreteMaterials,
+  fetchAdditionalInputsSchema,
+  fetchAdditionalInputDefaults,
+  recomputeBridgeLayout,
   type ConcreteMaterial,
   type SteelMaterial,
 } from '../services/api';
@@ -61,6 +64,9 @@ interface BridgeState {
   // ── Input schema ───────────────────────────────────────────────────────────
   inputs: Record<string, any>;
   additionalInputs: Record<string, any>;
+  additionalSchema: any[];
+  additionalLoading: boolean;
+  isAdditionalInputsOpen: boolean;
   schema: UIFieldSchema[];
   schemaLoading: boolean;
   schemaError: string | null;
@@ -98,7 +104,13 @@ interface BridgeState {
   darkMode: boolean;
 
   // ── Input Error Dialog ─────────────────────────────────────────────────────
-  inputErrorDialog: { message: string; onOk: () => void } | null;
+  inputErrorDialog: {
+    message: string;
+    onOk: () => void;
+    title?: string;
+    type?: 'warning' | 'critical';
+  } | null;
+  requiredErrors: string[];
 
   // ── Actions ────────────────────────────────────────────────────────────────
   fetchConstants: () => Promise<void>;
@@ -121,8 +133,15 @@ interface BridgeState {
   toggleDarkMode: () => void;
   setLocation: (loc: LocationData) => void;
   setLocationModalOpen: (open: boolean) => void;
-  showInputErrorDialog: (message: string, onOk: () => void) => void;
+  showInputErrorDialog: (
+    message: string,
+    onOk?: () => void,
+    title?: string,
+    type?: 'warning' | 'critical'
+  ) => void;
   dismissInputErrorDialog: () => void;
+  validateRequiredInputs: () => boolean;
+  clearRequiredErrors: () => void;
 
   // UI-only no-ops (kept so existing JSX references compile)
   saveInputs: () => void;
@@ -133,6 +152,11 @@ interface BridgeState {
   runDesign: () => void;
   resetInputs: () => void;
   setAdditionalInputsOpen: (open: boolean) => void;
+  fetchAdditionalInputs: () => Promise<void>;
+  updateAdditionalInput: (key: string, value: any) => void;
+  recomputeLayout: (changedField: 'girders' | 'spacing' | 'overhang', val: number) => Promise<void>;
+  saveAdditionalInputs: () => void;
+  resetAdditionalDefaults: () => Promise<void>;
   setSteelDesignModalOpen: (open: boolean) => void;
   setTransverseDesignModalOpen: (open: boolean) => void;
   setDeckDesignModalOpen: (open: boolean) => void;
@@ -164,6 +188,9 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   // ── Input schema ───────────────────────────────────────────────────────────
   inputs: {},
   additionalInputs: {},
+  additionalSchema: [],
+  additionalLoading: false,
+  isAdditionalInputsOpen: false,
   schema: [],
   schemaLoading: false,
   schemaError: null,
@@ -201,6 +228,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
 
   // ── Input Error Dialog ─────────────────────────────────────────────────────
   inputErrorDialog: null,
+  requiredErrors: [],
 
   // ── Viewport (display-only, drives Header button state) ───────────────────
   activeViewportTab: 'dual',
@@ -307,6 +335,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   updateField: (key, value) => {
     set((state) => ({
       inputs: { ...state.inputs, [key]: value },
+      requiredErrors: state.requiredErrors.filter((k) => k !== key),
     }));
   },
 
@@ -378,6 +407,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
         console.warn('setLocation called before constants loaded; environmental keys not set.');
         return {
           location: loc,
+        requiredErrors: state.requiredErrors.filter((k) => k !== 'project.location'),
           inputs: {
             ...state.inputs,
           },
@@ -392,6 +422,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
 
       return {
         location: loc,
+        requiredErrors: state.requiredErrors.filter((k) => k !== 'project.location'),
         inputs: {
           ...state.inputs,
           // Preserve the display string and all four environmental parameters
@@ -408,8 +439,68 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
 
   setLocationModalOpen: (isLocationModalOpen) => set({ isLocationModalOpen }),
 
-  showInputErrorDialog: (message, onOk) => set({ inputErrorDialog: { message, onOk } }),
+  showInputErrorDialog: (message, onOk, title = 'Input Error', type = 'warning') =>
+    set({
+      inputErrorDialog: {
+        message,
+        onOk: onOk || (() => {}),
+        title,
+        type,
+      },
+    }),
+
   dismissInputErrorDialog: () => set({ inputErrorDialog: null }),
+
+  validateRequiredInputs: () => {
+    const state = get();
+    const errors: string[] = [];
+    const missingLabels: string[] = [];
+
+    // 1. Check Project Location
+    const hasLocation = Boolean(
+      state.location && state.location.state && state.location.station
+    );
+    if (!hasLocation) {
+      errors.push('project.location');
+      missingLabels.push('Project Location');
+    }
+
+    // 2. Check Span (m)
+    const span = state.inputs['geometry.span'];
+    if (span === null || span === undefined || String(span).trim() === '') {
+      errors.push('geometry.span');
+      missingLabels.push('Span (m)');
+    }
+
+    // 3. Check Carriageway Width (m)
+    const cw = state.inputs['geometry.carriageway_width'];
+    if (cw === null || cw === undefined || String(cw).trim() === '') {
+      errors.push('geometry.carriageway_width');
+      missingLabels.push('Carriageway Width (Each way) (m)');
+    }
+
+    if (errors.length > 0) {
+      set({ requiredErrors: errors });
+      const message =
+        'Please fill in the required(*) fields before proceeding:\n' +
+        missingLabels.map((lbl) => ` - ${lbl}`).join('\n');
+
+      set({
+        inputErrorDialog: {
+          title: 'Empty Required Fields',
+          type: 'critical',
+          message,
+          onOk: () => {},
+        },
+      });
+      return false;
+    }
+
+    set({ requiredErrors: [] });
+    return true;
+  },
+
+  clearRequiredErrors: () => set({ requiredErrors: [] }),
 
   setActiveViewportTab: (activeViewportTab) => set({ activeViewportTab }),
   toggleCrossSection: () => set((s) => ({ showCrossSection: !s.showCrossSection })),
@@ -425,7 +516,105 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   exportCadImage: () => {},
   runDesign: () => {},
   resetInputs: () => {},
-  setAdditionalInputsOpen: () => {},
+  setAdditionalInputsOpen: (open: boolean) => {
+    set({ isAdditionalInputsOpen: open });
+    if (open) {
+      get().fetchAdditionalInputs();
+    }
+  },
+
+  fetchAdditionalInputs: async () => {
+    set({ additionalLoading: true });
+    try {
+      // 1. Fetch schema if not already fetched
+      let schema = get().additionalSchema;
+      if (!schema || schema.length === 0) {
+        schema = await fetchAdditionalInputsSchema();
+      }
+
+      // 2. Compute defaults if additionalInputs is empty
+      let currentInputs = { ...get().additionalInputs };
+      if (Object.keys(currentInputs).length === 0) {
+        const defaults = await fetchAdditionalInputDefaults(get().inputs);
+        currentInputs = defaults;
+      }
+
+      set({
+        additionalSchema: schema,
+        additionalInputs: currentInputs,
+        additionalLoading: false,
+      });
+    } catch (err) {
+      console.error('Failed to load additional inputs:', err);
+      set({ additionalLoading: false });
+    }
+  },
+
+  updateAdditionalInput: (key: string, value: any) => {
+    set((state) => ({
+      additionalInputs: {
+        ...state.additionalInputs,
+        [key]: value,
+      },
+    }));
+  },
+
+  recomputeLayout: async (changedField: 'girders' | 'spacing' | 'overhang', val: number) => {
+    const state = get();
+    const basicCw = Number(state.inputs['geometry.carriageway_width'] ?? 20.0);
+    const curr = state.additionalInputs;
+    const req = {
+      carriageway_width: basicCw,
+      crash_barrier_width: Number(curr['typical_section.crash_barrier.width'] ?? 0.45),
+      footpath_width: Number(curr['typical_section.footpath_width'] ?? 0.0),
+      railing_width: Number(curr['typical_section.railing.width'] ?? 0.0),
+      median_width: Number(curr['typical_section.median.width'] ?? 0.0),
+      n_footpaths: state.inputs['geometry.footpath'] === 'Both Sides' ? 2 : (state.inputs['geometry.footpath'] === 'Single Side' ? 1 : 0),
+      no_of_girders: changedField === 'girders' ? Math.round(val) : Number(curr['typical_section.no_of_girders'] ?? 9),
+      girder_spacing: changedField === 'spacing' ? val : Number(curr['typical_section.girder_spacing'] ?? 2.32),
+      deck_overhang: changedField === 'overhang' ? val : Number(curr['typical_section.deck_overhang'] ?? 1.16),
+      changed_field: changedField,
+    };
+
+    const res = await recomputeBridgeLayout(req);
+    if (res && res.status === 'success') {
+      set((s) => ({
+        additionalInputs: {
+          ...s.additionalInputs,
+          'typical_section.no_of_girders': res.no_of_girders,
+          'typical_section.girder_spacing': res.girder_spacing,
+          'typical_section.deck_overhang': res.deck_overhang,
+          'typical_section.overall_bridge_width': res.overall_bridge_width,
+        },
+      }));
+    }
+  },
+
+  saveAdditionalInputs: () => {
+    const additional = get().additionalInputs;
+    set((state) => ({
+      inputs: {
+        ...state.inputs,
+        ...additional,
+      },
+      isAdditionalInputsOpen: false,
+    }));
+  },
+
+  resetAdditionalDefaults: async () => {
+    set({ additionalLoading: true });
+    try {
+      const defaults = await fetchAdditionalInputDefaults(get().inputs);
+      set({
+        additionalInputs: defaults,
+        additionalLoading: false,
+      });
+    } catch (err) {
+      console.error('Failed to reset additional inputs defaults:', err);
+      set({ additionalLoading: false });
+    }
+  },
+
   setSteelDesignModalOpen: () => {},
   setTransverseDesignModalOpen: () => {},
   setDeckDesignModalOpen: () => {},

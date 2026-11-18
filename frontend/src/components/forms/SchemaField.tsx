@@ -1,30 +1,6 @@
 /**
  * SchemaField.tsx
- *
- * Input field renderer for Highway Bridge Design GUI.
- * Mirrors the field-row building logic of osdagbridge.desktop.ui.docks.input_dock.
- *
- * Design principles (adapted from desktop input_dock.py):
- *   - Label comes from field.label (tuple[1] in desktop).
- *   - Defaults live in field.default.
- *   - TYPE_BUTTON and TYPE_NOTE are first-class field rows.
- *   - Direct if-else branching for field types matching desktop field creation:
- *       if type in COMBOBOX: render combobox
- *       elif type in TEXTBOX / LINE_EDIT: render textbox
- *       elif type in BUTTON: render button
- *       elif type in NOTE: render note
- *       elif type in CHECKBOX: render checkbox
- *
- * Widget type strings are resolved at runtime from GET /api/v1/constants
- * (via useBridgeStore.constants). No TYPE_* strings are hardcoded here.
- *
- * Validation:
- *   - On blur (text/number) or on change (select), calls POST /api/v1/validate.
- *   - If the backend reports valid === false the backend message is surfaced via
- *     FieldError; the user's typed value is preserved unchanged.
- *   - If the backend is unreachable, validation is silently skipped.
- *   - No validation logic is implemented client-side in this component;
- *     all constraints come from the backend response.
+ * Input field renderer styled with Tailwind CSS utility classes.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -34,15 +10,6 @@ import { validateField } from '../../services/api';
 import { AlertCircle } from 'lucide-react';
 
 // ── Shared Sub-Components ──────────────────────────────────────────────────────
-
-const labelStyle: React.CSSProperties = {
-  minWidth: '110px',
-  maxWidth: '120px',
-  fontSize: '12px',
-  color: 'var(--text-main)',
-  fontWeight: 500,
-  lineHeight: 1.25,
-};
 
 function FieldLabel({ field, htmlFor }: { field: UIFieldSchema; htmlFor?: string }) {
   let displayLabel = field.label;
@@ -56,7 +23,10 @@ function FieldLabel({ field, htmlFor }: { field: UIFieldSchema; htmlFor?: string
   }
 
   return (
-    <label htmlFor={htmlFor} style={{ ...labelStyle, whiteSpace: 'pre-line' }}>
+    <label
+      htmlFor={htmlFor}
+      className="w-[110px] min-w-[110px] max-w-[110px] shrink-0 text-xs text-black font-semibold leading-tight whitespace-pre-line text-left select-none"
+    >
       {displayLabel}
     </label>
   );
@@ -68,15 +38,7 @@ function FieldError({ id, error }: { id: string; error?: string }) {
     <div
       id={id}
       role="alert"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '4px',
-        marginTop: '4px',
-        color: 'var(--danger)',
-        fontSize: '11px',
-        paddingLeft: '118px',
-      }}
+      className="flex items-center gap-1 mt-1 text-[#ff0000] text-[11px] pl-[122px]"
     >
       <AlertCircle size={12} aria-hidden="true" />
       <span>{error}</span>
@@ -84,15 +46,19 @@ function FieldError({ id, error }: { id: string; error?: string }) {
   );
 }
 
-// ── Field Renderers (mirrors desktop widget factories in input_dock.py) ────────
+// ── Field Renderers ────────────────────────────────────────────────────────────
 
-/**
- * ButtonField — mirrors the metadata-driven TYPE_BUTTON row in input_dock.py.
- * The schema action selects the supported web callback; the field key does not.
- * button_label comes from the schema provided by the backend; no hardcoded fallbacks.
- */
 const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, location, isLocked, setLocationModalOpen, constants } = useBridgeStore();
+  const {
+    inputs,
+    location,
+    isLocked,
+    setLocationModalOpen,
+    setAdditionalInputsOpen,
+    validateRequiredInputs,
+    requiredErrors,
+    constants,
+  } = useBridgeStore();
 
   const opensLocationDialog =
     field.action === 'show_project_location_dialog' ||
@@ -100,13 +66,12 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
 
   const projectLocationKey = constants ? String(constants.KEY_PROJECT_LOCATION ?? '') : '';
 
-  // Display text: prefer the live location from store, then the stored input value,
-  // then the schema-provided button_label. No hardcoded place names.
   const locationText = location
     ? `${location.station}, ${location.state}`
     : (projectLocationKey && inputs[projectLocationKey] ? inputs[projectLocationKey] : null);
 
   const hasLocation = Boolean(locationText);
+  const isLocationError = opensLocationDialog && requiredErrors.includes('project.location') && !hasLocation;
 
   const isAdditionalBtn = Boolean(
     field.key === 'geometry.additional_btn' ||
@@ -116,14 +81,14 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   );
 
   const buttonText = opensLocationDialog
-    ? (locationText || field.button_label || field.label)
+    ? (isLocationError ? 'Select Location' : (locationText || field.button_label || field.label))
     : (isAdditionalBtn ? (field.button_label || 'Modify Here') : (field.button_label || field.label));
 
   const showPin = field.post_row?.kind === 'info_row' && hasLocation;
 
   return (
-    <div style={{ marginBottom: field.show_group_title === false ? 0 : '8px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div className="w-full">
+      <div className="flex items-center justify-between gap-3 w-full min-h-[28px]">
         <FieldLabel field={field} />
         <button
           type="button"
@@ -131,44 +96,32 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
           onClick={() => {
             if (opensLocationDialog) {
               setLocationModalOpen(true);
+            } else if (isAdditionalBtn) {
+              if (validateRequiredInputs()) {
+                setAdditionalInputsOpen(true);
+              }
             }
           }}
-          className="osdag-action-btn"
-          style={{
-            flex: 1,
-            cursor: isLocked ? 'not-allowed' : 'pointer',
-            opacity: isLocked ? 0.65 : 1,
-          }}
+          className={`w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] px-3 text-[11px] font-bold rounded text-center select-none flex items-center justify-center transition-colors border disabled:opacity-65 disabled:cursor-not-allowed ${
+            isLocationError
+              ? 'bg-[#d32f2f] hover:bg-[#b71c1c] text-white border-[#d32f2f]'
+              : 'bg-[#90af13] hover:bg-[#7a9a12] text-white border-[#90af13]'
+          }`}
         >
-          {buttonText}
+          <span className="truncate">{buttonText}</span>
         </button>
       </div>
 
       {showPin && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            marginTop: '4px',
-            paddingLeft: '118px',
-            fontSize: '11px',
-            color: 'var(--text-sub)',
-          }}
-        >
+        <div className="flex items-center gap-1.5 mt-1 pl-[122px] text-[11px] text-[#333333]">
           <span aria-hidden="true">📍</span>
-          <span>{locationText}</span>
+          <span className="truncate">{locationText}</span>
         </div>
       )}
     </div>
   );
 };
 
-/**
- * SelectField — mirrors the desktop combobox factory.
- * Calls POST /api/v1/validate on change; surfaces backend errors via FieldError.
- * Disabled schema options remain visible but cannot be selected.
- */
 const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   const { inputs, updateField, isLocked } = useBridgeStore();
   const value = inputs[field.key] ?? field.default ?? '';
@@ -189,14 +142,14 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
         setValidationError(result.message ?? 'Invalid value.');
       }
     },
-    [field.key],
+    [field.key, updateField],
   );
 
   return (
-    <div style={{ marginBottom: '8px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div className="w-full">
+      <div className="flex items-center justify-between gap-3 w-full min-h-[28px]">
         <FieldLabel field={field} htmlFor={fieldId} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
+        <div className="flex items-center gap-1.5 w-[155px] min-w-[155px] max-w-[155px] shrink-0">
           <select
             id={fieldId}
             value={value}
@@ -205,13 +158,9 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             aria-describedby={validationError ? errorId : undefined}
             aria-invalid={validationError ? true : undefined}
             onChange={(e) => handleChange(e.target.value)}
-            className="osdag-select-field"
-            style={{
-              flex: 1,
-              width: '100%',
-              cursor: isLocked ? 'not-allowed' : 'pointer',
-              opacity: isLocked ? 0.65 : 1,
-            }}
+            className={`${
+              field.is_material_field ? 'w-[128px] min-w-[128px]' : 'w-full'
+            } h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[#070707] rounded-[5px] bg-white text-black outline-none focus:border-[#90af13] focus:ring-1 focus:ring-[#90af13] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px] disabled:bg-[#f1f1f1] disabled:text-[#666666] disabled:cursor-not-allowed`}
           >
             {field.placeholder && (
               <option value="" disabled>
@@ -232,22 +181,8 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             <button
               type="button"
               aria-label={`Material properties for ${field.label}`}
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-              style={{
-                width: '20px',
-                height: '20px',
-                minWidth: '20px',
-                padding: 0,
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                flexShrink: 0,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              onClick={(e) => e.preventDefault()}
+              className="w-5 h-5 min-w-[20px] shrink-0 p-0 border-0 bg-transparent cursor-pointer flex items-center justify-center"
             >
               <img src="/vectors/msg_about.svg" alt="" width={18} height={18} />
             </button>
@@ -259,78 +194,42 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   );
 };
 
-/**
- * CheckboxField — mirrors TYPE_CHECKBOX rows in input_dock.py.
- */
 const CheckboxField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   const { inputs, updateField, isLocked } = useBridgeStore();
   const value = inputs[field.key] ?? field.default ?? false;
   const fieldId = `field-${field.key}`;
 
   return (
-    <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <FieldLabel field={field} htmlFor={fieldId} />
-      <input
-        id={fieldId}
-        type="checkbox"
-        checked={Boolean(value)}
-        disabled={isLocked}
-        aria-required={field.required || undefined}
-        onChange={(e) => {
-          updateField(field.key, e.target.checked);
-        }}
-        style={{
-          width: '16px',
-          height: '16px',
-          accentColor: 'var(--accent-osdag)',
-          cursor: isLocked ? 'not-allowed' : 'pointer',
-        }}
-      />
+    <div className="w-full">
+      <div className="flex items-center justify-between gap-3 w-full min-h-[28px]">
+        <FieldLabel field={field} htmlFor={fieldId} />
+        <div className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 flex items-center">
+          <input
+            id={fieldId}
+            type="checkbox"
+            checked={Boolean(value)}
+            disabled={isLocked}
+            aria-required={field.required || undefined}
+            onChange={(e) => updateField(field.key, e.target.checked)}
+            className="w-4 h-4 accent-[#90af13] cursor-pointer disabled:cursor-not-allowed"
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
-/**
- * NoteField — mirrors TYPE_NOTE rows in input_dock.py.
- * Renders an informational text block with a left accent border.
- */
 const NoteField: React.FC<{ field: UIFieldSchema }> = ({ field }) => (
   <p
     role="note"
-    style={{
-      marginBottom: '8px',
-      fontSize: '11px',
-      color: 'var(--text-sub)',
-      lineHeight: 1.4,
-      padding: '6px 8px',
-      background: 'var(--bg-grouped)',
-      borderRadius: '4px',
-      borderLeft: '3px solid var(--accent-osdag)',
-    }}
+    className="mb-2 text-[11px] text-[#333333] leading-snug p-2 bg-[#f4f4f4] rounded border-l-4 border-[#90af13]"
   >
     {field.note || field.label}
   </p>
 );
 
-/**
- * TextOrNumberField — mirrors TYPE_TEXTBOX rows in input_dock.py.
- *
- * Keeps edits local until confirmed, matching desktop editingFinished.
- *
- * Validation:
- *   - Blur or Enter key commits edits and calls POST /api/v1/validate.
- *   - Backend response is the single source of truth for validity, error messages,
- *     and corrected values.
- *   - For invalid geometric inputs (Span, Carriageway Width, Skew Angle), shows
- *     an "Input Error" dialog matching desktop behaviour.
- *   - When the user acknowledges the dialog, the field updates to the backend-provided
- *     corrected_value (nearest valid value) if present.
- *
- * Geometric key detection uses backend constants from the store so no key strings
- * are hardcoded here.
- */
 const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, updateField, isLocked, showInputErrorDialog, constants } = useBridgeStore();
+  const { inputs, updateField, isLocked, showInputErrorDialog, requiredErrors, constants } = useBridgeStore();
 
   const value = inputs[field.key] ?? field.default ?? '';
   const [localVal, setLocalVal] = useState<string>(
@@ -350,13 +249,10 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
         typeof field.default === 'number' ||
         Boolean(field.unit)));
 
-  // Sync local display value when external store value changes
   useEffect(() => {
     setLocalVal(value !== null && value !== undefined ? String(value) : '');
   }, [value]);
 
-  // Determine if this field is a geometric input that warrants an error dialog.
-  // Use backend constants for key comparison — no hardcoded key strings.
   const isGeometric = Boolean(
     constants && (
       field.key === String(constants.KEY_SPAN ?? '') ||
@@ -370,7 +266,6 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
     if (validationError) setValidationError(undefined);
   };
 
-  // ── Enter key — trigger commit and validation via blur ──────────────────────
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -378,7 +273,6 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
     }
   }, []);
 
-  // ── Blur — commit value and validate against backend ──────────────────────
   const handleBlur = useCallback(async () => {
     const trimmed = localVal.trim();
 
@@ -425,10 +319,10 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   const showTrailingUnit = Boolean(field.unit && !field.placeholder && !isGeometric);
 
   return (
-    <div style={{ marginBottom: '8px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div className="w-full">
+      <div className="flex items-center justify-between gap-3 w-full min-h-[28px]">
         <FieldLabel field={field} htmlFor={fieldId} />
-        <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center' }}>
+        <div className="relative flex items-center w-[155px] min-w-[155px] max-w-[155px] shrink-0">
           <input
             id={fieldId}
             type="text"
@@ -442,24 +336,18 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             onChange={(e) => handleTyping(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            className="osdag-input-field"
-            style={{
-              width: '100%',
-              paddingRight: showTrailingUnit ? '32px' : '7px',
-              cursor: isLocked ? 'not-allowed' : 'text',
-              opacity: isLocked ? 0.65 : 1,
-            }}
+            className={`w-full h-7 min-h-[28px] py-0.5 px-2 text-xs border rounded-[5px] bg-white text-black outline-none transition-colors disabled:bg-[#f1f1f1] disabled:text-[#666666] disabled:cursor-not-allowed ${
+              showTrailingUnit ? 'pr-8' : ''
+            } ${
+              requiredErrors.includes(field.key) || (!isGeometric && validationError)
+                ? 'border-[#d32f2f] focus:border-[#d32f2f] focus:ring-1 focus:ring-[#d32f2f]'
+                : 'border-[#070707] focus:border-[#90af13] focus:ring-1 focus:ring-[#90af13]'
+            }`}
           />
           {showTrailingUnit && (
             <span
               aria-hidden="true"
-              style={{
-                position: 'absolute',
-                right: '8px',
-                fontSize: '11px',
-                color: 'var(--text-sub)',
-                pointerEvents: 'none',
-              }}
+              className="absolute right-2 text-[11px] text-[#333333] pointer-events-none select-none"
             >
               {field.unit}
             </span>
@@ -471,28 +359,10 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   );
 };
 
-
-// ── Public Component ───────────────────────────────────────────────────────────
-
-/**
- * SchemaField
- *
- * Direct if-else branching for field types mirroring desktop input_dock.py:
- *   if field_type == TYPE_BUTTON: ...
- *   elif field_type == TYPE_COMBO_BOX: ...
- *   elif field_type == TYPE_TEXTBOX: ...
- *   elif field_type == TYPE_CHECKBOX: ...
- *   elif field_type == TYPE_NOTE: ...
- *
- * TYPE_* strings are resolved from the backend constants (useBridgeStore.constants)
- * so no widget type literals are hardcoded here. The lowercase comparison against
- * the backend values ensures they match regardless of case in the response.
- */
 export const SchemaField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   const constants = useBridgeStore((s) => s.constants);
   const type = (field.ui_type || '').toLowerCase();
 
-  // Resolve TYPE_* directly from fetched backend constants.
   const TYPE_BUTTON    = constants?.TYPE_BUTTON ? String(constants.TYPE_BUTTON).toLowerCase() : '';
   const TYPE_COMBOBOX  = constants?.TYPE_COMBOBOX ? String(constants.TYPE_COMBOBOX).toLowerCase() : '';
   const TYPE_COMBO_BOX = constants?.TYPE_COMBO_BOX ? String(constants.TYPE_COMBO_BOX).toLowerCase() : '';
@@ -501,7 +371,6 @@ export const SchemaField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   const TYPE_NOTE      = constants?.TYPE_NOTE ? String(constants.TYPE_NOTE).toLowerCase() : '';
   const TYPE_CHECKBOX  = constants?.TYPE_CHECKBOX ? String(constants.TYPE_CHECKBOX).toLowerCase() : '';
 
-  // Desktop field creation branching (mirrors input_dock.py _build_field_loop)
   if (TYPE_BUTTON && type === TYPE_BUTTON) {
     return <ButtonField field={field} />;
   } else if (
@@ -526,7 +395,7 @@ export const SchemaField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
     return <NoteField field={field} />;
   } else {
     return (
-      <p role="alert" style={{ marginBottom: '8px', color: 'var(--danger)', fontSize: '11px' }}>
+      <p role="alert" className="mb-2 text-[#ff0000] text-[11px]">
         Unsupported input type &quot;{field.ui_type}&quot; for {field.label}.
       </p>
     );

@@ -69,6 +69,8 @@ def get_basic_input_schema():
             if(field[2] == "title"):
                 if(field[1]):
                     current_group = field[1] #the label
+                elif "additonal" in field[0] or "additional" in field[0]:
+                    current_group = "Additional Geometry"
                 continue
 
             #condition 1: If the field has a min, max value it is taken from the min_max_dict

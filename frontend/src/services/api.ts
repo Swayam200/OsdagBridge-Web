@@ -361,9 +361,68 @@ export async function fetchRolledSections(): Promise<RolledSection[]> {
   }
 }
 
-/** Display-only — no additional inputs content in UI preview mode. */
-export async function fetchAdditionalInputsSchema(): Promise<unknown[]> {
-  return [];
+export interface RecomputeLayoutParams {
+  carriageway_width: number;
+  crash_barrier_width?: number;
+  footpath_width?: number;
+  railing_width?: number;
+  median_width?: number;
+  n_footpaths?: number;
+  no_of_girders?: number;
+  girder_spacing?: number;
+  deck_overhang?: number;
+  changed_field: 'girders' | 'spacing' | 'overhang';
+}
+
+export interface RecomputeLayoutResponse {
+  status: string;
+  no_of_girders: number;
+  girder_spacing: number;
+  deck_overhang: number;
+  overall_bridge_width: number;
+}
+
+/** Fetches the full Additional Inputs schema from GET /schema/additional */
+export async function fetchAdditionalInputsSchema(): Promise<any[]> {
+  try {
+    const res = await apiClient.get<any[]>('/schema/additional');
+    return Array.isArray(res.data) ? res.data : [];
+  } catch (error) {
+    console.warn('Backend additional schema unavailable:', error);
+    return [];
+  }
+}
+
+/** Fetches default computed values for Additional Inputs based on basic inputs */
+export async function fetchAdditionalInputDefaults(
+  basicInputs: Record<string, any>
+): Promise<Record<string, any>> {
+  try {
+    const res = await apiClient.post<{ status: string; defaults: Record<string, any> }>(
+      '/schema/additional/defaults',
+      { basic_inputs: basicInputs }
+    );
+    return res.data?.defaults || {};
+  } catch (error) {
+    console.warn('Backend additional defaults unavailable:', error);
+    return {};
+  }
+}
+
+/** Recomputes layout (spacing, overhang, girders, total width) via BridgeConfigurationSolver */
+export async function recomputeBridgeLayout(
+  params: RecomputeLayoutParams
+): Promise<RecomputeLayoutResponse | null> {
+  try {
+    const res = await apiClient.post<RecomputeLayoutResponse>(
+      '/schema/additional/recompute-layout',
+      params
+    );
+    return res.data;
+  } catch (error) {
+    console.warn('Layout recomputation error:', error);
+    return null;
+  }
 }
 
 /**

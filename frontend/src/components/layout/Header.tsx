@@ -1,25 +1,10 @@
 /**
  * Header.tsx
- *
- * Application menu bar for the OsdagBridge workbench.
- * Adapts the desktop template_page.py title bar and menu structure for web.
- *
- * Structure:
- *   - Brand area: Osdag logo + application title.
- *   - Menu bar (nav): File, Graphics, Database, Help drop-down menus.
- *   - Controls (right): Viewport toggle buttons, theme switcher, Design quick-action.
- *
- * Design notes:
- *   - MenuDropdown is extracted as an inline component to keep menu rendering self-contained.
- *   - viewControls is a data-driven array; adding a new toolbar button requires only
- *     a new entry, not additional JSX.
- *   - Ctrl+S keyboard shortcut mirrors the desktop Save Input binding.
+ * Application menu bar styled with Tailwind CSS utility classes.
  */
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useBridgeStore } from '../../store/useBridgeStore';
-
-// ─── Types ─────────────────────────────────────────────────────────────────────
 
 type MenuItem = {
   label?: string;
@@ -38,12 +23,7 @@ type ViewControl = {
   onClick: () => void;
 };
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-/** Base path for toolbar vector icons (view_btn directory) */
 const VIEW_BTN_BASE = '/vectors/view_btn';
-
-// ─── MenuDropdown ─────────────────────────────────────────────────────────────
 
 const MenuDropdown: React.FC<{
   title: string;
@@ -52,20 +32,28 @@ const MenuDropdown: React.FC<{
   onToggle: () => void;
   onClose: () => void;
 }> = ({ title, items, open, onToggle, onClose }) => {
-  const renderItems = (list: MenuItem[], depth = 0): React.ReactNode =>
+  const renderItems = (list: MenuItem[]): React.ReactNode =>
     list.map((item, idx) => {
       if (item.separator) {
-        return <div key={`sep-${idx}`} role="separator" className="osdag-menu-separator" />;
+        return <div key={`sep-${idx}`} role="separator" className="h-px bg-[#e0e0e0] my-1 mx-0.5" />;
       }
       if (item.submenu) {
         return (
-          <div key={item.label} className="osdag-menu-submenu">
-            <button type="button" className="osdag-menu-item" role="menuitem" aria-haspopup="true">
+          <div key={item.label} className="relative group">
+            <button
+              type="button"
+              className="flex items-center justify-between gap-6 w-full bg-transparent border-0 text-black text-xs py-1.5 px-3.5 text-left cursor-pointer hover:bg-[#90af13] hover:text-white"
+              role="menuitem"
+              aria-haspopup="true"
+            >
               <span>{item.label}</span>
-              <span className="osdag-menu-arrow">▸</span>
+              <span className="text-xs">▸</span>
             </button>
-            <div className="osdag-menu-panel osdag-menu-panel--nested" role="menu">
-              {renderItems(item.submenu, depth + 1)}
+            <div
+              className="absolute top-[-3px] left-full min-w-[170px] bg-white border border-[#90af13] shadow-md py-0.5 z-[1100] hidden group-hover:block"
+              role="menu"
+            >
+              {renderItems(item.submenu)}
             </div>
           </div>
         );
@@ -74,7 +62,7 @@ const MenuDropdown: React.FC<{
         <button
           key={item.label}
           type="button"
-          className="osdag-menu-item"
+          className="flex items-center justify-between gap-6 w-full bg-transparent border-0 text-black text-xs py-1.5 px-3.5 text-left cursor-pointer hover:bg-[#90af13] hover:text-white"
           role="menuitem"
           onClick={() => {
             item.action?.();
@@ -82,16 +70,18 @@ const MenuDropdown: React.FC<{
           }}
         >
           <span>{item.label}</span>
-          {item.shortcut && <span className="osdag-menu-shortcut">{item.shortcut}</span>}
+          {item.shortcut && <span className="text-[11px] opacity-70">{item.shortcut}</span>}
         </button>
       );
     });
 
   return (
-    <div className="osdag-menu" style={{ position: 'relative' }}>
+    <div className="relative">
       <button
         type="button"
-        className={`osdag-menu-title${open ? ' is-open' : ''}`}
+        className={`bg-transparent border-0 text-black text-xs px-2.5 py-1 cursor-pointer rounded-none hover:bg-white select-none ${
+          open ? 'bg-white' : ''
+        }`}
         aria-haspopup="true"
         aria-expanded={open}
         onClick={onToggle}
@@ -99,15 +89,17 @@ const MenuDropdown: React.FC<{
         {title}
       </button>
       {open && (
-        <div className="osdag-menu-panel" role="menu" aria-label={title}>
+        <div
+          className="absolute top-full left-0 min-w-[220px] bg-white border border-[#90af13] shadow-md py-0.5 z-[1100]"
+          role="menu"
+          aria-label={title}
+        >
           {renderItems(items)}
         </div>
       )}
     </div>
   );
 };
-
-// ─── Header Component ─────────────────────────────────────────────────────────
 
 export const Header: React.FC = () => {
   const {
@@ -140,7 +132,6 @@ export const Header: React.FC = () => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
 
-  // Close menus when clicking outside the header
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
       if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
@@ -151,7 +142,6 @@ export const Header: React.FC = () => {
     return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
 
-  // Ctrl+S: mirrors desktop "Save Input" keyboard shortcut
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
@@ -162,8 +152,6 @@ export const Header: React.FC = () => {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [saveInputs]);
-
-  // ── Menu Definitions ─────────────────────────────────────────────────────────
 
   const menus: { title: string; items: MenuItem[] }[] = [
     {
@@ -227,8 +215,6 @@ export const Header: React.FC = () => {
     },
   ];
 
-  // ── Viewport / Dock Toggle Controls ──────────────────────────────────────────
-
   const viewControls: ViewControl[] = [
     {
       key: 'cross_section',
@@ -288,38 +274,44 @@ export const Header: React.FC = () => {
     },
   ];
 
-  // ── Render ────────────────────────────────────────────────────────────────────
-
   return (
-    <header ref={headerRef} role="banner" className="app-header osdag-menubar">
-      {/* Brand / Logo Area */}
-      <div className="osdag-menubar__brand">
-        <img src="/vectors/Osdag_logo.svg" alt="Osdag" width={20} height={20} />
-        <span className="osdag-menubar__title">OsdagBridge</span>
+    <header
+      ref={headerRef}
+      role="banner"
+      className="min-h-[28px] md:h-7 flex flex-col md:flex-row md:items-center justify-between gap-1 md:gap-2 px-2 py-1 md:py-0 bg-[#f4f4f4] text-black border-b border-[#90af13] relative z-[1000] select-none box-border"
+    >
+      {/* Brand / Logo Area + Menus (Row 1 on mobile, left on desktop) */}
+      <div className="flex items-center gap-1 sm:gap-2 shrink-0 overflow-visible">
+        <div className="flex items-center gap-1.5 pr-1.5 sm:pr-2 shrink-0">
+          <img src="/vectors/Osdag_logo.svg" alt="Osdag" width={20} height={20} />
+          <span className="text-xs font-bold text-black tracking-[0.02em]">OsdagBridge</span>
+        </div>
+
+        {/* Application Menu Bar */}
+        <nav aria-label="Application menu" className="flex items-center gap-0 shrink-0">
+          {menus.map((menu) => (
+            <MenuDropdown
+              key={menu.title}
+              title={menu.title}
+              items={menu.items}
+              open={openMenu === menu.title}
+              onToggle={() => setOpenMenu(openMenu === menu.title ? null : menu.title)}
+              onClose={() => setOpenMenu(null)}
+            />
+          ))}
+        </nav>
       </div>
 
-      {/* Application Menu Bar */}
-      <nav aria-label="Application menu" className="osdag-menubar__menus">
-        {menus.map((menu) => (
-          <MenuDropdown
-            key={menu.title}
-            title={menu.title}
-            items={menu.items}
-            open={openMenu === menu.title}
-            onToggle={() => setOpenMenu(openMenu === menu.title ? null : menu.title)}
-            onClose={() => setOpenMenu(null)}
-          />
-        ))}
-      </nav>
-
-      {/* Right: Viewport Controls + Theme + Design Quick-Action */}
-      <div className="osdag-menubar__controls">
+      {/* Viewport Controls + Theme + Design Quick-Action (Row 2 on mobile, right on desktop) */}
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden py-0.5 md:py-0 md:ml-auto">
         {viewControls.map((ctrl) => (
           <button
             key={ctrl.key}
             id={`btn_${ctrl.key}`}
             type="button"
-            className={`osdag-viewbtn${ctrl.active ? ' is-active' : ''}`}
+            className={`flex items-center justify-center w-[26px] h-[22px] min-w-[26px] p-0 bg-transparent border rounded-[3px] cursor-pointer hover:bg-[#90af13]/20 hover:border-[#90af13] transition-colors shrink-0 ${
+              ctrl.active ? 'bg-[#90af13]/25 border-[#90af13]' : 'border-transparent'
+            }`}
             title={ctrl.tooltip}
             aria-label={ctrl.tooltip}
             aria-pressed={ctrl.active}
@@ -334,11 +326,11 @@ export const Header: React.FC = () => {
           </button>
         ))}
 
-        <span className="osdag-menubar__divider" aria-hidden="true" />
+        <span className="w-px h-[18px] bg-[#d0d0d0] mx-0.5 sm:mx-1 shrink-0" aria-hidden="true" />
 
         <button
           type="button"
-          className="osdag-quickbtn"
+          className="bg-white text-black border border-[#d0d0d0] hover:border-[#90af13] rounded-[3px] py-0.5 px-2 sm:px-2.5 text-[11px] font-semibold cursor-pointer select-none transition-colors shrink-0"
           onClick={toggleDarkMode}
           title="Toggle theme"
           aria-label="Toggle dark/light theme"
@@ -347,7 +339,7 @@ export const Header: React.FC = () => {
         </button>
         <button
           type="button"
-          className="osdag-quickbtn osdag-quickbtn--primary"
+          className="bg-[#90af13] hover:bg-[#7a9a12] text-white border border-[#90af13] rounded-[3px] py-0.5 px-2 sm:px-2.5 text-[11px] font-semibold cursor-pointer select-none transition-colors shrink-0"
           onClick={runDesign}
           aria-label="Run bridge design"
         >
