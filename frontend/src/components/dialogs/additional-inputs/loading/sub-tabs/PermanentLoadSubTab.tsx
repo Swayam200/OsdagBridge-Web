@@ -12,13 +12,13 @@ export const PermanentLoadSubTab: React.FC = () => {
     <div className="flex gap-4 h-full min-h-0">
       {/* Left Column */}
       <div className="flex-[1.2] min-w-0 flex flex-col gap-3">
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-3">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-3">
             Dead Load (DL)
           </div>
 
           <div className="flex items-center justify-between">
-            <label className="text-xs text-black">
+            <label className="text-xs text-[var(--text-main)]">
               Self-weight modification factor
             </label>
             <input

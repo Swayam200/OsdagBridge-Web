@@ -72,20 +72,20 @@ export const SeismicLoadSubTab: React.FC = () => {
       {/* Left Column */}
       <div className="card-scroll flex-[1.2] min-w-0 flex flex-col gap-3 overflow-y-auto pr-1">
         {/* Seismic/Earthquake Load (EL) Inputs */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Seismic/Earthquake Load (EL) Inputs
           </div>
           <div className="flex flex-col gap-2">
             {/* Seismic Zone */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Seismic Zone</label>
+              <label className="text-xs text-[var(--text-main)]">Seismic Zone</label>
               <input type="text" readOnly value={seismicZone} className={readOnlyInputClass} />
             </div>
 
             {/* Importance Factor, I */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Importance Factor, I</label>
+              <label className="text-xs text-[var(--text-main)]">Importance Factor, I</label>
               <input
                 type="text"
                 value={importanceFactor}
@@ -96,7 +96,7 @@ export const SeismicLoadSubTab: React.FC = () => {
 
             {/* Type of Soil */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Type of Soil</label>
+              <label className="text-xs text-[var(--text-main)]">Type of Soil</label>
               <select
                 value={soilType}
                 onChange={(e) => updateAdditionalInput('loading.seismic_load.soil_type', e.target.value)}
@@ -110,7 +110,7 @@ export const SeismicLoadSubTab: React.FC = () => {
 
             {/* Fundamental Time Period, T (sec) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Fundamental Time Period, T (sec)</label>
+              <label className="text-xs text-[var(--text-main)]">Fundamental Time Period, T (sec)</label>
               <input
                 type="text"
                 value={timePeriod}
@@ -121,7 +121,7 @@ export const SeismicLoadSubTab: React.FC = () => {
 
             {/* Damping Percentage */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Damping Percentage</label>
+              <label className="text-xs text-[var(--text-main)]">Damping Percentage</label>
               <input
                 type="text"
                 value={damping}
@@ -132,7 +132,7 @@ export const SeismicLoadSubTab: React.FC = () => {
 
             {/* Response Reduction Factor, R */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Response Reduction Factor, R</label>
+              <label className="text-xs text-[var(--text-main)]">Response Reduction Factor, R</label>
               <select
                 value={respReductionFactor}
                 onChange={(e) => updateAdditionalInput('loading.seismic_load.response_reduction_factor', e.target.value)}
@@ -148,7 +148,7 @@ export const SeismicLoadSubTab: React.FC = () => {
 
             {/* Dead Load for Seismic Force (kN) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Dead Load for Seismic Force (kN)</label>
+              <label className="text-xs text-[var(--text-main)]">Dead Load for Seismic Force (kN)</label>
               <div className="w-[186px] flex items-center gap-1.5 justify-end">
                 <select
                   value={dlMode}
@@ -173,7 +173,7 @@ export const SeismicLoadSubTab: React.FC = () => {
 
             {/* Live Load for Seismic Force (kN) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Live Load for Seismic Force (kN)</label>
+              <label className="text-xs text-[var(--text-main)]">Live Load for Seismic Force (kN)</label>
               <div className="w-[186px] flex items-center gap-1.5 justify-end">
                 <select
                   value={llMode}
@@ -199,32 +199,32 @@ export const SeismicLoadSubTab: React.FC = () => {
         </div>
 
         {/* Computed Values */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Computed Values
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Zone Factor, Z</label>
+              <label className="text-xs text-[var(--text-main)]">Zone Factor, Z</label>
               <input type="text" readOnly value={zStr} className={readOnlyInputClass} />
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">
+              <label className="text-xs text-[var(--text-main)]">
                 Spectral Acceleration Coefficient, S<sub>a</sub>/g × Damping Factor
               </label>
               <input type="text" readOnly value={saStr} className={readOnlyInputClass} />
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">
+              <label className="text-xs text-[var(--text-main)]">
                 Horizontal Seismic Coefficient, A<sub>h</sub>
               </label>
               <input type="text" readOnly value={ahStr} className={readOnlyInputClass} />
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">
+              <label className="text-xs text-[var(--text-main)]">
                 Vertical Seismic Coefficient, A<sub>v</sub>
               </label>
               <input type="text" readOnly value={avStr} className={readOnlyInputClass} />

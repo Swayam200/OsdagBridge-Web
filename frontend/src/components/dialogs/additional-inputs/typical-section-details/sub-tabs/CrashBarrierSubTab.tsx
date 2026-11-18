@@ -64,7 +64,7 @@ export const CrashBarrierSubTab: React.FC = () => {
       {/* Type */}
       <div className="flex items-center">
         <div className="w-[200px] shrink-0">
-          <label className="text-xs font-bold text-black">
+          <label className="text-xs font-bold text-[var(--text-main)]">
             Type:
           </label>
         </div>
@@ -85,7 +85,7 @@ export const CrashBarrierSubTab: React.FC = () => {
       {!isMetallic && (
         <div className="flex items-center">
           <div className="w-[200px] shrink-0">
-            <label className="text-xs font-bold text-black">
+            <label className="text-xs font-bold text-[var(--text-main)]">
               Material Density (kN/m³):
             </label>
           </div>
@@ -102,7 +102,7 @@ export const CrashBarrierSubTab: React.FC = () => {
       {/* Width (m) */}
       <div className="flex items-center">
         <div className="w-[200px] shrink-0">
-          <label className="text-xs font-bold text-black">
+          <label className="text-xs font-bold text-[var(--text-main)]">
             Width (m):
           </label>
         </div>
@@ -119,7 +119,7 @@ export const CrashBarrierSubTab: React.FC = () => {
       {/* Height (m) */}
       <div className="flex items-center">
         <div className="w-[200px] shrink-0">
-          <label className="text-xs font-bold text-black">
+          <label className="text-xs font-bold text-[var(--text-main)]">
             Height (m):
           </label>
         </div>
@@ -137,7 +137,7 @@ export const CrashBarrierSubTab: React.FC = () => {
       {!isMetallic && (
         <div className="flex items-center">
           <div className="w-[200px] shrink-0">
-            <label className="text-xs font-bold text-black">
+            <label className="text-xs font-bold text-[var(--text-main)]">
               Area (m²):
             </label>
           </div>
@@ -163,7 +163,7 @@ export const CrashBarrierSubTab: React.FC = () => {
       {/* Load (kN/m) */}
       <div className="flex items-center">
         <div className="w-[200px] shrink-0">
-          <label className="text-xs font-bold text-black">
+          <label className="text-xs font-bold text-[var(--text-main)]">
             Load (kN/m):
           </label>
         </div>
@@ -189,7 +189,7 @@ export const CrashBarrierSubTab: React.FC = () => {
       {isMetallic && (
         <div className="flex items-center">
           <div className="w-[200px] shrink-0">
-            <label className="text-xs font-bold text-black">
+            <label className="text-xs font-bold text-[var(--text-main)]">
               Spacing between Posts (m):
             </label>
           </div>

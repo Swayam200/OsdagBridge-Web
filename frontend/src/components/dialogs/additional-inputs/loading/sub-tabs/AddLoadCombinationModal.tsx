@@ -145,9 +145,9 @@ export const AddLoadCombinationModal: React.FC<AddLoadCombinationModalProps> = (
         if (e.target === e.currentTarget) handleClose();
       }}
     >
-      <div className="w-[540px] bg-white rounded-[4px] border border-[#707070] shadow-[0_10px_28px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden font-sans">
+      <div className="w-[540px] bg-[var(--bg-surface)] rounded-[4px] border border-[#707070] shadow-[0_10px_28px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden font-sans">
         {/* Title Bar */}
-        <div className="h-8 bg-white flex items-center justify-between px-2.5 border-b-2 border-[#8cae11] select-none">
+        <div className="h-8 bg-[var(--bg-surface)] flex items-center justify-between px-2.5 border-b-2 border-[var(--accent-osdag)] select-none">
           <div className="flex items-center gap-2">
             <img
               src="/vectors/Osdag_logo.svg"
@@ -156,14 +156,14 @@ export const AddLoadCombinationModal: React.FC<AddLoadCombinationModalProps> = (
               height={16}
               className="block pointer-events-none"
             />
-            <span className="text-xs font-bold text-black">
+            <span className="text-xs font-bold text-[var(--text-main)]">
               Add Load Combination
             </span>
           </div>
           <button
             type="button"
             onClick={handleClose}
-            className="bg-transparent border-0 text-sm font-bold text-[#333333] cursor-pointer leading-none px-1.5 py-0.5 hover:text-black"
+            className="bg-transparent border-0 text-sm font-bold text-[var(--text-sub)] cursor-pointer leading-none px-1.5 py-0.5 hover:text-[var(--text-main)]"
             aria-label="Close"
           >
             ✕
@@ -174,7 +174,7 @@ export const AddLoadCombinationModal: React.FC<AddLoadCombinationModalProps> = (
         <div className="p-[16px_20px] flex flex-col">
           {/* Combination Name Row */}
           <div className="flex items-center gap-3.5 mb-3.5">
-            <label className="text-xs text-black w-[130px]">
+            <label className="text-xs text-[var(--text-main)] w-[130px]">
               Combination Name:
             </label>
             <input
@@ -182,17 +182,17 @@ export const AddLoadCombinationModal: React.FC<AddLoadCombinationModalProps> = (
               value={comboName}
               onChange={(e) => setComboName(e.target.value)}
               placeholder=""
-              className="w-[200px] h-6 px-2 py-0.5 text-xs border border-[#757575] rounded-[4px] outline-none box-border bg-white text-black focus:border-[#90af13]"
+              className="w-[200px] h-6 px-2 py-0.5 text-xs border border-[#757575] rounded-[4px] outline-none box-border bg-[var(--bg-surface)] text-[var(--text-main)] focus:border-[#90af13]"
             />
           </div>
 
           {/* Load Case & Partial Safety Factor Row */}
           <div className="flex items-center gap-3 mb-4">
-            <label className="text-xs text-black">Load Case:</label>
+            <label className="text-xs text-[var(--text-main)]">Load Case:</label>
             <select
               value={currentLoadCase}
               onChange={(e) => setCurrentLoadCase(e.target.value)}
-              className="w-[78px] h-6 px-1.5 text-xs border border-[#757575] rounded-[4px] outline-none box-border bg-white text-black cursor-pointer focus:border-[#90af13]"
+              className="w-[78px] h-6 px-1.5 text-xs border border-[#757575] rounded-[4px] outline-none box-border bg-[var(--bg-surface)] text-[var(--text-main)] cursor-pointer focus:border-[#90af13]"
             >
               {LOAD_CASES.map((lc) => (
                 <option key={lc} value={lc}>
@@ -201,31 +201,31 @@ export const AddLoadCombinationModal: React.FC<AddLoadCombinationModalProps> = (
               ))}
             </select>
 
-            <label className="text-xs text-black ml-3">
+            <label className="text-xs text-[var(--text-main)] ml-3">
               Partial Safety Factor:
             </label>
             <input
               type="text"
               value={currentFactor}
               onChange={(e) => setCurrentFactor(e.target.value)}
-              className="w-[90px] h-6 px-2 py-0.5 text-xs border border-[#757575] rounded-[4px] outline-none box-border bg-white text-black focus:border-[#90af13]"
+              className="w-[90px] h-6 px-2 py-0.5 text-xs border border-[#757575] rounded-[4px] outline-none box-border bg-[var(--bg-surface)] text-[var(--text-main)] focus:border-[#90af13]"
             />
           </div>
 
           {/* Table & Right Buttons Row */}
           <div className="flex gap-3.5 mb-4">
             {/* Table Container */}
-            <div className="flex-1 h-[210px] border border-[#c0c0c0] rounded-[4px] bg-white overflow-y-auto box-border">
+            <div className="flex-1 h-[210px] border border-[var(--border-color)] rounded-[4px] bg-[var(--bg-surface)] overflow-y-auto box-border">
               <table className="w-full border-collapse text-[11.5px]">
                 <thead>
-                  <tr className="bg-[#eaeaea]">
-                    <th className="p-[6px_4px] font-semibold text-[#333333] text-[11px] border-b border-r border-[#c0c0c0] w-[55px] text-center">
+                  <tr className="bg-[var(--bg-grouped)]">
+                    <th className="p-[6px_4px] font-semibold text-[var(--text-sub)] text-[11px] border-b border-r border-[var(--border-color)] w-[55px] text-center">
                       S.No
                     </th>
-                    <th className="p-[6px_4px] font-semibold text-[#333333] text-[11px] border-b border-r border-[#c0c0c0] w-[140px] text-center">
+                    <th className="p-[6px_4px] font-semibold text-[var(--text-sub)] text-[11px] border-b border-r border-[var(--border-color)] w-[140px] text-center">
                       Load Case
                     </th>
-                    <th className="p-[6px_4px] font-semibold text-[#333333] text-[11px] border-b border-[#c0c0c0] text-center">
+                    <th className="p-[6px_4px] font-semibold text-[var(--text-sub)] text-[11px] border-b border-[var(--border-color)] text-center">
                       Partial Safety Factor
                     </th>
                   </tr>
@@ -241,17 +241,17 @@ export const AddLoadCombinationModal: React.FC<AddLoadCombinationModalProps> = (
                           isSelected
                             ? 'bg-[#dbeafe]'
                             : idx % 2 === 1
-                            ? 'bg-[#fcfcfc] hover:bg-[#f2f2f2]'
-                            : 'bg-white hover:bg-[#f2f2f2]'
+                            ? 'bg-[#fcfcfc] hover:bg-[var(--bg-grouped)]'
+                            : 'bg-[var(--bg-surface)] hover:bg-[var(--bg-grouped)]'
                         }`}
                       >
-                        <td className="p-[5px_4px] text-center border-b border-r border-[#e8e8e8] text-black">
+                        <td className="p-[5px_4px] text-center border-b border-r border-[#e8e8e8] text-[var(--text-main)]">
                           {row.sNo}
                         </td>
-                        <td className="p-[5px_4px] text-center border-b border-r border-[#e8e8e8] text-black font-medium">
+                        <td className="p-[5px_4px] text-center border-b border-r border-[#e8e8e8] text-[var(--text-main)] font-medium">
                           {row.loadCase}
                         </td>
-                        <td className="p-[5px_4px] text-center border-b border-[#e8e8e8] text-black">
+                        <td className="p-[5px_4px] text-center border-b border-[#e8e8e8] text-[var(--text-main)]">
                           {row.factor}
                         </td>
                       </tr>
@@ -266,21 +266,21 @@ export const AddLoadCombinationModal: React.FC<AddLoadCombinationModalProps> = (
               <button
                 type="button"
                 onClick={handleAdd}
-                className="h-[25px] bg-white hover:bg-[#f2f2f2] border border-[#757575] rounded-[4px] text-[11.5px] font-medium text-[#222222] cursor-pointer transition-colors"
+                className="h-[25px] bg-[var(--bg-surface)] hover:bg-[var(--bg-grouped)] border border-[#757575] rounded-[4px] text-[11.5px] font-medium text-[var(--text-sub)] cursor-pointer transition-colors"
               >
                 Add
               </button>
               <button
                 type="button"
                 onClick={handleModify}
-                className="h-[25px] bg-white hover:bg-[#f2f2f2] border border-[#757575] rounded-[4px] text-[11.5px] font-medium text-[#222222] cursor-pointer transition-colors"
+                className="h-[25px] bg-[var(--bg-surface)] hover:bg-[var(--bg-grouped)] border border-[#757575] rounded-[4px] text-[11.5px] font-medium text-[var(--text-sub)] cursor-pointer transition-colors"
               >
                 Modify
               </button>
               <button
                 type="button"
                 onClick={handleDelete}
-                className="h-[25px] bg-white hover:bg-[#f2f2f2] border border-[#757575] rounded-[4px] text-[11.5px] font-medium text-[#222222] cursor-pointer transition-colors"
+                className="h-[25px] bg-[var(--bg-surface)] hover:bg-[var(--bg-grouped)] border border-[#757575] rounded-[4px] text-[11.5px] font-medium text-[var(--text-sub)] cursor-pointer transition-colors"
               >
                 Delete
               </button>
@@ -299,14 +299,14 @@ export const AddLoadCombinationModal: React.FC<AddLoadCombinationModalProps> = (
             <button
               type="button"
               onClick={handleClose}
-              className="w-20 h-[26px] bg-[#bfbfbf] hover:bg-[#adadad] border border-[#999999] rounded-[4px] text-black text-xs font-medium cursor-pointer transition-colors"
+              className="w-20 h-[26px] bg-[#bfbfbf] hover:bg-[#adadad] border border-[#999999] rounded-[4px] text-[var(--text-main)] text-xs font-medium cursor-pointer transition-colors"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleSave}
-              className="w-20 h-[26px] bg-[#bfbfbf] hover:bg-[#adadad] border border-[#999999] rounded-[4px] text-black text-xs font-medium cursor-pointer transition-colors"
+              className="w-20 h-[26px] bg-[#bfbfbf] hover:bg-[#adadad] border border-[#999999] rounded-[4px] text-[var(--text-main)] text-xs font-medium cursor-pointer transition-colors"
             >
               Save
             </button>

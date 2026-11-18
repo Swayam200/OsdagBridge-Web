@@ -69,7 +69,7 @@ export const DesignOptionsContTab: React.FC = () => {
       className="flex items-center gap-2 py-[3px] cursor-pointer"
     >
       <OsdagCheckbox checked={Boolean(val)} onChange={onToggle} ariaLabel={label} />
-      <span className="text-[11.5px] text-black select-none font-sans">
+      <span className="text-[11.5px] text-[var(--text-main)] select-none font-sans">
         {label}
       </span>
     </div>
@@ -82,11 +82,11 @@ export const DesignOptionsContTab: React.FC = () => {
         {/* Left Column (Cards) */}
         <div className="flex-[1.2] min-w-0 flex flex-col gap-3">
           {/* Card 1: Partial Factor */}
-          <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-            <div className="text-xs font-bold text-black mb-2.5">Partial Factor</div>
+          <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+            <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">Partial Factor</div>
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs text-black">
+                <label className="text-xs text-[var(--text-main)]">
                   Concrete basic & seismic, γ<sub>c</sub>
                 </label>
                 <input
@@ -103,7 +103,7 @@ export const DesignOptionsContTab: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-xs text-black">
+                <label className="text-xs text-[var(--text-main)]">
                   Concrete Accidental, γ<sub>c</sub>
                 </label>
                 <input
@@ -120,7 +120,7 @@ export const DesignOptionsContTab: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-xs text-black">
+                <label className="text-xs text-[var(--text-main)]">
                   Structural steel for Yielding and Buckling, γ<sub>M0</sub>
                 </label>
                 <input
@@ -137,7 +137,7 @@ export const DesignOptionsContTab: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-xs text-black">
+                <label className="text-xs text-[var(--text-main)]">
                   Structural Steel For Ultimate Stress, γ<sub>M1</sub>
                 </label>
                 <input
@@ -154,7 +154,7 @@ export const DesignOptionsContTab: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-xs text-black">
+                <label className="text-xs text-[var(--text-main)]">
                   Reinforcing Steel, γ<sub>s</sub>
                 </label>
                 <input
@@ -171,7 +171,7 @@ export const DesignOptionsContTab: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-xs text-black">
+                <label className="text-xs text-[var(--text-main)]">
                   Shear Connectors For Yield, γ<sub>v</sub>
                 </label>
                 <input
@@ -188,7 +188,7 @@ export const DesignOptionsContTab: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-xs text-black">
+                <label className="text-xs text-[var(--text-main)]">
                   Fatigue Load, γ<sub>Ff</sub>
                 </label>
                 <input
@@ -205,7 +205,7 @@ export const DesignOptionsContTab: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-xs text-black">
+                <label className="text-xs text-[var(--text-main)]">
                   Fatigue Strength, γ<sub>Mf, f</sub>
                 </label>
                 <input
@@ -224,10 +224,10 @@ export const DesignOptionsContTab: React.FC = () => {
           </div>
 
           {/* Card 2: Resistance to Fatigue */}
-          <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-            <div className="text-xs font-bold text-black mb-2.5">Resistance to Fatigue</div>
+          <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+            <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">Resistance to Fatigue</div>
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Number of Load Cycles</label>
+              <label className="text-xs text-[var(--text-main)]">Number of Load Cycles</label>
               <input
                 type="text"
                 value={loadCycles}
@@ -243,10 +243,10 @@ export const DesignOptionsContTab: React.FC = () => {
           </div>
 
           {/* Card 3: Deflection Control */}
-          <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-            <div className="text-xs font-bold text-black mb-2.5">Deflection Control</div>
+          <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+            <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">Deflection Control</div>
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Camber (mm)</label>
+              <label className="text-xs text-[var(--text-main)]">Camber (mm)</label>
               <div className="w-[186px] flex items-center gap-1.5 justify-end">
                 <select
                   value={camberMode}
@@ -304,14 +304,14 @@ export const DesignOptionsContTab: React.FC = () => {
 
       {/* Bottom Section: Limit States */}
       <div className="mt-3.5 shrink-0">
-        <div className="text-xs font-bold text-black mb-2">
+        <div className="text-xs font-bold text-[var(--text-main)] mb-2">
           Limit States
         </div>
 
         <div className="flex gap-4">
           {/* Group 1: Ultimate Limit States */}
-          <fieldset className="border border-[#757575] rounded-[6px] p-[8px_14px_12px_14px] flex-1 min-w-0 bg-white">
-            <legend className="text-[11.5px] font-bold text-black px-1.5">Ultimate Limit States</legend>
+          <fieldset className="border border-[#757575] rounded-[6px] p-[8px_14px_12px_14px] flex-1 min-w-0 bg-[var(--bg-surface)]">
+            <legend className="text-[11.5px] font-bold text-[var(--text-main)] px-1.5">Ultimate Limit States</legend>
             <div className="flex flex-col gap-0.5">
               {renderCheckboxRow(
                 'Bending Resistance',
@@ -377,8 +377,8 @@ export const DesignOptionsContTab: React.FC = () => {
           </fieldset>
 
           {/* Group 2: Serviceability Limit States */}
-          <fieldset className="border border-[#757575] rounded-[6px] p-[8px_14px_12px_14px] flex-1 min-w-0 bg-white">
-            <legend className="text-[11.5px] font-bold text-black px-1.5">Serviceability Limit States</legend>
+          <fieldset className="border border-[#757575] rounded-[6px] p-[8px_14px_12px_14px] flex-1 min-w-0 bg-[var(--bg-surface)]">
+            <legend className="text-[11.5px] font-bold text-[var(--text-main)] px-1.5">Serviceability Limit States</legend>
             <div className="flex flex-col gap-0.5">
               {renderCheckboxRow(
                 'Stress Limitation',

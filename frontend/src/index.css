@@ -1,13 +1,12 @@
 @import "tailwindcss";
 
-:root {
+:root,
+[data-theme="light"] {
   color-scheme: light;
-  --color-white: #ffffff;
-  --color-black: #000000;
   --font-sans: "Ubuntu Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
   --font-mono: 'Courier New', 'JetBrains Mono', Consolas, monospace;
 
-  /* Theme variables */
+  /* Theme variables - Light Mode */
   --bg-app: #f4f4f4;
   --bg-surface: #ffffff;
   --bg-sidebar: #ffffff;
@@ -35,12 +34,15 @@
   --log-header-bg: #f2f2f2;
   --log-bg: #ffffff;
   --log-text: #000000;
-  --log-text-color: #000000;
   --log-border: #d0d0d0;
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
+  --font-sans: "Ubuntu Sans", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  --font-mono: 'Courier New', 'JetBrains Mono', Consolas, monospace;
+
+  /* Theme variables - Dark Mode */
   --bg-app: #282828;
   --bg-surface: #2b2b2b;
   --bg-sidebar: #282828;
@@ -68,11 +70,47 @@
   --log-header-bg: #2b2b2b;
   --log-bg: #212121;
   --log-text: #d0d0d0;
-  --log-text-color: #d0d0d0;
   --log-border: #444444;
 }
 
-/* Base resets & typography */
+@theme {
+  --color-bg-app: var(--bg-app);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-sidebar: var(--bg-sidebar);
+  --color-bg-grouped: var(--bg-grouped);
+  --color-bg-viewport: var(--bg-viewport);
+
+  --color-border-color: var(--border-color);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-focus: var(--border-focus);
+
+  --color-text-main: var(--text-main);
+  --color-text-sub: var(--text-sub);
+  --color-text-muted: var(--text-muted);
+
+  --color-accent-osdag: var(--accent-osdag);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-disabled: var(--accent-disabled);
+  --color-accent-border: var(--accent-border);
+
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+
+  --color-header-bg: var(--header-bg);
+  --color-header-text: var(--header-text);
+  --color-header-border: var(--header-border);
+
+  --color-input-bg: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-input-disabled-bg: var(--input-disabled-bg);
+  --color-input-disabled-color: var(--input-disabled-color);
+
+  --color-log-header-bg: var(--log-header-bg);
+  --color-log-bg: var(--log-bg);
+  --color-log-text: var(--log-text);
+  --color-log-border: var(--log-border);
+}
+
 @layer base {
   *, ::before, ::after {
     box-sizing: border-box;
@@ -94,6 +132,30 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+/* Ensure smooth theme transitions */
+body,
+#root,
+header,
+aside,
+input,
+select,
+button {
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: var(--text-main);
+  background-color: var(--input-bg);
+}
+
+/* Dark mode select dropdown arrow replacement */
+[data-theme="dark"] select {
+  background-image: url('/vectors/arrow_down_dark.svg') !important;
 }
 
 /* Hide scrollbars globally across ALL browsers while preserving full scrolling functionality */

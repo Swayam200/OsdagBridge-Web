@@ -22,7 +22,7 @@ export const LoadingTab: React.FC = () => {
   return (
     <div className="flex-1 flex flex-col min-h-0 mx-3.5 mb-1.5 overflow-hidden">
       {/* Sub-tabs bar */}
-      <div className="flex items-stretch bg-[#2b2b2b] border border-[#c0c0c0] border-b-0 h-8 shrink-0">
+      <div className="flex items-stretch bg-[#2b2b2b] border border-[var(--border-color)] border-b-0 h-8 shrink-0">
         {subTabs.map((tab, idx) => {
           const isSelected = activeSubTab === idx;
           const isDisabled = tab.disabled;
@@ -34,12 +34,12 @@ export const LoadingTab: React.FC = () => {
               disabled={isDisabled}
               onClick={() => !isDisabled && setActiveSubTab(idx)}
               title={tab.tooltip || tab.label}
-              className={`px-4 text-[11.5px] font-bold font-sans border-0 border-r border-[#c0c0c0] whitespace-nowrap transition-colors flex items-center justify-center select-none ${
+              className={`px-4 text-[11.5px] font-bold font-sans border-0 border-r border-[var(--border-color)] whitespace-nowrap transition-colors flex items-center justify-center select-none ${
                 isSelected
-                  ? 'bg-[#8cae11] text-white'
+                  ? 'bg-[var(--accent-osdag)] text-white'
                   : isDisabled
-                  ? 'bg-white text-[#9e9e9e] cursor-not-allowed'
-                  : 'bg-white text-[#333333] hover:bg-[#f0f0f0] cursor-pointer'
+                  ? 'bg-[var(--bg-surface)] text-[#9e9e9e] cursor-not-allowed'
+                  : 'bg-[var(--bg-surface)] text-[var(--text-sub)] hover:bg-[var(--bg-grouped)] cursor-pointer'
               }`}
             >
               {tab.label}
@@ -51,7 +51,7 @@ export const LoadingTab: React.FC = () => {
       </div>
 
       {/* Sub-tab content */}
-      <div className="flex-1 min-h-0 border border-[#c0c0c0] p-3.5 bg-white flex flex-col overflow-hidden">
+      <div className="flex-1 min-h-0 border border-[var(--border-color)] p-3.5 bg-[var(--bg-surface)] flex flex-col overflow-hidden">
         {activeSubTab === 0 && <PermanentLoadSubTab />}
         {activeSubTab === 1 && <LiveLoadSubTab />}
         {activeSubTab === 2 && <SeismicLoadSubTab />}

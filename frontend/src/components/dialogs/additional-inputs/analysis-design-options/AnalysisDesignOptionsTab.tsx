@@ -64,10 +64,10 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
       {/* Left Column: Input Cards */}
       <div className="hide-scrollbar flex-[1.2] min-w-0 flex flex-col gap-3 h-full overflow-y-auto pr-0.5 pb-2">
         {/* Card 1: Construction Stages */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">Construction Stages</div>
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">Construction Stages</div>
           <div className="flex items-center justify-between">
-            <label className="text-xs text-black">Include default</label>
+            <label className="text-xs text-[var(--text-main)]">Include default</label>
             <select
               value={includeDefaultStages}
               onChange={(e) =>
@@ -85,16 +85,16 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
         </div>
 
         {/* Card 2: Deck Design */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">Deck Design</div>
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">Deck Design</div>
           <div className="flex flex-col gap-2">
             {/* Reinforcement Size */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Reinforcement Size</label>
+              <label className="text-xs text-[var(--text-main)]">Reinforcement Size</label>
               <button
                 type="button"
                 onClick={() => setIsSetBoundsOpen(true)}
-                className="w-[186px] h-6 bg-[#f5f5f5] hover:bg-[#e8e8e8] border border-[#757575] rounded-[4px] text-[11.5px] font-semibold text-[#222222] cursor-pointer text-center transition-colors"
+                className="w-[186px] h-6 bg-[var(--bg-grouped)] hover:bg-[var(--bg-grouped)] border border-[#757575] rounded-[4px] text-[11.5px] font-semibold text-[var(--text-sub)] cursor-pointer text-center transition-colors"
               >
                 Set Bounds
               </button>
@@ -102,7 +102,7 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
 
             {/* Reinforcement Material */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Reinforcement Material</label>
+              <label className="text-xs text-[var(--text-main)]">Reinforcement Material</label>
               <select
                 value={rebarMaterial}
                 onChange={(e) =>
@@ -123,7 +123,7 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
 
             {/* Top Clear Cover (mm) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Top Clear Cover (mm)</label>
+              <label className="text-xs text-[var(--text-main)]">Top Clear Cover (mm)</label>
               <input
                 type="text"
                 value={topClearCover}
@@ -139,7 +139,7 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
 
             {/* Bottom Clear Cover (mm) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Bottom Clear Cover (mm)</label>
+              <label className="text-xs text-[var(--text-main)]">Bottom Clear Cover (mm)</label>
               <input
                 type="text"
                 value={bottomClearCover}
@@ -155,7 +155,7 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
 
             {/* Side Clear Cover (mm) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Side Clear Cover (mm)</label>
+              <label className="text-xs text-[var(--text-main)]">Side Clear Cover (mm)</label>
               <input
                 type="text"
                 value={sideClearCover}
@@ -172,12 +172,12 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
         </div>
 
         {/* Card 3: Shear Studs */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">Shear Studs</div>
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">Shear Studs</div>
           <div className="flex flex-col gap-2">
             {/* Yield Strength (MPa) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Yield Strength (MPa)</label>
+              <label className="text-xs text-[var(--text-main)]">Yield Strength (MPa)</label>
               <input
                 type="text"
                 value={yieldStrength}
@@ -193,7 +193,7 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
 
             {/* Ultimate Strength (MPa) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Ultimate Strength (MPa)</label>
+              <label className="text-xs text-[var(--text-main)]">Ultimate Strength (MPa)</label>
               <input
                 type="text"
                 value={ultimateStrength}
@@ -209,7 +209,7 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
 
             {/* Diameter (mm) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Diameter (mm)</label>
+              <label className="text-xs text-[var(--text-main)]">Diameter (mm)</label>
               <select
                 value={studDiameter}
                 onChange={(e) =>
@@ -230,7 +230,7 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
 
             {/* Height (mm) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Height (mm)</label>
+              <label className="text-xs text-[var(--text-main)]">Height (mm)</label>
               <input
                 type="text"
                 value={studHeight}
@@ -246,7 +246,7 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
 
             {/* No. of Shear Studs per Section */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">No. of Shear Studs per Section</label>
+              <label className="text-xs text-[var(--text-main)]">No. of Shear Studs per Section</label>
               <select
                 value={studCount}
                 onChange={(e) =>
@@ -267,7 +267,7 @@ export const AnalysisDesignOptionsTab: React.FC = () => {
 
             {/* Transverse Spacing (mm) */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Transverse Spacing (mm)</label>
+              <label className="text-xs text-[var(--text-main)]">Transverse Spacing (mm)</label>
               <input
                 type="text"
                 value={transverseSpacing}

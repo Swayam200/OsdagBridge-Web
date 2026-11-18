@@ -16,23 +16,23 @@ export const TemperatureLoadSubTab: React.FC = () => {
       {/* Left Column */}
       <div className="card-scroll flex-[1.2] min-w-0 flex flex-col gap-3 overflow-y-auto pr-1">
         {/* Temperature Load (TL) Inputs for Evaluation per IRC6 */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Temperature Load (TL) Inputs for Evaluation per IRC6
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Highest Maximum Air Temperature (°C)</label>
+              <label className="text-xs text-[var(--text-main)]">Highest Maximum Air Temperature (°C)</label>
               <input type="text" readOnly value={maxTemp} className={readOnlyInputClass} />
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Lowest Minimum Air Temperature (°C)</label>
+              <label className="text-xs text-[var(--text-main)]">Lowest Minimum Air Temperature (°C)</label>
               <input type="text" readOnly value={minTemp} className={readOnlyInputClass} />
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">
+              <label className="text-xs text-[var(--text-main)]">
                 Coefficient of Thermal Expansion for Steel (×10⁻⁶/°C)
               </label>
               <input
@@ -44,7 +44,7 @@ export const TemperatureLoadSubTab: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">
+              <label className="text-xs text-[var(--text-main)]">
                 Coefficient of Thermal Expansion for RCC (×10⁻⁶/°C)
               </label>
               <input
@@ -58,36 +58,36 @@ export const TemperatureLoadSubTab: React.FC = () => {
         </div>
 
         {/* Range of Effective Bridge Temperature */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Range of Effective Bridge Temperature
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Minimum (°C)</label>
+              <label className="text-xs text-[var(--text-main)]">Minimum (°C)</label>
               <input type="text" readOnly value="4.60" className={readOnlyInputClass} />
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Maximum (°C)</label>
+              <label className="text-xs text-[var(--text-main)]">Maximum (°C)</label>
               <input type="text" readOnly value="51.40" className={readOnlyInputClass} />
             </div>
           </div>
         </div>
 
         {/* Temperature for Design */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Temperature for Design
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Rise (°C)</label>
+              <label className="text-xs text-[var(--text-main)]">Rise (°C)</label>
               <input type="text" readOnly value="23.40" className={readOnlyInputClass} />
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Fall (°C)</label>
+              <label className="text-xs text-[var(--text-main)]">Fall (°C)</label>
               <input type="text" readOnly value="23.40" className={readOnlyInputClass} />
             </div>
           </div>

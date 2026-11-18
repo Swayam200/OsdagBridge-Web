@@ -114,7 +114,7 @@ export const CrossSectionPreview: React.FC<CrossSectionPreviewProps> = () => {
           type="button"
           onClick={handleZoomIn}
           title="Zoom In"
-          className="w-[22px] h-[22px] bg-white border border-[#999999] rounded-[2px] cursor-pointer flex items-center justify-center p-0 text-sm font-bold text-[#333333] shadow-[0_1px_3px_rgba(0,0,0,0.15)] hover:bg-[#f2f2f2]"
+          className="w-[22px] h-[22px] bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[2px] cursor-pointer flex items-center justify-center p-0 text-sm font-bold text-[var(--text-main)] shadow-[0_1px_3px_rgba(0,0,0,0.15)] hover:bg-[var(--bg-grouped)]"
         >
           +
         </button>
@@ -122,7 +122,7 @@ export const CrossSectionPreview: React.FC<CrossSectionPreviewProps> = () => {
           type="button"
           onClick={handleZoomOut}
           title="Zoom Out"
-          className="w-[22px] h-[22px] bg-white border border-[#999999] rounded-[2px] cursor-pointer flex items-center justify-center p-0 text-sm font-bold text-[#333333] shadow-[0_1px_3px_rgba(0,0,0,0.15)] hover:bg-[#f2f2f2]"
+          className="w-[22px] h-[22px] bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[2px] cursor-pointer flex items-center justify-center p-0 text-sm font-bold text-[var(--text-main)] shadow-[0_1px_3px_rgba(0,0,0,0.15)] hover:bg-[var(--bg-grouped)]"
         >
           -
         </button>
@@ -130,9 +130,9 @@ export const CrossSectionPreview: React.FC<CrossSectionPreviewProps> = () => {
           type="button"
           onClick={handleResetZoom}
           title="Fit to Screen"
-          className="w-[22px] h-[22px] bg-white border border-[#999999] rounded-[2px] cursor-pointer flex items-center justify-center p-0 shadow-[0_1px_3px_rgba(0,0,0,0.15)] hover:bg-[#f2f2f2]"
+          className="w-[22px] h-[22px] bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-[2px] cursor-pointer flex items-center justify-center p-0 shadow-[0_1px_3px_rgba(0,0,0,0.15)] hover:bg-[var(--bg-grouped)]"
         >
-          <div className="w-2.5 h-2.5 border-2 border-[#333333] rounded-[1px]" />
+          <div className="w-2.5 h-2.5 border-2 border-[var(--text-main)] rounded-[1px]" />
         </button>
       </div>
 

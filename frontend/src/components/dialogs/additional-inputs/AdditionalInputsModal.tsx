@@ -157,7 +157,7 @@ export const AdditionalInputsModal: React.FC = () => {
   return (
     <div className="fixed inset-0 bg-black/25 flex items-center justify-center z-[9999]">
       <div
-        className="fixed max-w-[calc(100vw-20px)] max-h-[calc(100vh-20px)] bg-white rounded-[4px] shadow-[0_8px_32px_rgba(0,0,0,0.35)] flex flex-col border-2 border-[#8cae11] overflow-hidden z-[10000]"
+        className="fixed max-w-[calc(100vw-20px)] max-h-[calc(100vh-20px)] bg-[var(--bg-surface)] text-[var(--text-main)] rounded-[4px] shadow-[0_8px_32px_rgba(0,0,0,0.35)] flex flex-col border-2 border-[var(--accent-osdag)] overflow-hidden z-[10000]"
         style={{
           left: position ? `${position.x}px` : '50%',
           top: position ? `${position.y}px` : '50%',
@@ -179,7 +179,7 @@ export const AdditionalInputsModal: React.FC = () => {
         {/* Modal Title Bar (Draggable) */}
         <div
           onMouseDown={handleTitleBarMouseDown}
-          className="h-8 bg-white flex items-center justify-between pl-2.5 border-b border-[#d5d5d5] select-none relative cursor-move"
+          className="h-8 bg-[var(--header-bg)] flex items-center justify-between pl-2.5 border-b border-[var(--border-color)] select-none relative cursor-move"
         >
           <div className="flex items-center gap-2">
             <img
@@ -189,7 +189,7 @@ export const AdditionalInputsModal: React.FC = () => {
               height={18}
               className="block select-none pointer-events-none"
             />
-            <span className="text-xs font-semibold text-[#333333]">
+            <span className="text-xs font-semibold text-[var(--text-main)]">
               Additional Inputs
             </span>
           </div>
@@ -200,7 +200,7 @@ export const AdditionalInputsModal: React.FC = () => {
               onClick={() => setAdditionalInputsOpen(false)}
               onMouseEnter={() => setIsCloseHovered(true)}
               onMouseLeave={() => setIsCloseHovered(false)}
-              className="w-[46px] h-8 border-0 rounded-none bg-transparent hover:bg-[#fa382f] active:bg-[#c0392b] text-black hover:text-white cursor-pointer flex items-center justify-center p-0 text-[15px] font-bold font-sans transition-colors"
+              className="w-[46px] h-8 border-0 rounded-none bg-transparent hover:bg-[#fa382f] active:bg-[#c0392b] text-[var(--text-main)] hover:text-white cursor-pointer flex items-center justify-center p-0 text-[15px] font-bold font-sans transition-colors"
               aria-label="Close"
             >
               ✕
@@ -208,8 +208,8 @@ export const AdditionalInputsModal: React.FC = () => {
 
             {/* Tooltip matching Desktop Osdag (Green border #8cae11) */}
             {isCloseHovered && (
-              <div className="absolute top-[34px] right-1 bg-white border-[1.5px] border-[#8cae11] rounded-[2px] p-[3px_8px] shadow-[0_2px_8px_rgba(0,0,0,0.2)] z-[99999] pointer-events-none whitespace-nowrap">
-                <span className="text-xs font-bold text-black font-sans">
+              <div className="absolute top-[34px] right-1 bg-[var(--bg-surface)] border-[1.5px] border-[var(--accent-osdag)] rounded-[2px] p-[3px_8px] shadow-[0_2px_8px_rgba(0,0,0,0.2)] z-[99999] pointer-events-none whitespace-nowrap">
+                <span className="text-xs font-bold text-[var(--text-main)] font-sans">
                   Close
                 </span>
               </div>
@@ -218,7 +218,7 @@ export const AdditionalInputsModal: React.FC = () => {
         </div>
 
         {/* Main Tabs Header */}
-        <div className="flex justify-center bg-white border-b border-[#c0c0c0] pt-2 px-3.5 gap-0 shrink-0">
+        <div className="flex justify-center bg-[var(--bg-surface)] border-b border-[var(--border-color)] pt-2 px-3.5 gap-0 shrink-0">
           {mainTabs.map((tabLabel, idx) => {
             const isSelected = activeMainTab === idx;
             return (
@@ -226,12 +226,12 @@ export const AdditionalInputsModal: React.FC = () => {
                 key={tabLabel}
                 type="button"
                 onClick={() => setActiveMainTab(idx)}
-                className={`px-[22px] py-[7px] text-xs font-bold border border-[#c0c0c0] relative -bottom-px whitespace-nowrap transition-colors cursor-pointer ${
+                className={`px-[22px] py-[7px] text-xs font-bold border border-[var(--border-color)] relative -bottom-px whitespace-nowrap transition-colors cursor-pointer ${
                   idx < mainTabs.length - 1 ? 'border-r-0' : ''
                 } ${
                   isSelected
-                    ? 'bg-[#8cae11] text-white border-b-0 z-[3]'
-                    : 'bg-[#eaeaea] text-[#333333] hover:bg-[#e0e0e0] z-[1]'
+                    ? 'bg-[var(--accent-osdag)] text-white border-b-0 z-[3]'
+                    : 'bg-[var(--bg-grouped)] text-[var(--text-sub)] hover:bg-[var(--bg-surface)] z-[1]'
                 }`}
               >
                 {tabLabel}
@@ -241,7 +241,7 @@ export const AdditionalInputsModal: React.FC = () => {
         </div>
 
         {/* Tab Body Content */}
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white pt-1.5">
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-[var(--bg-surface)] pt-1.5">
           {activeMainTab === 0 && <TypicalSectionDetailsTab dialogSize={dialogSize} />}
           {activeMainTab === 1 && <MemberPropertiesTab />}
           {activeMainTab === 2 && <LoadingTab />}
@@ -250,7 +250,7 @@ export const AdditionalInputsModal: React.FC = () => {
         </div>
 
         {/* Bottom Action Bar (Defaults, Save) */}
-        <div className="bg-[#ededed] border border-[#c8c8c8] rounded-[6px] p-[8px_16px] mx-3.5 mt-1 mb-2.5 flex items-center justify-center gap-3.5 shrink-0 relative">
+        <div className="bg-[var(--bg-grouped)] border border-[var(--border-subtle)] rounded-[6px] p-[8px_16px] mx-3.5 mt-1 mb-2.5 flex items-center justify-center gap-3.5 shrink-0 relative">
           <button
             type="button"
             onClick={resetAdditionalDefaults}

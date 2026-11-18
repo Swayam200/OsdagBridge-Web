@@ -28,8 +28,8 @@ export const LiveLoadSubTab: React.FC = () => {
       {/* Left Column */}
       <div className="card-scroll flex-[1.2] min-w-0 flex flex-col gap-3 overflow-y-auto pr-1">
         {/* Vehicles from IRC 6 */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Vehicles from IRC 6
           </div>
           <div className="flex flex-col gap-2">
@@ -41,7 +41,7 @@ export const LiveLoadSubTab: React.FC = () => {
                   onClick={() => updateAdditionalInput(v.id, !checked)}
                   className="flex items-center justify-between cursor-pointer"
                 >
-                  <label className="text-xs text-black cursor-pointer select-none">
+                  <label className="text-xs text-[var(--text-main)] cursor-pointer select-none">
                     {v.label}
                   </label>
                   <div className="w-[186px] flex items-center">
@@ -58,8 +58,8 @@ export const LiveLoadSubTab: React.FC = () => {
         </div>
 
         {/* Braking Load from Vehicles */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Braking Load from Vehicles
           </div>
           <div className="flex flex-col gap-2.5">
@@ -67,7 +67,7 @@ export const LiveLoadSubTab: React.FC = () => {
               onClick={() => updateAdditionalInput('bl_irc_class_sv', !brakingSv)}
               className="flex items-center justify-between cursor-pointer"
             >
-              <label className="text-xs text-black cursor-pointer select-none">
+              <label className="text-xs text-[var(--text-main)] cursor-pointer select-none">
                 Class SV
               </label>
               <div className="w-[186px] flex items-center">
@@ -80,7 +80,7 @@ export const LiveLoadSubTab: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">
+              <label className="text-xs text-[var(--text-main)]">
                 Eccentricity from top of Deck (m)
               </label>
               <input
@@ -94,9 +94,9 @@ export const LiveLoadSubTab: React.FC = () => {
         </div>
 
         {/* Footpath Pressure */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
           <div className="flex items-center justify-between">
-            <label className="text-xs text-black">
+            <label className="text-xs text-[var(--text-main)]">
               Footpath Pressure (kN/mm²)
             </label>
             <div className="w-[186px] flex items-center gap-1.5 justify-end">

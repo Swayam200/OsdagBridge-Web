@@ -12,7 +12,7 @@ export const DeckDetailsSubTab: React.FC = () => {
   return (
     <div className="grid grid-cols-2 gap-x-8 gap-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs text-black min-w-[160px]">
+        <label className="text-xs text-[var(--text-main)] min-w-[160px]">
           Deck Thickness (mm):
         </label>
         <input
@@ -27,7 +27,7 @@ export const DeckDetailsSubTab: React.FC = () => {
       <div />
 
       <div className="flex items-center justify-between">
-        <label className="text-xs text-black min-w-[160px]">
+        <label className="text-xs text-[var(--text-main)] min-w-[160px]">
           Footpath Width (m):
         </label>
         <input
@@ -39,7 +39,7 @@ export const DeckDetailsSubTab: React.FC = () => {
       </div>
 
       <div className="flex items-center justify-between">
-        <label className="text-xs text-black min-w-[160px]">
+        <label className="text-xs text-[var(--text-main)] min-w-[160px]">
           Footpath Thickness (mm):
         </label>
         <input

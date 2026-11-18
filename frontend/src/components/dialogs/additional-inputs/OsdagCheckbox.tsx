@@ -25,7 +25,7 @@ export const OsdagCheckbox: React.FC<OsdagCheckboxProps> = ({ checked, onChange,
           onChange(!checked);
         }
       }}
-      className="w-[15px] h-[15px] min-w-[15px] min-h-[15px] bg-white border border-[#757575] hover:border-[#333333] rounded-[2px] inline-flex items-center justify-center cursor-pointer box-border select-none shrink-0 transition-colors"
+      className="w-[15px] h-[15px] min-w-[15px] min-h-[15px] bg-[var(--input-bg)] border border-[var(--input-border)] hover:border-[var(--border-focus)] rounded-[2px] inline-flex items-center justify-center cursor-pointer box-border select-none shrink-0 transition-colors"
     >
       {checked && (
         <svg
@@ -37,7 +37,7 @@ export const OsdagCheckbox: React.FC<OsdagCheckboxProps> = ({ checked, onChange,
         >
           <path
             d="M2 5.8L4.4 8.5L9.2 2.5"
-            stroke="#7ea10a"
+            stroke="var(--accent-osdag)"
             strokeWidth="1.85"
             strokeLinecap="round"
             strokeLinejoin="round"

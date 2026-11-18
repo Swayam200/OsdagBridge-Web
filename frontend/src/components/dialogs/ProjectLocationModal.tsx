@@ -150,12 +150,12 @@ export const ProjectLocationModal: React.FC = () => {
       aria-labelledby="location-dialog-title"
       className="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-[1000]"
     >
-      <div className="bg-white rounded-lg w-[540px] shadow-lg overflow-hidden border border-[#e0e0e0] flex flex-col font-sans">
+      <div className="bg-[var(--bg-surface)] text-[var(--text-main)] rounded-lg w-[540px] shadow-lg overflow-hidden border border-[var(--border-color)] flex flex-col font-sans">
         {/* Header */}
-        <div className="p-[14px_18px] bg-[#f4f4f4] border-b border-[#e0e0e0] flex justify-between items-center select-none">
+        <div className="p-[14px_18px] bg-[var(--header-bg)] border-b border-[var(--border-color)] flex justify-between items-center select-none">
           <div className="flex items-center gap-2">
-            <MapPin size={18} className="text-[#90af13]" aria-hidden="true" />
-            <h3 id="location-dialog-title" className="text-sm font-semibold text-black">
+            <MapPin size={18} className="text-[var(--accent-osdag)]" aria-hidden="true" />
+            <h3 id="location-dialog-title" className="text-sm font-semibold text-[var(--text-main)]">
               Project Location &amp; Weather Details
             </h3>
           </div>
@@ -163,7 +163,7 @@ export const ProjectLocationModal: React.FC = () => {
             type="button"
             onClick={handleClose}
             aria-label="Close dialog"
-            className="bg-transparent border-0 cursor-pointer text-[#666666] hover:text-black p-0.5"
+            className="bg-transparent border-0 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-main)] p-0.5"
           >
             <X size={18} />
           </button>
@@ -175,7 +175,7 @@ export const ProjectLocationModal: React.FC = () => {
             <div>
               <label
                 htmlFor="location-state-select"
-                className="block text-[11px] font-semibold text-[#666666] mb-1.5"
+                className="block text-[11px] font-semibold text-[var(--text-sub)] mb-1.5"
               >
                 State
               </label>
@@ -183,7 +183,7 @@ export const ProjectLocationModal: React.FC = () => {
                 id="location-state-select"
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
-                className="w-full p-2 rounded border border-[#d0d0d0] text-xs bg-white text-black outline-none focus:border-[#90af13] cursor-pointer"
+                className="w-full p-2 rounded border border-[var(--input-border)] text-xs bg-[var(--input-bg)] text-[var(--text-main)] outline-none focus:border-[var(--border-focus)] cursor-pointer"
               >
                 {states.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -194,7 +194,7 @@ export const ProjectLocationModal: React.FC = () => {
             <div>
               <label
                 htmlFor="location-station-select"
-                className="block text-[11px] font-semibold text-[#666666] mb-1.5"
+                className="block text-[11px] font-semibold text-[var(--text-sub)] mb-1.5"
               >
                 District / Station
               </label>
@@ -202,7 +202,7 @@ export const ProjectLocationModal: React.FC = () => {
                 id="location-station-select"
                 value={selectedStation}
                 onChange={(e) => setSelectedStation(e.target.value)}
-                className="w-full p-2 rounded border border-[#d0d0d0] text-xs bg-white text-black outline-none focus:border-[#90af13] cursor-pointer"
+                className="w-full p-2 rounded border border-[var(--input-border)] text-xs bg-[var(--input-bg)] text-[var(--text-main)] outline-none focus:border-[var(--border-focus)] cursor-pointer"
               >
                 {stations.map((st) => (
                   <option key={st} value={st}>{st}</option>
@@ -212,20 +212,20 @@ export const ProjectLocationModal: React.FC = () => {
           </div>
 
           {/* Environmental Parameters Card */}
-          <div className="bg-[#f4f4f4] border border-[#e0e0e0] rounded-[6px] p-4">
-            <h4 className="text-[11px] uppercase tracking-[0.05em] text-[#666666] font-bold mb-3">
+          <div className="bg-[var(--bg-grouped)] border border-[var(--border-subtle)] rounded-[6px] p-4">
+            <h4 className="text-[11px] uppercase tracking-[0.05em] text-[var(--text-sub)] font-bold mb-3">
               IRC:6 Environmental Constraints
             </h4>
 
             {loading ? (
-              <div className="text-xs text-[#666666]">Loading location data...</div>
+              <div className="text-xs text-[var(--text-sub)]">Loading location data...</div>
             ) : locationDetails ? (
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex items-center gap-2.5">
                   <Wind size={20} className="text-[#0284c7] shrink-0" aria-hidden="true" />
                   <div>
-                    <div className="text-[11px] text-[#666666]">Basic Wind Speed (V_b)</div>
-                    <div className="text-[13px] font-semibold font-mono text-black">
+                    <div className="text-[11px] text-[var(--text-sub)]">Basic Wind Speed (V_b)</div>
+                    <div className="text-[13px] font-semibold font-mono text-[var(--text-main)]">
                       {locationDetails.basic_wind_speed} m/s
                     </div>
                   </div>
@@ -234,8 +234,8 @@ export const ProjectLocationModal: React.FC = () => {
                 <div className="flex items-center gap-2.5">
                   <Activity size={20} className="text-[#dc2626] shrink-0" aria-hidden="true" />
                   <div>
-                    <div className="text-[11px] text-[#666666]">Seismic Zone</div>
-                    <div className="text-[13px] font-semibold text-black">
+                    <div className="text-[11px] text-[var(--text-sub)]">Seismic Zone</div>
+                    <div className="text-[13px] font-semibold text-[var(--text-main)]">
                       {locationDetails.seismic_zone}
                     </div>
                   </div>
@@ -244,8 +244,8 @@ export const ProjectLocationModal: React.FC = () => {
                 <div className="flex items-center gap-2.5">
                   <Thermometer size={20} className="text-[#ea580c] shrink-0" aria-hidden="true" />
                   <div>
-                    <div className="text-[11px] text-[#666666]">Max Temperature</div>
-                    <div className="text-[13px] font-semibold font-mono text-black">
+                    <div className="text-[11px] text-[var(--text-sub)]">Max Temperature</div>
+                    <div className="text-[13px] font-semibold font-mono text-[var(--text-main)]">
                       {locationDetails.max_temperature} °C
                     </div>
                   </div>
@@ -254,32 +254,32 @@ export const ProjectLocationModal: React.FC = () => {
                 <div className="flex items-center gap-2.5">
                   <Thermometer size={20} className="text-[#0d9488] shrink-0" aria-hidden="true" />
                   <div>
-                    <div className="text-[11px] text-[#666666]">Min Temperature</div>
-                    <div className="text-[13px] font-semibold font-mono text-black">
+                    <div className="text-[11px] text-[var(--text-sub)]">Min Temperature</div>
+                    <div className="text-[13px] font-semibold font-mono text-[var(--text-main)]">
                       {locationDetails.min_temperature} °C
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="text-xs text-[#666666]">No location details available</div>
+              <div className="text-xs text-[var(--text-sub)]">No location details available</div>
             )}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-[12px_18px] bg-[#f4f4f4] border-t border-[#e0e0e0] flex justify-end gap-2 select-none">
+        <div className="p-[12px_18px] bg-[var(--header-bg)] border-t border-[var(--border-color)] flex justify-end gap-2 select-none">
           <button
             type="button"
             onClick={handleClose}
-            className="px-3.5 py-1.5 rounded border border-[#d0d0d0] bg-white text-black hover:bg-[#f0f0f0] cursor-pointer text-xs transition-colors"
+            className="px-3.5 py-1.5 rounded border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-main)] hover:bg-[var(--bg-grouped)] cursor-pointer text-xs transition-colors"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleApply}
-            className="px-4 py-1.5 rounded border-0 bg-[#90af13] hover:bg-[#7a9a12] text-white font-semibold cursor-pointer text-xs flex items-center gap-1.5 transition-colors"
+            className="px-4 py-1.5 rounded border-0 bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] text-white font-semibold cursor-pointer text-xs flex items-center gap-1.5 transition-colors"
           >
             <Check size={14} aria-hidden="true" /> Apply Location
           </button>

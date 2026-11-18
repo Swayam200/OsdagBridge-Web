@@ -39,9 +39,9 @@ export const SetBoundsModal: React.FC<SetBoundsModalProps> = ({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-[370px] bg-white rounded-[4px] border-[1.5px] border-[#8cae11] shadow-[0_10px_25px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden font-sans">
+      <div className="w-[370px] bg-[var(--bg-surface)] rounded-[4px] border-[1.5px] border-[var(--accent-osdag)] shadow-[0_10px_25px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden font-sans">
         {/* Title Bar */}
-        <div className="h-8 bg-white flex items-center justify-between px-2.5 border-b-2 border-[#8cae11] select-none">
+        <div className="h-8 bg-[var(--bg-surface)] flex items-center justify-between px-2.5 border-b-2 border-[var(--accent-osdag)] select-none">
           <div className="flex items-center gap-2">
             <img
               src="/vectors/Osdag_logo.svg"
@@ -50,14 +50,14 @@ export const SetBoundsModal: React.FC<SetBoundsModalProps> = ({
               height={18}
               className="block pointer-events-none"
             />
-            <span className="text-[13px] font-bold text-black">
+            <span className="text-[13px] font-bold text-[var(--text-main)]">
               Set Bounds
             </span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="bg-transparent border-0 text-[15px] font-bold text-black cursor-pointer leading-none px-1.5 py-0.5 hover:text-[#555555]"
+            className="bg-transparent border-0 text-[15px] font-bold text-[var(--text-main)] cursor-pointer leading-none px-1.5 py-0.5 hover:text-[var(--text-muted)]"
             aria-label="Close"
           >
             ✕
@@ -68,7 +68,7 @@ export const SetBoundsModal: React.FC<SetBoundsModalProps> = ({
         <div className="p-[22px_24px_18px_24px] flex flex-col gap-4">
           {/* Lower Bound */}
           <div className="flex items-center justify-between">
-            <label className="text-[13px] font-bold text-black">
+            <label className="text-[13px] font-bold text-[var(--text-main)]">
               Lower Bound:
             </label>
             <input
@@ -76,13 +76,13 @@ export const SetBoundsModal: React.FC<SetBoundsModalProps> = ({
               value={lower}
               placeholder="Min: 8.00"
               onChange={(e) => setLower(e.target.value)}
-              className="w-[145px] h-[30px] px-2.5 py-0.5 text-[13px] font-semibold border-[1.5px] border-[#8cae11] rounded-[6px] outline-none bg-white text-black box-border"
+              className="w-[145px] h-[30px] px-2.5 py-0.5 text-[13px] font-semibold border-[1.5px] border-[var(--accent-osdag)] rounded-[6px] outline-none bg-[var(--bg-surface)] text-[var(--text-main)] box-border"
             />
           </div>
 
           {/* Upper Bound */}
           <div className="flex items-center justify-between">
-            <label className="text-[13px] font-bold text-black">
+            <label className="text-[13px] font-bold text-[var(--text-main)]">
               Upper Bound:
             </label>
             <input
@@ -90,7 +90,7 @@ export const SetBoundsModal: React.FC<SetBoundsModalProps> = ({
               value={upper}
               placeholder="Max: 40.00"
               onChange={(e) => setUpper(e.target.value)}
-              className="w-[145px] h-[30px] px-2.5 py-0.5 text-[13px] font-semibold border-[1.5px] border-[#c0c0c0] focus:border-[#8cae11] rounded-[6px] outline-none bg-white text-black box-border"
+              className="w-[145px] h-[30px] px-2.5 py-0.5 text-[13px] font-semibold border-[1.5px] border-[var(--border-color)] focus:border-[var(--accent-osdag)] rounded-[6px] outline-none bg-[var(--bg-surface)] text-[var(--text-main)] box-border"
             />
           </div>
 
@@ -99,14 +99,14 @@ export const SetBoundsModal: React.FC<SetBoundsModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="w-[78px] h-[30px] bg-white hover:bg-[#f2f2f2] border-[1.5px] border-black rounded-[6px] text-black text-[13px] font-bold cursor-pointer transition-colors"
+              className="w-[78px] h-[30px] bg-[var(--bg-surface)] hover:bg-[var(--bg-grouped)] border-[1.5px] border-[var(--border-color)] rounded-[6px] text-[var(--text-main)] text-[13px] font-bold cursor-pointer transition-colors"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleOK}
-              className="w-[60px] h-[30px] bg-white hover:bg-[#f2f2f2] border-[1.5px] border-black rounded-[6px] text-black text-[13px] font-bold cursor-pointer transition-colors"
+              className="w-[60px] h-[30px] bg-[var(--bg-surface)] hover:bg-[var(--bg-grouped)] border-[1.5px] border-[var(--border-color)] rounded-[6px] text-[var(--text-main)] text-[13px] font-bold cursor-pointer transition-colors"
             >
               OK
             </button>

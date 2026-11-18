@@ -96,7 +96,7 @@ export const OutputDock: React.FC = () => {
         <>
           {/* ── 1. Toggle Strip on Left of Output Dock ───────────────────────── */}
           <div
-            className="w-1.5 min-w-[6px] bg-[#90af13] h-full flex items-center justify-center relative cursor-pointer select-none shrink-0"
+            className="w-1.5 min-w-[6px] bg-[var(--accent-osdag)] h-full flex items-center justify-center relative cursor-pointer select-none shrink-0"
             onClick={toggleOutputDock}
             title="Hide output panel"
           >
@@ -117,14 +117,14 @@ export const OutputDock: React.FC = () => {
           {/* ── 2. Content Container (Output Panel) ─────────────────────────── */}
           <aside
             aria-label="Bridge Design Outputs"
-            className="w-[340px] min-w-[340px] bg-white border-l border-[#d0d0d0] h-full flex flex-col overflow-hidden"
+            className="w-[340px] min-w-[340px] bg-[var(--bg-surface)] border-l border-[var(--border-color)] h-full flex flex-col overflow-hidden"
           >
             <div className="p-[12px_15px_10px_15px] flex flex-col h-full min-w-[310px] box-border">
               {/* ── Top Bar ─────────────────────────────────── */}
               <div className="flex items-center mb-3">
                 <button
                   type="button"
-                  className="flex-1 bg-[#90af13] text-white font-bold text-[13px] border-0 rounded p-[7px_20px] text-center cursor-default select-none"
+                  className="flex-1 bg-[var(--accent-osdag)] text-white font-bold text-[13px] border-0 rounded p-[7px_20px] text-center cursor-default select-none"
                 >
                   Output Dock
                 </button>
@@ -134,20 +134,20 @@ export const OutputDock: React.FC = () => {
               <div
                 role="region"
                 aria-label="Analysis and design results"
-                className="flex-1 overflow-y-auto border-t border-b border-[#d0d0d0] pt-3 pb-2.5 px-0.5"
+                className="flex-1 overflow-y-auto border-t border-b border-[var(--border-color)] pt-3 pb-2.5 px-0.5"
               >
                 {/* ─── SECTION 1: Superstructure ──────────── */}
-                <div className="border border-[#90af13] rounded-[5px] bg-white p-[8px_10px_10px_10px] mt-1">
+                <div className="border border-[var(--accent-osdag)] rounded-[5px] bg-[var(--bg-surface)] p-[8px_10px_10px_10px] mt-1">
                   <div
                     className={`flex items-center justify-between cursor-pointer select-none ${
-                      isSuperstructureCollapsed ? '' : 'pb-2 border-b border-[#e0e0e0] mb-2'
+                      isSuperstructureCollapsed ? '' : 'pb-2 border-b border-[var(--border-subtle)] mb-2'
                     }`}
                     onClick={() => toggleOutputSection('superstructure')}
                   >
-                    <span className="text-[13px] font-bold text-black">Superstructure</span>
+                    <span className="text-[13px] font-bold text-[var(--text-main)]">Superstructure</span>
                     <button
                       type="button"
-                      className="bg-transparent border-0 cursor-pointer p-0.5 flex items-center justify-center"
+                      className="bg-transparent border-0 cursor-pointer p-0.5 flex items-center justify-center text-[var(--text-main)]"
                       aria-expanded={!isSuperstructureCollapsed}
                       title={isSuperstructureCollapsed ? 'Expand Superstructure' : 'Collapse Superstructure'}
                     >
@@ -158,66 +158,66 @@ export const OutputDock: React.FC = () => {
                   {!isSuperstructureCollapsed && (
                     <div className="flex flex-col gap-2.5">
                       {/* ── 1.1 Girder Analysis Results Group ─────────────────── */}
-                      <div className="relative border border-[#90af13] rounded bg-white px-2.5 pt-3.5 pb-2 mt-5 mb-1.5">
+                      <div className="relative border border-[var(--accent-osdag)] rounded bg-[var(--bg-surface)] px-2.5 pt-3.5 pb-2 mt-5 mb-1.5">
                         <span
-                          className="absolute -top-[8px] left-2 px-1.5 text-[10px] font-bold text-[#555555] tracking-[0.03em] uppercase leading-none select-none z-10 bg-white"
+                          className="absolute -top-[8px] left-2 px-1.5 text-[10px] font-bold text-[var(--text-muted)] tracking-[0.03em] uppercase leading-none select-none z-10 bg-[var(--bg-surface)]"
                         >
                           Girder Analysis Results
                         </span>
 
                         {/* Member Dropdown */}
                         <div className="flex items-center justify-between gap-3 mb-2 min-h-[28px]">
-                          <label className="w-[95px] min-w-[95px] max-w-[95px] shrink-0 text-xs text-black font-semibold select-none">
+                          <label className="w-[95px] min-w-[95px] max-w-[95px] shrink-0 text-xs text-[var(--text-main)] font-semibold select-none">
                             Member
                           </label>
                           <select
                             value={analysisMember ?? ''}
                             onChange={(e) => setAnalysisMember(e.target.value || null)}
-                            className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[#070707] rounded-[5px] bg-white text-black outline-none focus:border-[#90af13] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px]"
+                            className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[var(--input-border)] rounded-[5px] bg-[var(--input-bg)] text-[var(--text-main)] outline-none focus:border-[var(--border-focus)] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px]"
                             aria-label="Analysis Member"
                           >
-                            <option value="">-</option>
-                            <option value="All">All</option>
+                            <option value="" className="bg-[var(--input-bg)] text-[var(--text-main)]">-</option>
+                            <option value="All" className="bg-[var(--input-bg)] text-[var(--text-main)]">All</option>
                             {girderItems.map((g) => (
-                              <option key={g} value={g}>{g}</option>
+                              <option key={g} value={g} className="bg-[var(--input-bg)] text-[var(--text-main)]">{g}</option>
                             ))}
                           </select>
                         </div>
 
                         {/* Load Case Dropdown */}
                         <div className="flex items-center justify-between gap-3 mb-2 min-h-[28px]">
-                          <label className="w-[95px] min-w-[95px] max-w-[95px] shrink-0 text-xs text-black font-semibold leading-tight select-none">
+                          <label className="w-[95px] min-w-[95px] max-w-[95px] shrink-0 text-xs text-[var(--text-main)] font-semibold leading-tight select-none">
                             Load Case /<br />Combination
                           </label>
                           <select
                             value={analysisLoadCase ?? ''}
                             onChange={(e) => setAnalysisLoadCase(e.target.value || null)}
-                            className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[#070707] rounded-[5px] bg-white text-black outline-none focus:border-[#90af13] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px]"
+                            className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[var(--input-border)] rounded-[5px] bg-[var(--input-bg)] text-[var(--text-main)] outline-none focus:border-[var(--border-focus)] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px]"
                             aria-label="Analysis Load Case"
                           >
-                            <option value="">-</option>
-                            <option value="1.35 DL + 1.5 LL">1.35 DL + 1.5 LL</option>
-                            <option value="1.0 DL + 1.0 LL">1.0 DL + 1.0 LL</option>
-                            <option value="0.9 DL + 1.5 LL">0.9 DL + 1.5 LL</option>
-                            <option value="Design Envelope">Design Envelope</option>
+                            <option value="" className="bg-[var(--input-bg)] text-[var(--text-main)]">-</option>
+                            <option value="1.35 DL + 1.5 LL" className="bg-[var(--input-bg)] text-[var(--text-main)]">1.35 DL + 1.5 LL</option>
+                            <option value="1.0 DL + 1.0 LL" className="bg-[var(--input-bg)] text-[var(--text-main)]">1.0 DL + 1.0 LL</option>
+                            <option value="0.9 DL + 1.5 LL" className="bg-[var(--input-bg)] text-[var(--text-main)]">0.9 DL + 1.5 LL</option>
+                            <option value="Design Envelope" className="bg-[var(--input-bg)] text-[var(--text-main)]">Design Envelope</option>
                           </select>
                         </div>
 
                         {/* 3x3 Force Component Radio Grid */}
-                        <div className="grid grid-cols-3 gap-1 py-1.5 border-t border-b border-[#e0e0e0] my-1.5">
+                        <div className="grid grid-cols-3 gap-1 py-1.5 border-t border-b border-[var(--border-subtle)] my-1.5">
                           {FORCE_COLUMNS.map((col, cIdx) => (
                             <div key={cIdx} className="flex flex-col gap-1 items-center">
                               {col.map((item) => (
                                 <label
                                   key={item.key}
-                                  className="flex items-center justify-center gap-1.5 text-[11px] cursor-pointer select-none w-full py-0.5 text-black"
+                                  className="flex items-center justify-center gap-1.5 text-[11px] cursor-pointer select-none w-full py-0.5 text-[var(--text-main)]"
                                 >
                                   <input
                                     type="radio"
                                     name="force_radio_grid"
                                     checked={Boolean(analysisForce && analysisForce === item.key)}
                                     onChange={() => setAnalysisForce(item.key)}
-                                    className="accent-[#90af13] cursor-pointer"
+                                    className="accent-[var(--accent-osdag)] cursor-pointer"
                                   />
                                   <span className={analysisForce === item.key ? 'font-bold' : 'font-medium'}>
                                     {item.label}
@@ -229,46 +229,46 @@ export const OutputDock: React.FC = () => {
                         </div>
 
                         {/* Display Values Checkboxes */}
-                        <div className="border border-[#e0e0e0] rounded p-[6px_8px] mt-1.5">
-                          <div className="text-[10px] font-bold text-[#333333] uppercase mb-1">
+                        <div className="border border-[var(--border-subtle)] rounded p-[6px_8px] mt-1.5">
+                          <div className="text-[10px] font-bold text-[var(--text-sub)] uppercase mb-1">
                             Display Values
                           </div>
                           <div className="flex gap-4 mb-1">
-                            <label className="flex items-center gap-1.5 text-[11px] cursor-pointer select-none text-black">
+                            <label className="flex items-center gap-1.5 text-[11px] cursor-pointer select-none text-[var(--text-main)]">
                               <input
                                 type="checkbox"
                                 checked={Boolean(analysisDisplayOptions?.Max)}
                                 onChange={() => toggleAnalysisDisplayOption('Max')}
-                                className="accent-[#90af13] cursor-pointer"
+                                className="accent-[var(--accent-osdag)] cursor-pointer"
                               />
                               <span>Max</span>
                             </label>
-                            <label className="flex items-center gap-1.5 text-[11px] cursor-pointer select-none text-black">
+                            <label className="flex items-center gap-1.5 text-[11px] cursor-pointer select-none text-[var(--text-main)]">
                               <input
                                 type="checkbox"
                                 checked={Boolean(analysisDisplayOptions?.Min)}
                                 onChange={() => toggleAnalysisDisplayOption('Min')}
-                                className="accent-[#90af13] cursor-pointer"
+                                className="accent-[var(--accent-osdag)] cursor-pointer"
                               />
                               <span>Min</span>
                             </label>
                           </div>
                           <div className="flex gap-4">
-                            <label className="flex items-center gap-1.5 text-[11px] cursor-pointer select-none text-black">
+                            <label className="flex items-center gap-1.5 text-[11px] cursor-pointer select-none text-[var(--text-main)]">
                               <input
                                 type="checkbox"
                                 checked={Boolean(analysisDisplayOptions?.All)}
                                 onChange={() => toggleAnalysisDisplayOption('All')}
-                                className="accent-[#90af13] cursor-pointer"
+                                className="accent-[var(--accent-osdag)] cursor-pointer"
                               />
                               <span>All</span>
                             </label>
-                            <label className="flex items-center gap-1.5 text-[11px] cursor-pointer select-none text-black">
+                            <label className="flex items-center gap-1.5 text-[11px] cursor-pointer select-none text-[var(--text-main)]">
                               <input
                                 type="checkbox"
                                 checked={Boolean(analysisDisplayOptions?.Summary)}
                                 onChange={() => toggleAnalysisDisplayOption('Summary')}
-                                className="accent-[#90af13] cursor-pointer"
+                                className="accent-[var(--accent-osdag)] cursor-pointer"
                               />
                               <span>Summary</span>
                             </label>
@@ -277,46 +277,46 @@ export const OutputDock: React.FC = () => {
                       </div>
 
                       {/* ── 1.2 Girder Design Group ─────────────────── */}
-                      <div className="relative border border-[#90af13] rounded bg-white px-2.5 pt-3.5 pb-2 mt-5 mb-1.5">
+                      <div className="relative border border-[var(--accent-osdag)] rounded bg-[var(--bg-surface)] px-2.5 pt-3.5 pb-2 mt-5 mb-1.5">
                         <span
-                          className="absolute -top-[8px] left-2 px-1.5 text-[10px] font-bold text-[#555555] tracking-[0.03em] uppercase leading-none select-none z-10 bg-white"
+                          className="absolute -top-[8px] left-2 px-1.5 text-[10px] font-bold text-[var(--text-muted)] tracking-[0.03em] uppercase leading-none select-none z-10 bg-[var(--bg-surface)]"
                         >
                           Girder Design
                         </span>
 
                         {/* Member Dropdown */}
                         <div className="flex items-center justify-between gap-3 mb-2 min-h-[28px]">
-                          <label className="w-[95px] min-w-[95px] max-w-[95px] shrink-0 text-xs text-black font-semibold select-none">
+                          <label className="w-[95px] min-w-[95px] max-w-[95px] shrink-0 text-xs text-[var(--text-main)] font-semibold select-none">
                             Member
                           </label>
                           <select
                             value={designMember ?? ''}
                             onChange={(e) => setDesignMember(e.target.value || null)}
-                            className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[#070707] rounded-[5px] bg-white text-black outline-none focus:border-[#90af13] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px]"
+                            className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[var(--input-border)] rounded-[5px] bg-[var(--input-bg)] text-[var(--text-main)] outline-none focus:border-[var(--border-focus)] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px]"
                             aria-label="Design Member"
                           >
-                            <option value="">-</option>
+                            <option value="" className="bg-[var(--input-bg)] text-[var(--text-main)]">-</option>
                             {girderItems.map((g) => (
-                              <option key={g} value={g}>{g}</option>
+                              <option key={g} value={g} className="bg-[var(--input-bg)] text-[var(--text-main)]">{g}</option>
                             ))}
                           </select>
                         </div>
 
                         {/* Load Case Dropdown */}
                         <div className="flex items-center justify-between gap-3 mb-2.5 min-h-[28px]">
-                          <label className="w-[95px] min-w-[95px] max-w-[95px] shrink-0 text-xs text-black font-semibold leading-tight select-none">
+                          <label className="w-[95px] min-w-[95px] max-w-[95px] shrink-0 text-xs text-[var(--text-main)] font-semibold leading-tight select-none">
                             Load Case /<br />Combination
                           </label>
                           <select
                             value={designLoadCase ?? ''}
                             onChange={(e) => setDesignLoadCase(e.target.value || null)}
-                            className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[#070707] rounded-[5px] bg-white text-black outline-none focus:border-[#90af13] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px]"
+                            className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[var(--input-border)] rounded-[5px] bg-[var(--input-bg)] text-[var(--text-main)] outline-none focus:border-[var(--border-focus)] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px]"
                             aria-label="Design Load Case"
                           >
-                            <option value="">-</option>
-                            <option value="Design Envelope">Design Envelope</option>
-                            <option value="1.35 DL + 1.5 LL">1.35 DL + 1.5 LL</option>
-                            <option value="1.0 DL + 1.0 LL">1.0 DL + 1.0 LL</option>
+                            <option value="" className="bg-[var(--input-bg)] text-[var(--text-main)]">-</option>
+                            <option value="Design Envelope" className="bg-[var(--input-bg)] text-[var(--text-main)]">Design Envelope</option>
+                            <option value="1.35 DL + 1.5 LL" className="bg-[var(--input-bg)] text-[var(--text-main)]">1.35 DL + 1.5 LL</option>
+                            <option value="1.0 DL + 1.0 LL" className="bg-[var(--input-bg)] text-[var(--text-main)]">1.0 DL + 1.0 LL</option>
                           </select>
                         </div>
 
@@ -338,16 +338,16 @@ export const OutputDock: React.FC = () => {
                           disabled={!isDesignAvailable}
                           title={!isDesignAvailable ? 'Available after running design' : undefined}
                           onClick={isDesignAvailable ? () => setSteelDesignModalOpen(true) : undefined}
-                          className="w-full bg-[#90af13] hover:bg-[#7a9a12] disabled:bg-[#d0d0d0] disabled:text-[#666666] text-white font-bold rounded p-[6px_14px] text-[11px] min-h-[28px] transition-colors cursor-pointer select-none disabled:cursor-not-allowed mt-2"
+                          className="w-full bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--border-color)] disabled:text-[var(--text-muted)] text-white font-bold rounded p-[6px_14px] text-[11px] min-h-[28px] transition-colors cursor-pointer select-none disabled:cursor-not-allowed mt-2"
                         >
                           Analysis and Design Summary
                         </button>
                       </div>
 
                       {/* ── 1.3 Transverse Design Group ───────────────────────── */}
-                      <div className="relative border border-[#90af13] rounded bg-white px-2.5 pt-3.5 pb-2 mt-5 mb-1.5">
+                      <div className="relative border border-[var(--accent-osdag)] rounded bg-[var(--bg-surface)] px-2.5 pt-3.5 pb-2 mt-5 mb-1.5">
                         <span
-                          className="absolute -top-[8px] left-2 px-1.5 text-[10px] font-bold text-[#555555] tracking-[0.03em] uppercase leading-none select-none z-10 bg-white"
+                          className="absolute -top-[8px] left-2 px-1.5 text-[10px] font-bold text-[var(--text-muted)] tracking-[0.03em] uppercase leading-none select-none z-10 bg-[var(--bg-surface)]"
                         >
                           Transverse Design
                         </span>
@@ -356,16 +356,16 @@ export const OutputDock: React.FC = () => {
                           disabled={!isDesignAvailable}
                           title={!isDesignAvailable ? 'Available after running design' : undefined}
                           onClick={isDesignAvailable ? () => setTransverseDesignModalOpen(true) : undefined}
-                          className="w-full bg-[#90af13] hover:bg-[#7a9a12] disabled:bg-[#d0d0d0] disabled:text-[#666666] text-white font-bold rounded p-[6px_14px] text-[11px] min-h-[28px] transition-colors cursor-pointer select-none disabled:cursor-not-allowed mt-0.5"
+                          className="w-full bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--border-color)] disabled:text-[var(--text-muted)] text-white font-bold rounded p-[6px_14px] text-[11px] min-h-[28px] transition-colors cursor-pointer select-none disabled:cursor-not-allowed mt-0.5"
                         >
                           Design Summary
                         </button>
                       </div>
 
                       {/* ── 1.4 Deck Design Group ─────────────────────────────── */}
-                      <div className="relative border border-[#90af13] rounded bg-white px-2.5 pt-3.5 pb-2 mt-5 mb-1.5">
+                      <div className="relative border border-[var(--accent-osdag)] rounded bg-[var(--bg-surface)] px-2.5 pt-3.5 pb-2 mt-5 mb-1.5">
                         <span
-                          className="absolute -top-[8px] left-2 px-1.5 text-[10px] font-bold text-[#555555] tracking-[0.03em] uppercase leading-none select-none z-10 bg-white"
+                          className="absolute -top-[8px] left-2 px-1.5 text-[10px] font-bold text-[var(--text-muted)] tracking-[0.03em] uppercase leading-none select-none z-10 bg-[var(--bg-surface)]"
                         >
                           Deck Design
                         </span>
@@ -374,7 +374,7 @@ export const OutputDock: React.FC = () => {
                           disabled={!isDesignAvailable}
                           title={!isDesignAvailable ? 'Available after running design' : undefined}
                           onClick={isDesignAvailable ? () => setDeckDesignModalOpen(true) : undefined}
-                          className="w-full bg-[#90af13] hover:bg-[#7a9a12] disabled:bg-[#d0d0d0] disabled:text-[#666666] text-white font-bold rounded p-[6px_14px] text-[11px] min-h-[28px] transition-colors cursor-pointer select-none disabled:cursor-not-allowed mt-0.5"
+                          className="w-full bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--border-color)] disabled:text-[var(--text-muted)] text-white font-bold rounded p-[6px_14px] text-[11px] min-h-[28px] transition-colors cursor-pointer select-none disabled:cursor-not-allowed mt-0.5"
                         >
                           Design Summary
                         </button>
@@ -384,26 +384,26 @@ export const OutputDock: React.FC = () => {
                 </div>
 
                 {/* ─── SECTION 2: Substructure ────────────── */}
-                <div className="border border-[#90af13] rounded-[5px] bg-white p-[8px_10px_10px_10px] mt-2.5">
+                <div className="border border-[var(--accent-osdag)] rounded-[5px] bg-[var(--bg-surface)] p-[8px_10px_10px_10px] mt-2.5">
                   <div
                     className={`flex items-center justify-between cursor-pointer select-none ${
-                      isSubstructureCollapsed ? '' : 'pb-2 border-b border-[#e0e0e0] mb-2'
+                      isSubstructureCollapsed ? '' : 'pb-2 border-b border-[var(--border-subtle)] mb-2'
                     }`}
                     onClick={() => toggleOutputSection('substructure')}
                   >
-                    <span className="text-[13px] font-bold text-black">Substructure</span>
+                    <span className="text-[13px] font-bold text-[var(--text-main)]">Substructure</span>
                     <button
                       type="button"
-                      className="bg-transparent border-0 cursor-pointer p-0.5 flex items-center justify-center"
+                      className="bg-transparent border-0 cursor-pointer p-0.5 flex items-center justify-center text-[var(--text-main)]"
                       aria-expanded={!isSubstructureCollapsed}
                       title={isSubstructureCollapsed ? 'Expand Substructure' : 'Collapse Substructure'}
                     >
-                      {isSubstructureCollapsed ? <ChevronDown size={17} /> : <ChevronUp size={17} />}
+                      {isSuperstructureCollapsed ? <ChevronDown size={17} /> : <ChevronUp size={17} />}
                     </button>
                   </div>
 
                   {!isSubstructureCollapsed && (
-                    <div className="py-1.5 px-1 text-[11px] text-[#333333] italic">
+                    <div className="py-1.5 px-1 text-[11px] text-[var(--text-sub)] italic">
                       Substructure modules will activate when substructure geometry is configured.
                     </div>
                   )}
@@ -417,7 +417,7 @@ export const OutputDock: React.FC = () => {
                   disabled={!isDesignAvailable}
                   title={!isDesignAvailable ? 'Available after running design' : undefined}
                   onClick={isDesignAvailable ? () => setGenerateResultsModalOpen(true) : undefined}
-                  className="flex-[1.28] min-w-0 h-[34px] min-h-[34px] bg-[#90af13] hover:bg-[#7a9a12] disabled:bg-[#d6e3a3] disabled:text-[#444444] text-white font-semibold text-[11px] rounded px-2 py-1.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer select-none disabled:cursor-not-allowed"
+                  className="flex-[1.28] min-w-0 h-[34px] min-h-[34px] bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--accent-disabled)] disabled:text-[var(--text-muted)] text-white font-semibold text-[11px] rounded px-2 py-1.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer select-none disabled:cursor-not-allowed"
                 >
                   <img src="/vectors/design_result_table.svg" alt="" width={16} height={16} />
                   <span className="truncate">Generate Results Table</span>
@@ -428,7 +428,7 @@ export const OutputDock: React.FC = () => {
                   disabled={!isDesignAvailable}
                   title={!isDesignAvailable ? 'Available after running design' : undefined}
                   onClick={isDesignAvailable ? () => setReportModalOpen(true) : undefined}
-                  className="flex-[0.88] min-w-0 h-[34px] min-h-[34px] bg-[#90af13] hover:bg-[#7a9a12] disabled:bg-[#d6e3a3] disabled:text-[#444444] text-white font-semibold text-[11px] rounded px-2 py-1.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer select-none disabled:cursor-not-allowed"
+                  className="flex-[0.88] min-w-0 h-[34px] min-h-[34px] bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] disabled:bg-[var(--accent-disabled)] disabled:text-[var(--text-muted)] text-white font-semibold text-[11px] rounded px-2 py-1.5 flex items-center justify-center gap-1.5 transition-colors cursor-pointer select-none disabled:cursor-not-allowed"
                 >
                   <img src="/vectors/design_report.svg" alt="" width={16} height={16} />
                   <span className="truncate">Generate Report</span>

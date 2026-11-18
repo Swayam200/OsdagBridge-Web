@@ -66,8 +66,8 @@ export const LoadCombinationSubTab: React.FC = () => {
       {/* Left Column */}
       <div className="hide-scrollbar flex-[1.2] min-w-0 flex flex-col gap-3 h-full overflow-y-auto pr-0.5 pb-2">
         {/* Load Combinations from IRC 6 */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white flex flex-col">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)] flex flex-col">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Load Combinations from IRC 6
           </div>
 
@@ -80,7 +80,7 @@ export const LoadCombinationSubTab: React.FC = () => {
                   onClick={() => handleToggle(c.id, Boolean(checked))}
                   className="flex items-center justify-between p-[4px_2px] cursor-pointer rounded-[3px] transition-colors hover:bg-[#f7f7f7]"
                 >
-                  <label className="text-[11.5px] text-black cursor-pointer select-none font-sans pr-3">
+                  <label className="text-[11.5px] text-[var(--text-main)] cursor-pointer select-none font-sans pr-3">
                     {c.name} : {c.expr}
                   </label>
                   <div className="w-10 flex items-center justify-center">
@@ -97,11 +97,11 @@ export const LoadCombinationSubTab: React.FC = () => {
         </div>
 
         {/* Add Custom Combination Box */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
           <button
             type="button"
             onClick={() => setIsAddingCustom(true)}
-            className={`bg-white hover:bg-[#f0f0f0] border border-[#757575] rounded-[4px] p-[5px_14px] text-[11.5px] font-semibold text-[#333333] cursor-pointer transition-colors ${
+            className={`bg-[var(--bg-surface)] hover:bg-[var(--bg-grouped)] border border-[#757575] rounded-[4px] p-[5px_14px] text-[11.5px] font-semibold text-[var(--text-sub)] cursor-pointer transition-colors ${
               customCombos.length > 0 ? 'mb-3' : 'mb-0'
             }`}
           >
@@ -120,7 +120,7 @@ export const LoadCombinationSubTab: React.FC = () => {
                     onClick={() => handleToggle(c.id, Boolean(checked))}
                     className="flex items-center justify-between p-[4px_2px] cursor-pointer rounded-[3px] transition-colors hover:bg-[#f7f7f7]"
                   >
-                    <label className="text-[11.5px] text-black cursor-pointer select-none font-sans pr-3">
+                    <label className="text-[11.5px] text-[var(--text-main)] cursor-pointer select-none font-sans pr-3">
                       {displayText}
                     </label>
                     <div className="w-10 flex items-center justify-center">

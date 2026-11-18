@@ -89,7 +89,7 @@ export const WindLoadSubTab: React.FC = () => {
 
     return (
       <div className="flex items-center justify-between">
-        <label className="text-xs text-black">{label}</label>
+        <label className="text-xs text-[var(--text-main)]">{label}</label>
         <div className="w-[186px] flex items-center gap-1.5 justify-end">
           <select
             value={mode}
@@ -122,14 +122,14 @@ export const WindLoadSubTab: React.FC = () => {
       {/* Left Column */}
       <div className="card-scroll flex-[1.2] min-w-0 flex flex-col gap-3 overflow-y-auto pr-1">
         {/* Wind Load (WL) Inputs */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Wind Load (WL) Inputs
           </div>
           <div className="flex flex-col gap-2">
             {/* Basic Wind Speed, Vb */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">
+              <label className="text-xs text-[var(--text-main)]">
                 Basic Wind Speed, V<sub>b</sub> (m/s)
               </label>
               <input type="text" readOnly value={basicWindSpeed} className={readOnlyInputClass} />
@@ -137,7 +137,7 @@ export const WindLoadSubTab: React.FC = () => {
 
             {/* Average Exposed Height, H */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Average Exposed Height, H (m)</label>
+              <label className="text-xs text-[var(--text-main)]">Average Exposed Height, H (m)</label>
               <input
                 type="text"
                 value={exposedHeight}
@@ -148,7 +148,7 @@ export const WindLoadSubTab: React.FC = () => {
 
             {/* Type of Terrain */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Type of Terrain</label>
+              <label className="text-xs text-[var(--text-main)]">Type of Terrain</label>
               <select
                 value={terrainType}
                 onChange={(e) => updateAdditionalInput('loading.wind_load.terrain_type', e.target.value)}
@@ -161,7 +161,7 @@ export const WindLoadSubTab: React.FC = () => {
 
             {/* Site Topography */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">Site Topography</label>
+              <label className="text-xs text-[var(--text-main)]">Site Topography</label>
               <select
                 value={siteTopo}
                 onChange={(e) => updateAdditionalInput('loading.wind_load.site_topography', e.target.value)}
@@ -247,20 +247,20 @@ export const WindLoadSubTab: React.FC = () => {
         </div>
 
         {/* Computed Values */}
-        <div className="border border-[#c0c0c0] rounded-[6px] p-[12px_16px] bg-white">
-          <div className="text-xs font-bold text-black mb-2.5">
+        <div className="border border-[var(--border-color)] rounded-[6px] p-[12px_16px] bg-[var(--bg-surface)]">
+          <div className="text-xs font-bold text-[var(--text-main)] mb-2.5">
             Computed Values
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">
+              <label className="text-xs text-[var(--text-main)]">
                 Hourly Mean Wind Speed, V<sub>z</sub> (m/s)
               </label>
               <input type="text" readOnly value={vzStr} className={readOnlyInputClass} />
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="text-xs text-black">
+              <label className="text-xs text-[var(--text-main)]">
                 Hourly Wind Pressure, P<sub>z</sub> (N/m²)
               </label>
               <input type="text" readOnly value={pzStr} className={readOnlyInputClass} />

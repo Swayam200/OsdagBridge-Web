@@ -24,7 +24,7 @@ export const WearingCourseSubTab: React.FC = () => {
       {/* Material */}
       <div className="flex items-center">
         <div className="w-[200px] shrink-0">
-          <label className="text-xs font-bold text-black">
+          <label className="text-xs font-bold text-[var(--text-main)]">
             Material:
           </label>
         </div>
@@ -42,7 +42,7 @@ export const WearingCourseSubTab: React.FC = () => {
       {/* Density (kN/m³) */}
       <div className="flex items-center">
         <div className="w-[200px] shrink-0">
-          <label className="text-xs font-bold text-black">
+          <label className="text-xs font-bold text-[var(--text-main)]">
             Density (kN/m³):
           </label>
         </div>
@@ -59,7 +59,7 @@ export const WearingCourseSubTab: React.FC = () => {
       {/* Thickness (mm) */}
       <div className="flex items-center">
         <div className="w-[200px] shrink-0">
-          <label className="text-xs font-bold text-black">
+          <label className="text-xs font-bold text-[var(--text-main)]">
             Thickness (mm):
           </label>
         </div>

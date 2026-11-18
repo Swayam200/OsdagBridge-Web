@@ -8,7 +8,7 @@ export const RailingSubTab: React.FC = () => {
   return (
     <div className="grid grid-cols-2 gap-x-8 gap-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-xs text-black min-w-[160px]">Type:</label>
+        <label className="text-xs text-[var(--text-main)] min-w-[160px]">Type:</label>
         <select
           value={additionalInputs['typical_section.railing.type'] ?? 'IRC 5 - RCC Railing'}
           onChange={(e) => updateAdditionalInput('typical_section.railing.type', e.target.value)}
@@ -20,7 +20,7 @@ export const RailingSubTab: React.FC = () => {
       </div>
 
       <div className="flex items-center justify-between">
-        <label className="text-xs text-black min-w-[160px]">Height (m):</label>
+        <label className="text-xs text-[var(--text-main)] min-w-[160px]">Height (m):</label>
         <input
           type="number"
           step="0.01"

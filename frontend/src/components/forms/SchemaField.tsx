@@ -25,7 +25,7 @@ function FieldLabel({ field, htmlFor }: { field: UIFieldSchema; htmlFor?: string
   return (
     <label
       htmlFor={htmlFor}
-      className="w-[110px] min-w-[110px] max-w-[110px] shrink-0 text-xs text-black font-semibold leading-tight whitespace-pre-line text-left select-none"
+      className="w-[110px] min-w-[110px] max-w-[110px] shrink-0 text-xs text-[var(--text-main)] font-semibold leading-tight whitespace-pre-line text-left select-none"
     >
       {displayLabel}
     </label>
@@ -38,7 +38,7 @@ function FieldError({ id, error }: { id: string; error?: string }) {
     <div
       id={id}
       role="alert"
-      className="flex items-center gap-1 mt-1 text-[#ff0000] text-[11px] pl-[122px]"
+      className="flex items-center gap-1 mt-1 text-[var(--danger)] text-[11px] pl-[122px]"
     >
       <AlertCircle size={12} aria-hidden="true" />
       <span>{error}</span>
@@ -105,7 +105,7 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
           className={`w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] px-3 text-[11px] font-bold rounded text-center select-none flex items-center justify-center transition-colors border disabled:opacity-65 disabled:cursor-not-allowed ${
             isLocationError
               ? 'bg-[#d32f2f] hover:bg-[#b71c1c] text-white border-[#d32f2f]'
-              : 'bg-[#90af13] hover:bg-[#7a9a12] text-white border-[#90af13]'
+              : 'bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] text-white border-[var(--accent-border)]'
           }`}
         >
           <span className="truncate">{buttonText}</span>
@@ -113,7 +113,7 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
       </div>
 
       {showPin && (
-        <div className="flex items-center gap-1.5 mt-1 pl-[122px] text-[11px] text-[#333333]">
+        <div className="flex items-center gap-1.5 mt-1 pl-[122px] text-[11px] text-[var(--text-sub)]">
           <span aria-hidden="true">📍</span>
           <span className="truncate">{locationText}</span>
         </div>
@@ -160,10 +160,10 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             onChange={(e) => handleChange(e.target.value)}
             className={`${
               field.is_material_field ? 'w-[128px] min-w-[128px]' : 'w-full'
-            } h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[#070707] rounded-[5px] bg-white text-black outline-none focus:border-[#90af13] focus:ring-1 focus:ring-[#90af13] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px] disabled:bg-[#f1f1f1] disabled:text-[#666666] disabled:cursor-not-allowed`}
+            } h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-[var(--input-border)] rounded-[5px] bg-[var(--input-bg)] text-[var(--text-main)] outline-none focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--border-focus)] cursor-pointer appearance-none bg-[url('/vectors/arrow_down_light.svg')] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px] disabled:bg-[var(--input-disabled-bg)] disabled:text-[var(--input-disabled-color)] disabled:cursor-not-allowed`}
           >
             {field.placeholder && (
-              <option value="" disabled>
+              <option value="" disabled className="bg-[var(--input-bg)] text-[var(--text-muted)]">
                 {field.placeholder}
               </option>
             )}
@@ -172,6 +172,7 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
                 key={opt}
                 value={opt}
                 disabled={field.disabled_options?.includes(opt)}
+                className="bg-[var(--input-bg)] text-[var(--text-main)]"
               >
                 {opt}
               </option>
@@ -211,7 +212,7 @@ const CheckboxField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             disabled={isLocked}
             aria-required={field.required || undefined}
             onChange={(e) => updateField(field.key, e.target.checked)}
-            className="w-4 h-4 accent-[#90af13] cursor-pointer disabled:cursor-not-allowed"
+            className="w-4 h-4 accent-[var(--accent-osdag)] cursor-pointer disabled:cursor-not-allowed"
           />
         </div>
       </div>
@@ -222,7 +223,7 @@ const CheckboxField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
 const NoteField: React.FC<{ field: UIFieldSchema }> = ({ field }) => (
   <p
     role="note"
-    className="mb-2 text-[11px] text-[#333333] leading-snug p-2 bg-[#f4f4f4] rounded border-l-4 border-[#90af13]"
+    className="mb-2 text-[11px] text-[var(--text-sub)] leading-snug p-2 bg-[var(--bg-grouped)] rounded border-l-4 border-[var(--accent-osdag)]"
   >
     {field.note || field.label}
   </p>
@@ -336,18 +337,18 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             onChange={(e) => handleTyping(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            className={`w-full h-7 min-h-[28px] py-0.5 px-2 text-xs border rounded-[5px] bg-white text-black outline-none transition-colors disabled:bg-[#f1f1f1] disabled:text-[#666666] disabled:cursor-not-allowed ${
+            className={`w-full h-7 min-h-[28px] py-0.5 px-2 text-xs border rounded-[5px] bg-[var(--input-bg)] text-[var(--text-main)] outline-none transition-colors disabled:bg-[var(--input-disabled-bg)] disabled:text-[var(--input-disabled-color)] disabled:cursor-not-allowed ${
               showTrailingUnit ? 'pr-8' : ''
             } ${
               requiredErrors.includes(field.key) || (!isGeometric && validationError)
                 ? 'border-[#d32f2f] focus:border-[#d32f2f] focus:ring-1 focus:ring-[#d32f2f]'
-                : 'border-[#070707] focus:border-[#90af13] focus:ring-1 focus:ring-[#90af13]'
+                : 'border-[var(--input-border)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--border-focus)]'
             }`}
           />
           {showTrailingUnit && (
             <span
               aria-hidden="true"
-              className="absolute right-2 text-[11px] text-[#333333] pointer-events-none select-none"
+              className="absolute right-2 text-[11px] text-[var(--text-sub)] pointer-events-none select-none"
             >
               {field.unit}
             </span>
