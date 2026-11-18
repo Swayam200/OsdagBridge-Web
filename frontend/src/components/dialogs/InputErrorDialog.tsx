@@ -30,14 +30,8 @@ export const InputErrorDialog: React.FC = () => {
 
   if (!inputErrorDialog) return null;
 
-  const isCritical = inputErrorDialog.type === 'critical';
-  const title = inputErrorDialog.title || (isCritical ? 'Empty Required Fields' : 'Input Error');
-  const iconSrc = isCritical ? '/vectors/msg_critical.svg' : '/vectors/msg_warning.svg';
-
   const handleOk = () => {
-    if (inputErrorDialog.onOk) {
-      inputErrorDialog.onOk();
-    }
+    inputErrorDialog.onOk();
     dismissInputErrorDialog();
   };
 
@@ -65,7 +59,7 @@ export const InputErrorDialog: React.FC = () => {
               id="input-error-title"
               className="text-xs font-semibold text-[var(--text-main)]"
             >
-              {title}
+              Input Error
             </span>
           </div>
 
@@ -84,7 +78,7 @@ export const InputErrorDialog: React.FC = () => {
           {/* Inner row: warning/critical icon + text */}
           <div className="flex items-start gap-3.5">
             <img
-              src={iconSrc}
+              src="/vectors/msg_warning.svg"
               alt="Alert"
               width={34}
               height={34}
@@ -104,11 +98,7 @@ export const InputErrorDialog: React.FC = () => {
               type="button"
               onClick={handleOk}
               autoFocus
-              className={`h-[30px] min-w-[70px] px-[18px] py-[5px] text-white border-0 rounded-[5px] text-xs font-semibold cursor-pointer transition-colors ${
-                isCritical
-                  ? 'bg-[#F44336] hover:bg-[#E53935] active:bg-[#D32F2F]'
-                  : 'bg-[#FF9800] hover:bg-[#FB8C00] active:bg-[#F57C00]'
-              }`}
+              className="h-[30px] min-w-[70px] px-[18px] py-[5px] text-white border-0 rounded-[5px] text-xs font-semibold cursor-pointer transition-colors bg-[#FF9800] hover:bg-[#FB8C00] active:bg-[#F57C00]"
             >
               OK
             </button>

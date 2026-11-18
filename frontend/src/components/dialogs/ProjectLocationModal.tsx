@@ -22,7 +22,6 @@ export const ProjectLocationModal: React.FC = () => {
   const location = useBridgeStore((s) => s.location);
   const constants = useBridgeStore((s) => s.constants);
   const updateField = useBridgeStore((s) => s.updateField);
-  const updateAdditionalInput = useBridgeStore((s) => s.updateAdditionalInput);
 
   const [states, setStates] = useState<string[]>([]);
   const [stations, setStations] = useState<string[]>([]);
@@ -129,12 +128,6 @@ export const ProjectLocationModal: React.FC = () => {
       updateField('loading.temperature_load.highest_max_temp', locationDetails.max_temperature);
       updateField('loading.temperature_load.lowest_min_temp', locationDetails.min_temperature);
     }
-
-    // Apply to Additional Inputs sub-tabs
-    updateAdditionalInput('loading.wind_load.basic_wind_speed', String(locationDetails.basic_wind_speed));
-    updateAdditionalInput('loading.seismic_load.seismic_zone', String(locationDetails.seismic_zone));
-    updateAdditionalInput('loading.temperature_load.highest_max_temp', String(locationDetails.max_temperature));
-    updateAdditionalInput('loading.temperature_load.lowest_min_temp', String(locationDetails.min_temperature));
 
     setLocationModalOpen(false);
   };

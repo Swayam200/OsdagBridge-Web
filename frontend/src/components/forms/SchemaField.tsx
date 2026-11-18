@@ -54,9 +54,6 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
     location,
     isLocked,
     setLocationModalOpen,
-    setAdditionalInputsOpen,
-    validateRequiredInputs,
-    requiredErrors,
     constants,
   } = useBridgeStore();
 
@@ -71,7 +68,6 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
     : (projectLocationKey && inputs[projectLocationKey] ? inputs[projectLocationKey] : null);
 
   const hasLocation = Boolean(locationText);
-  const isLocationError = opensLocationDialog && requiredErrors.includes('project.location') && !hasLocation;
 
   const isAdditionalBtn = Boolean(
     field.key === 'geometry.additional_btn' ||
@@ -81,7 +77,7 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   );
 
   const buttonText = opensLocationDialog
-    ? (isLocationError ? 'Select Location' : (locationText || field.button_label || field.label))
+    ? (locationText || field.button_label || field.label)
     : (isAdditionalBtn ? (field.button_label || 'Modify Here') : (field.button_label || field.label));
 
   const showPin = field.post_row?.kind === 'info_row' && hasLocation;
@@ -96,17 +92,9 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
           onClick={() => {
             if (opensLocationDialog) {
               setLocationModalOpen(true);
-            } else if (isAdditionalBtn) {
-              if (validateRequiredInputs()) {
-                setAdditionalInputsOpen(true);
-              }
             }
           }}
-          className={`w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] px-3 text-[11px] font-bold rounded text-center select-none flex items-center justify-center transition-colors border disabled:opacity-65 disabled:cursor-not-allowed ${
-            isLocationError
-              ? 'bg-[#d32f2f] hover:bg-[#b71c1c] text-white border-[#d32f2f]'
-              : 'bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] text-white border-[var(--accent-border)]'
-          }`}
+          className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] px-3 text-[11px] font-bold rounded text-center select-none flex items-center justify-center transition-colors border disabled:opacity-65 disabled:cursor-not-allowed bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] text-white border-[var(--accent-border)]"
         >
           <span className="truncate">{buttonText}</span>
         </button>
@@ -230,7 +218,7 @@ const NoteField: React.FC<{ field: UIFieldSchema }> = ({ field }) => (
 );
 
 const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, updateField, isLocked, showInputErrorDialog, requiredErrors, constants } = useBridgeStore();
+  const { inputs, updateField, isLocked, showInputErrorDialog, constants } = useBridgeStore();
 
   const value = inputs[field.key] ?? field.default ?? '';
   const [localVal, setLocalVal] = useState<string>(
@@ -340,7 +328,7 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             className={`w-full h-7 min-h-[28px] py-0.5 px-2 text-xs border rounded-[5px] bg-[var(--input-bg)] text-[var(--text-main)] outline-none transition-colors disabled:bg-[var(--input-disabled-bg)] disabled:text-[var(--input-disabled-color)] disabled:cursor-not-allowed ${
               showTrailingUnit ? 'pr-8' : ''
             } ${
-              requiredErrors.includes(field.key) || (!isGeometric && validationError)
+              !isGeometric && validationError
                 ? 'border-[#d32f2f] focus:border-[#d32f2f] focus:ring-1 focus:ring-[#d32f2f]'
                 : 'border-[var(--input-border)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--border-focus)]'
             }`}

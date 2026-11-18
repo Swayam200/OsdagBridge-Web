@@ -25,8 +25,6 @@ export const InputDock: React.FC = () => {
     toggleContainer,
     saveInputs,
     runDesign,
-    setAdditionalInputsOpen,
-    validateRequiredInputs,
   } = useBridgeStore();
 
   const [showLockTooltip, setShowLockTooltip] = useState(false);
@@ -132,14 +130,10 @@ export const InputDock: React.FC = () => {
 
                 <button
                   type="button"
-                  title="Open Additional Inputs dialog"
-                  aria-label="Open Additional Inputs dialog"
-                  onClick={() => {
-                    if (validateRequiredInputs()) {
-                      setAdditionalInputsOpen(true);
-                    }
-                  }}
-                  className="flex-[1_1_0] min-w-0 bg-[var(--bg-surface)] hover:bg-[var(--accent-osdag)] hover:text-white text-[var(--text-main)] font-bold text-xs border border-[var(--input-border)] hover:border-[var(--accent-osdag)] rounded-[5px] p-[6px_8px] text-center whitespace-nowrap overflow-hidden text-ellipsis transition-colors cursor-pointer select-none"
+                  disabled
+                  title="Additional inputs will be enabled after basic inputs validation"
+                  aria-label="Additional inputs (available after basic inputs validation)"
+                  className="flex-[1_1_0] min-w-0 bg-[var(--bg-grouped)] text-[var(--text-muted)] font-bold text-xs border border-[var(--border-color)] rounded-[5px] p-[6px_8px] text-center whitespace-nowrap overflow-hidden text-ellipsis cursor-not-allowed select-none opacity-60"
                 >
                   Additional Inputs
                 </button>
