@@ -62,9 +62,9 @@ export const LogDock: React.FC = () => {
 
         {/* Inline progress bar */}
         {logProgress !== null && logProgress < 100 && (
-          <div className="ml-2 w-[60px] h-1 bg-[#90af13]/20 rounded overflow-hidden">
+          <div className="ml-2 w-[60px] h-1 bg-accent/20 rounded overflow-hidden">
             <div
-              className="h-full bg-[#90af13] transition-[width] duration-200"
+              className="h-full bg-accent transition-[width] duration-200"
               style={{ width: `${logProgress}%` }}
             />
           </div>

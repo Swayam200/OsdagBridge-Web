@@ -9,7 +9,6 @@ export const PercentBarWidget: React.FC<PercentBarWidgetProps> = ({ label, value
   const clampedValue = Math.max(0, value ?? 0);
   const exceeded = clampedValue >= 100.0;
   const fillRatio = Math.min(clampedValue / 150.0, 1.0);
-  const fillColor = exceeded ? '#CC2222' : '#90AF13';
   const markerLeftPercent = (100.0 / 150.0) * 100; // 66.67%
 
   return (
@@ -28,7 +27,7 @@ export const PercentBarWidget: React.FC<PercentBarWidgetProps> = ({ label, value
           {/* Filled Pill */}
           <div
             className={`h-full rounded-[3px] transition-[width] duration-200 ${
-              exceeded ? 'bg-[#CC2222]' : 'bg-[#90AF13]'
+              exceeded ? 'bg-[#CC2222]' : 'bg-accent'
             }`}
             style={{ width: `${fillRatio * 100}%` }}
           />

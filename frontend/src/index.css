@@ -36,6 +36,8 @@
   --log-text: #000000;
   --log-border: #d0d0d0;
   --select-arrow: url('/vectors/arrow_down_light.svg');
+  --arrow-down: url('/vectors/arrow_down_light.svg');
+  --arrow-up: url('/vectors/arrow_up_light.svg');
 }
 
 [data-theme="dark"] {
@@ -73,6 +75,8 @@
   --log-text: #d0d0d0;
   --log-border: #444444;
   --select-arrow: url('/vectors/arrow_down_dark.svg');
+  --arrow-down: url('/vectors/arrow_down_dark.svg');
+  --arrow-up: url('/vectors/arrow_up_dark.svg');
 }
 
 @theme {

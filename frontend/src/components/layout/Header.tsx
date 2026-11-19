@@ -309,7 +309,7 @@ export const Header: React.FC = () => {
             key={ctrl.key}
             id={`btn_${ctrl.key}`}
             type="button"
-            className={`flex items-center justify-center w-[26px] h-[22px] min-w-[26px] p-0 bg-transparent border rounded-[3px] cursor-pointer hover:bg-accent/20 hover:border-accent transition-colors shrink-0 ${
+            className={`flex items-center justify-center w-[26px] h-[22px] min-w-[26px] p-0 bg-transparent border rounded-[3px] cursor-pointer select-none hover:bg-accent/20 hover:border-accent transition-colors shrink-0 ${
               ctrl.active ? 'bg-accent/25 border-accent' : 'border-transparent'
             }`}
             title={ctrl.tooltip}

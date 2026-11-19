@@ -27,7 +27,7 @@ export default function App() {
   }, [darkMode]);
 
   return (
-    <div className="flex flex-col h-screen w-screen border border-accent-border box-border bg-app text-main overflow-hidden select-none">
+    <div className="flex flex-col h-screen w-screen border border-accent-border box-border bg-app text-main overflow-hidden">
       {/* Accessibility: skip-nav link */}
       <a
         href="#main-workbench"

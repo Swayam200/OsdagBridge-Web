@@ -74,7 +74,7 @@ export const OutputDock: React.FC = () => {
             className="w-8 h-full block select-none"
           />
           <div
-            className="w-1.5 min-w-[6px] bg-[#90af13] h-full flex items-center justify-center relative cursor-pointer select-none shrink-0"
+            className="w-1.5 min-w-[6px] bg-accent h-full flex items-center justify-center relative cursor-pointer select-none shrink-0"
             onClick={toggleOutputDock}
             title="Show output panel"
           >

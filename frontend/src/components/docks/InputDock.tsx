@@ -25,6 +25,7 @@ export const InputDock: React.FC = () => {
     toggleContainer,
     saveInputs,
     runDesign,
+    darkMode,
   } = useBridgeStore();
 
   const [showLockTooltip, setShowLockTooltip] = useState(false);
@@ -237,12 +238,16 @@ export const InputDock: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => toggleContainer(containerKey)}
-                            className="bg-transparent border-0 cursor-pointer p-0.5 flex items-center justify-center"
+                            className="bg-transparent border-0 cursor-pointer p-0.5 flex items-center justify-center select-none"
                             title={isCollapsed ? `Expand ${containerTitle}` : `Collapse ${containerTitle}`}
                             aria-expanded={!isCollapsed}
                           >
                             <img
-                              src={isCollapsed ? '/vectors/arrow_down_light.svg' : '/vectors/arrow_up_light.svg'}
+                              src={
+                                isCollapsed
+                                  ? (darkMode ? '/vectors/arrow_down_dark.svg' : '/vectors/arrow_down_light.svg')
+                                  : (darkMode ? '/vectors/arrow_up_dark.svg' : '/vectors/arrow_up_light.svg')
+                              }
                               alt={isCollapsed ? 'Expand' : 'Collapse'}
                               width={18}
                               height={18}
