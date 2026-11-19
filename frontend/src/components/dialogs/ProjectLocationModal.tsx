@@ -1,11 +1,16 @@
 /**
  * ProjectLocationModal.tsx
- * Allows selecting Indian states and IMD meteorological stations
- * to auto-populate basic wind speed, seismic zone, and design temperatures.
- * Styled with pure Tailwind CSS.
+ *
+ * Dialog for selecting project state/station and viewing environmental parameters
+ * (IRC:6 Basic Wind Speed, Seismic Zone, Max/Min Temperatures).
+ * Adapts osdagbridge.desktop.ui.dialogs.project_location.ProjectLocationDialog.
+ *
+ * Validation mirrors desktop validate_and_save (project_location.py lines 669-693):
+ *   - Verifies wind speed, seismic zone, and temperatures are populated.
+ *   - Updates the store location state and closes the dialog upon confirmation.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useBridgeStore } from '../../store/useBridgeStore';
 import {
   fetchLocationStates,
@@ -13,22 +18,23 @@ import {
   fetchLocationDetails,
 } from '../../services/api';
 import { LocationData } from '../../types/location';
-import { MapPin, Wind, Activity, Thermometer, Check, X } from 'lucide-react';
+import { X, MapPin, Check, Wind, Activity, Thermometer } from 'lucide-react';
 
 export const ProjectLocationModal: React.FC = () => {
+  // ── Store Selectors ────────────────────────────────────────────────────────
   const isLocationModalOpen = useBridgeStore((s) => s.isLocationModalOpen);
   const setLocationModalOpen = useBridgeStore((s) => s.setLocationModalOpen);
   const setLocation = useBridgeStore((s) => s.setLocation);
-  const location = useBridgeStore((s) => s.location);
-  const constants = useBridgeStore((s) => s.constants);
-  const updateField = useBridgeStore((s) => s.updateField);
 
+  // ── Local State ────────────────────────────────────────────────────────────
   const [states, setStates] = useState<string[]>([]);
-  const [stations, setStations] = useState<string[]>([]);
   const [selectedState, setSelectedState] = useState<string>('');
+  const [stations, setStations] = useState<string[]>([]);
   const [selectedStation, setSelectedStation] = useState<string>('');
   const [locationDetails, setLocationDetails] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  // ── Effects ────────────────────────────────────────────────────────────────
 
   // Fetch states list when dialog opens
   useEffect(() => {
@@ -46,7 +52,7 @@ export const ProjectLocationModal: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [isLocationModalOpen, selectedState]);
+  }, [isLocationModalOpen]);
 
   // Fetch stations when selected state changes
   useEffect(() => {
@@ -81,7 +87,8 @@ export const ProjectLocationModal: React.FC = () => {
         setLoading(false);
       })
       .catch(() => {
-        if (!cancelled) setLoading(false);
+        if (cancelled) return;
+        setLoading(false);
       });
 
     return () => {
@@ -89,46 +96,39 @@ export const ProjectLocationModal: React.FC = () => {
     };
   }, [selectedState, selectedStation]);
 
-  // Sync state if modal opens with existing location
-  useEffect(() => {
-    if (isLocationModalOpen && location) {
-      setSelectedState(location.state);
-      setSelectedStation(location.station);
-      setLocationDetails(location);
-    }
-  }, [isLocationModalOpen, location]);
-
   if (!isLocationModalOpen) return null;
 
-  const handleApply = () => {
-    if (!locationDetails) return;
-    setLocation(locationDetails);
+  // ── Handlers ───────────────────────────────────────────────────────────────
 
-    // Apply to Main Dock inputs
-    if (constants) {
-      if (constants.KEY_PROJECT_LOCATION) {
-        updateField(String(constants.KEY_PROJECT_LOCATION), `${locationDetails.station}, ${locationDetails.state}`);
-      }
-      if (constants.KEY_BASIC_WIND_SPEED) {
-        updateField(String(constants.KEY_BASIC_WIND_SPEED), locationDetails.basic_wind_speed);
-      }
-      if (constants.KEY_SEISMIC_ZONE) {
-        updateField(String(constants.KEY_SEISMIC_ZONE), locationDetails.seismic_zone);
-      }
-      if (constants.KEY_MAX_TEMP) {
-        updateField(String(constants.KEY_MAX_TEMP), locationDetails.max_temperature);
-      }
-      if (constants.KEY_MIN_TEMP) {
-        updateField(String(constants.KEY_MIN_TEMP), locationDetails.min_temperature);
-      }
-    } else {
-      updateField('project.location', `${locationDetails.station}, ${locationDetails.state}`);
-      updateField('loading.wind_load.basic_wind_speed', locationDetails.basic_wind_speed);
-      updateField('loading.seismic_load.seismic_zone', locationDetails.seismic_zone);
-      updateField('loading.temperature_load.highest_max_temp', locationDetails.max_temperature);
-      updateField('loading.temperature_load.lowest_min_temp', locationDetails.min_temperature);
+  /**
+   * Validates environmental data completeness before saving.
+   * Mirrors desktop validate_and_save (project_location.py lines 669-693).
+   */
+  const handleApply = () => {
+    if (!locationDetails) {
+      window.alert('Incomplete Data: Please select a location either on the map or from the dropdown menu.');
+      return;
     }
 
+    const missing: string[] = [];
+    if (!locationDetails.basic_wind_speed && locationDetails.basic_wind_speed !== 0) {
+      missing.push('Wind Speed');
+    }
+    if (!locationDetails.seismic_zone) {
+      missing.push('Seismic Zone');
+    }
+    if (locationDetails.max_temperature === undefined || locationDetails.min_temperature === undefined) {
+      missing.push('Temperature');
+    }
+
+    if (missing.length > 0) {
+      window.alert(
+        `Incomplete Data: Missing data: ${missing.join(', ')}.\nPlease select a different location or enter values manually.`
+      );
+      return;
+    }
+
+    setLocation(locationDetails);
     setLocationModalOpen(false);
   };
 
@@ -136,19 +136,49 @@ export const ProjectLocationModal: React.FC = () => {
     setLocationModalOpen(false);
   };
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div
+      className="modal-backdrop"
       role="dialog"
       aria-modal="true"
       aria-labelledby="location-dialog-title"
-      className="fixed inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center z-[1000]"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'var(--overlay-bg)',
+        backdropFilter: 'blur(2px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+      }}
     >
-      <div className="bg-[var(--bg-surface)] text-[var(--text-main)] rounded-lg w-[540px] shadow-lg overflow-hidden border border-[var(--border-color)] flex flex-col font-sans">
+      <div
+        className="modal-card"
+        style={{
+          background: 'var(--bg-surface)',
+          borderRadius: '8px',
+          width: '540px',
+          boxShadow: 'var(--shadow-lg)',
+          overflow: 'hidden',
+          border: '1px solid var(--border-subtle)',
+        }}
+      >
         {/* Header */}
-        <div className="p-[14px_18px] bg-[var(--header-bg)] border-b border-[var(--border-color)] flex justify-between items-center select-none">
-          <div className="flex items-center gap-2">
-            <MapPin size={18} className="text-[var(--accent-osdag)]" aria-hidden="true" />
-            <h3 id="location-dialog-title" className="text-sm font-semibold text-[var(--text-main)]">
+        <div
+          style={{
+            padding: '14px 18px',
+            background: 'var(--bg-grouped)',
+            borderBottom: '1px solid var(--border-subtle)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <MapPin size={18} color="var(--accent-osdag)" aria-hidden="true" />
+            <h3 id="location-dialog-title" style={{ fontSize: '14px', fontWeight: 600 }}>
               Project Location &amp; Weather Details
             </h3>
           </div>
@@ -156,19 +186,19 @@ export const ProjectLocationModal: React.FC = () => {
             type="button"
             onClick={handleClose}
             aria-label="Close dialog"
-            className="bg-transparent border-0 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-main)] p-0.5"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-5">
-          <div className="grid grid-cols-2 gap-4 mb-5">
+        <div style={{ padding: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
             <div>
               <label
                 htmlFor="location-state-select"
-                className="block text-[11px] font-semibold text-[var(--text-sub)] mb-1.5"
+                style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}
               >
                 State
               </label>
@@ -176,7 +206,15 @@ export const ProjectLocationModal: React.FC = () => {
                 id="location-state-select"
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
-                className="w-full p-2 rounded border border-[var(--input-border)] text-xs bg-[var(--input-bg)] text-[var(--text-main)] outline-none focus:border-[var(--border-focus)] cursor-pointer"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid var(--border-color)',
+                  fontSize: '12px',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text-main)',
+                }}
               >
                 {states.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -187,7 +225,7 @@ export const ProjectLocationModal: React.FC = () => {
             <div>
               <label
                 htmlFor="location-station-select"
-                className="block text-[11px] font-semibold text-[var(--text-sub)] mb-1.5"
+                style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}
               >
                 District / Station
               </label>
@@ -195,7 +233,15 @@ export const ProjectLocationModal: React.FC = () => {
                 id="location-station-select"
                 value={selectedStation}
                 onChange={(e) => setSelectedStation(e.target.value)}
-                className="w-full p-2 rounded border border-[var(--input-border)] text-xs bg-[var(--input-bg)] text-[var(--text-main)] outline-none focus:border-[var(--border-focus)] cursor-pointer"
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid var(--border-color)',
+                  fontSize: '12px',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text-main)',
+                }}
               >
                 {stations.map((st) => (
                   <option key={st} value={st}>{st}</option>
@@ -205,74 +251,119 @@ export const ProjectLocationModal: React.FC = () => {
           </div>
 
           {/* Environmental Parameters Card */}
-          <div className="bg-[var(--bg-grouped)] border border-[var(--border-subtle)] rounded-[6px] p-4">
-            <h4 className="text-[11px] uppercase tracking-[0.05em] text-[var(--text-sub)] font-bold mb-3">
+          <div
+            style={{
+              background: 'var(--bg-grouped)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '6px',
+              padding: '16px',
+            }}
+          >
+            <h4
+              style={{
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: 'var(--text-muted)',
+                fontWeight: 700,
+                marginBottom: '12px',
+              }}
+            >
               IRC:6 Environmental Constraints
             </h4>
 
             {loading ? (
-              <div className="text-xs text-[var(--text-sub)]">Loading location data...</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Loading location data...</div>
             ) : locationDetails ? (
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-2.5">
-                  <Wind size={20} className="text-[#0284c7] shrink-0" aria-hidden="true" />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Wind size={20} color="#0284c7" aria-hidden="true" />
                   <div>
-                    <div className="text-[11px] text-[var(--text-sub)]">Basic Wind Speed (V_b)</div>
-                    <div className="text-[13px] font-semibold font-mono text-[var(--text-main)]">
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Basic Wind Speed (V_b)</div>
+                    <div style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
                       {locationDetails.basic_wind_speed} m/s
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5">
-                  <Activity size={20} className="text-[#dc2626] shrink-0" aria-hidden="true" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Activity size={20} color="#dc2626" aria-hidden="true" />
                   <div>
-                    <div className="text-[11px] text-[var(--text-sub)]">Seismic Zone</div>
-                    <div className="text-[13px] font-semibold text-[var(--text-main)]">
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Seismic Zone</div>
+                    <div style={{ fontSize: '13px', fontWeight: 600 }}>
                       {locationDetails.seismic_zone}
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5">
-                  <Thermometer size={20} className="text-[#ea580c] shrink-0" aria-hidden="true" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Thermometer size={20} color="#ea580c" aria-hidden="true" />
                   <div>
-                    <div className="text-[11px] text-[var(--text-sub)]">Max Temperature</div>
-                    <div className="text-[13px] font-semibold font-mono text-[var(--text-main)]">
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Max Temperature</div>
+                    <div style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
                       {locationDetails.max_temperature} °C
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5">
-                  <Thermometer size={20} className="text-[#0d9488] shrink-0" aria-hidden="true" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Thermometer size={20} color="#0d9488" aria-hidden="true" />
                   <div>
-                    <div className="text-[11px] text-[var(--text-sub)]">Min Temperature</div>
-                    <div className="text-[13px] font-semibold font-mono text-[var(--text-main)]">
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Min Temperature</div>
+                    <div style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
                       {locationDetails.min_temperature} °C
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="text-xs text-[var(--text-sub)]">No location details available</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>No location details available</div>
             )}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-[12px_18px] bg-[var(--header-bg)] border-t border-[var(--border-color)] flex justify-end gap-2 select-none">
+        <div
+          style={{
+            padding: '12px 18px',
+            background: 'var(--bg-grouped)',
+            borderTop: '1px solid var(--border-subtle)',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '8px',
+          }}
+        >
           <button
             type="button"
             onClick={handleClose}
-            className="px-3.5 py-1.5 rounded border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-main)] hover:bg-[var(--bg-grouped)] cursor-pointer text-xs transition-colors"
+            style={{
+              padding: '6px 14px',
+              borderRadius: '4px',
+              border: '1px solid var(--border-color)',
+              background: 'var(--input-bg)',
+              color: 'var(--text-main)',
+              cursor: 'pointer',
+              fontSize: '12px',
+            }}
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleApply}
-            className="px-4 py-1.5 rounded border-0 bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] text-white font-semibold cursor-pointer text-xs flex items-center gap-1.5 transition-colors"
+            style={{
+              padding: '6px 18px',
+              borderRadius: '4px',
+              border: 'none',
+              background: 'var(--accent-osdag)',
+              color: '#ffffff',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontSize: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
           >
             <Check size={14} aria-hidden="true" /> Apply Location
           </button>

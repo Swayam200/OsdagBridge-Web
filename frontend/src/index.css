@@ -35,6 +35,7 @@
   --log-bg: #ffffff;
   --log-text: #000000;
   --log-border: #d0d0d0;
+  --select-arrow: url('/vectors/arrow_down_light.svg');
 }
 
 [data-theme="dark"] {
@@ -71,23 +72,25 @@
   --log-bg: #212121;
   --log-text: #d0d0d0;
   --log-border: #444444;
+  --select-arrow: url('/vectors/arrow_down_dark.svg');
 }
 
 @theme {
-  --color-bg-app: var(--bg-app);
-  --color-bg-surface: var(--bg-surface);
-  --color-bg-sidebar: var(--bg-sidebar);
-  --color-bg-grouped: var(--bg-grouped);
-  --color-bg-viewport: var(--bg-viewport);
+  --color-app: var(--bg-app);
+  --color-surface: var(--bg-surface);
+  --color-sidebar: var(--bg-sidebar);
+  --color-grouped: var(--bg-grouped);
+  --color-viewport: var(--bg-viewport);
 
-  --color-border-color: var(--border-color);
+  --color-border: var(--border-color);
   --color-border-subtle: var(--border-subtle);
   --color-border-focus: var(--border-focus);
 
-  --color-text-main: var(--text-main);
-  --color-text-sub: var(--text-sub);
-  --color-text-muted: var(--text-muted);
+  --color-main: var(--text-main);
+  --color-sub: var(--text-sub);
+  --color-muted: var(--text-muted);
 
+  --color-accent: var(--accent-osdag);
   --color-accent-osdag: var(--accent-osdag);
   --color-accent-hover: var(--accent-hover);
   --color-accent-disabled: var(--accent-disabled);
@@ -96,19 +99,33 @@
   --color-danger: var(--danger);
   --color-danger-bg: var(--danger-bg);
 
-  --color-header-bg: var(--header-bg);
+  --color-header: var(--header-bg);
   --color-header-text: var(--header-text);
   --color-header-border: var(--header-border);
 
-  --color-input-bg: var(--input-bg);
+  --color-input: var(--input-bg);
   --color-input-border: var(--input-border);
-  --color-input-disabled-bg: var(--input-disabled-bg);
-  --color-input-disabled-color: var(--input-disabled-color);
+  --color-input-disabled: var(--input-disabled-bg);
+  --color-input-disabled-text: var(--input-disabled-color);
 
-  --color-log-header-bg: var(--log-header-bg);
-  --color-log-bg: var(--log-bg);
+  --color-log-header: var(--log-header-bg);
+  --color-log: var(--log-bg);
   --color-log-text: var(--log-text);
   --color-log-border: var(--log-border);
+
+  /* Aliases for compatibility */
+  --color-bg-app: var(--bg-app);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-sidebar: var(--bg-sidebar);
+  --color-bg-grouped: var(--bg-grouped);
+  --color-bg-viewport: var(--bg-viewport);
+  --color-border-color: var(--border-color);
+  --color-text-main: var(--text-main);
+  --color-text-sub: var(--text-sub);
+  --color-text-muted: var(--text-muted);
+  --color-header-bg: var(--header-bg);
+  --color-input-bg: var(--input-bg);
+  --color-log-bg: var(--log-bg);
 }
 
 @layer base {
@@ -153,9 +170,8 @@ textarea {
   background-color: var(--input-bg);
 }
 
-/* Dark mode select dropdown arrow replacement */
-[data-theme="dark"] select {
-  background-image: url('/vectors/arrow_down_dark.svg') !important;
+select {
+  background-image: var(--select-arrow);
 }
 
 /* Hide scrollbars globally across ALL browsers while preserving full scrolling functionality */
@@ -182,8 +198,68 @@ input[type="number"] {
   appearance: textfield;
 }
 
-/* Text selection highlight */
-::selection {
+/* Text selection highlight limited to log dock */
+.log-content::selection,
+.log-content *::selection,
+#textEdit::selection,
+#textEdit *::selection {
   background-color: #db1212;
   color: #ffffff;
+}
+
+/* Responsive layout adjustments for mobile / narrow viewports */
+@media (max-width: 1100px) {
+  #main-workbench,
+  .app-workbench {
+    overflow: auto !important;
+  }
+
+  .osdag-input-dock,
+  .osdag-output-dock {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 860px) {
+  #main-workbench,
+  .app-workbench {
+    flex-direction: column !important;
+    overflow: auto !important;
+  }
+
+  .app-header > div:first-child {
+    flex-wrap: wrap;
+  }
+
+  .app-header > div:last-child {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .osdag-input-dock,
+  .osdag-output-dock {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 42vh !important;
+  }
+
+  .osdag-input-dock aside,
+  .osdag-output-dock aside {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-height: 42vh !important;
+  }
+
+  .osdag-input-dock aside > div,
+  .osdag-output-dock aside > div {
+    min-width: 0 !important;
+  }
+
+  .app-center {
+    min-height: 48vh !important;
+  }
+
+  .viewport-toolbar {
+    flex-shrink: 0;
+  }
 }

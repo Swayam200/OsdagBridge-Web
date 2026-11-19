@@ -44,9 +44,9 @@ export const InputErrorDialog: React.FC = () => {
       className="fixed inset-0 bg-black/40 flex items-center justify-center z-[10000]"
     >
       {/* Dialog card — mirrors CustomMessageBox (1px solid #90AF13 border, white bg) */}
-      <div className="bg-[var(--bg-surface)] border border-[var(--accent-osdag)] rounded-[4px] min-w-[380px] max-w-[460px] shadow-[0_8px_24px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col">
+      <div className="bg-surface border border-accent rounded-[4px] min-w-[380px] max-w-[460px] shadow-[0_8px_24px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col">
         {/* CustomTitleBar — mirrors desktop CustomTitleBar (32px, Osdag_logo.svg, ✕ close button) */}
-        <div className="h-8 bg-[var(--header-bg)] border-b border-[var(--border-color)] flex items-center justify-between pl-2 select-none">
+        <div className="h-8 bg-header border-b border-border flex items-center justify-between pl-2 select-none">
           <div className="flex items-center gap-2">
             <img
               src="/vectors/Osdag_logo.svg"
@@ -57,7 +57,7 @@ export const InputErrorDialog: React.FC = () => {
             />
             <span
               id="input-error-title"
-              className="text-xs font-semibold text-[var(--text-main)]"
+              className="text-xs font-semibold text-main"
             >
               Input Error
             </span>
@@ -67,7 +67,7 @@ export const InputErrorDialog: React.FC = () => {
             type="button"
             onClick={dismissInputErrorDialog}
             aria-label="Close"
-            className="w-10 h-8 border-0 bg-transparent hover:bg-[#e81123] text-[var(--text-muted)] hover:text-white text-[13px] flex items-center justify-center cursor-pointer transition-colors"
+            className="w-10 h-8 border-0 bg-transparent hover:bg-[#e81123] text-muted hover:text-white text-[13px] flex items-center justify-center cursor-pointer transition-colors"
           >
             ✕
           </button>
@@ -86,7 +86,7 @@ export const InputErrorDialog: React.FC = () => {
             />
             <div
               id="input-error-message"
-              className="text-xs text-[var(--text-main)] leading-normal m-0 text-left whitespace-pre-line font-sans"
+              className="text-xs text-main leading-normal m-0 text-left whitespace-pre-line font-sans"
             >
               {inputErrorDialog.message}
             </div>

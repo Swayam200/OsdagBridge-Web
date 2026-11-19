@@ -35,14 +35,14 @@ const MenuDropdown: React.FC<{
   const renderItems = (list: MenuItem[]): React.ReactNode =>
     list.map((item, idx) => {
       if (item.separator) {
-        return <div key={`sep-${idx}`} role="separator" className="h-px bg-[var(--border-subtle)] my-1 mx-0.5" />;
+        return <div key={`sep-${idx}`} role="separator" className="h-px bg-border-subtle my-1 mx-0.5" />;
       }
       if (item.submenu) {
         return (
           <div key={item.label} className="relative group">
             <button
               type="button"
-              className="flex items-center justify-between gap-6 w-full bg-transparent border-0 text-[var(--text-main)] text-xs py-1.5 px-3.5 text-left cursor-pointer hover:bg-[var(--accent-osdag)] hover:text-white"
+              className="flex items-center justify-between gap-6 w-full bg-transparent border-0 text-main text-xs py-1.5 px-3.5 text-left cursor-pointer hover:bg-accent hover:text-white"
               role="menuitem"
               aria-haspopup="true"
             >
@@ -50,7 +50,7 @@ const MenuDropdown: React.FC<{
               <span className="text-xs">▸</span>
             </button>
             <div
-              className="absolute top-[-3px] left-full min-w-[170px] bg-[var(--bg-surface)] border border-[var(--accent-osdag)] shadow-md py-0.5 z-[1100] hidden group-hover:block"
+              className="absolute top-[-3px] left-full min-w-[170px] bg-surface border border-accent shadow-md py-0.5 z-[1100] hidden group-hover:block"
               role="menu"
             >
               {renderItems(item.submenu)}
@@ -62,7 +62,7 @@ const MenuDropdown: React.FC<{
         <button
           key={item.label}
           type="button"
-          className="flex items-center justify-between gap-6 w-full bg-transparent border-0 text-[var(--text-main)] text-xs py-1.5 px-3.5 text-left cursor-pointer hover:bg-[var(--accent-osdag)] hover:text-white"
+          className="flex items-center justify-between gap-6 w-full bg-transparent border-0 text-main text-xs py-1.5 px-3.5 text-left cursor-pointer hover:bg-accent hover:text-white"
           role="menuitem"
           onClick={() => {
             item.action?.();
@@ -79,8 +79,8 @@ const MenuDropdown: React.FC<{
     <div className="relative">
       <button
         type="button"
-        className={`bg-transparent border-0 text-[var(--header-text)] text-xs px-2.5 py-1 cursor-pointer rounded-none hover:bg-[var(--bg-surface)] select-none ${
-          open ? 'bg-[var(--bg-surface)] text-[var(--text-main)]' : ''
+        className={`bg-transparent border-0 text-header-text text-xs px-2.5 py-1 cursor-pointer rounded-none hover:bg-surface select-none ${
+          open ? 'bg-surface text-main' : ''
         }`}
         aria-haspopup="true"
         aria-expanded={open}
@@ -90,7 +90,7 @@ const MenuDropdown: React.FC<{
       </button>
       {open && (
         <div
-          className="absolute top-full left-0 min-w-[220px] bg-[var(--bg-surface)] border border-[var(--accent-osdag)] shadow-md py-0.5 z-[1100]"
+          className="absolute top-full left-0 min-w-[220px] bg-surface border border-accent shadow-md py-0.5 z-[1100]"
           role="menu"
           aria-label={title}
         >
@@ -278,13 +278,13 @@ export const Header: React.FC = () => {
     <header
       ref={headerRef}
       role="banner"
-      className="min-h-[28px] md:h-7 flex flex-col md:flex-row md:items-center justify-between gap-1 md:gap-2 px-2 py-1 md:py-0 bg-[var(--header-bg)] text-[var(--header-text)] border-b border-[var(--header-border)] relative z-[1000] select-none box-border"
+      className="app-header min-h-[28px] md:h-7 flex flex-col md:flex-row md:items-center justify-between gap-1 md:gap-2 px-2 py-1 md:py-0 bg-header text-header-text border-b border-header-border relative z-[1000] select-none box-border"
     >
       {/* Brand / Logo Area + Menus (Row 1 on mobile, left on desktop) */}
       <div className="flex items-center gap-1 sm:gap-2 shrink-0 overflow-visible">
         <div className="flex items-center gap-1.5 pr-1.5 sm:pr-2 shrink-0">
           <img src="/vectors/Osdag_logo.svg" alt="Osdag" width={20} height={20} />
-          <span className="text-xs font-bold text-[var(--header-text)] tracking-[0.02em]">OsdagBridge</span>
+          <span className="text-xs font-bold text-header-text tracking-[0.02em]">OsdagBridge</span>
         </div>
 
         {/* Application Menu Bar */}
@@ -309,8 +309,8 @@ export const Header: React.FC = () => {
             key={ctrl.key}
             id={`btn_${ctrl.key}`}
             type="button"
-            className={`flex items-center justify-center w-[26px] h-[22px] min-w-[26px] p-0 bg-transparent border rounded-[3px] cursor-pointer hover:bg-[var(--accent-osdag)]/20 hover:border-[var(--accent-osdag)] transition-colors shrink-0 ${
-              ctrl.active ? 'bg-[var(--accent-osdag)]/25 border-[var(--accent-osdag)]' : 'border-transparent'
+            className={`flex items-center justify-center w-[26px] h-[22px] min-w-[26px] p-0 bg-transparent border rounded-[3px] cursor-pointer hover:bg-accent/20 hover:border-accent transition-colors shrink-0 ${
+              ctrl.active ? 'bg-accent/25 border-accent' : 'border-transparent'
             }`}
             title={ctrl.tooltip}
             aria-label={ctrl.tooltip}
@@ -326,11 +326,11 @@ export const Header: React.FC = () => {
           </button>
         ))}
 
-        <span className="w-px h-[18px] bg-[var(--border-color)] mx-0.5 sm:mx-1 shrink-0" aria-hidden="true" />
+        <span className="w-px h-[18px] bg-border mx-0.5 sm:mx-1 shrink-0" aria-hidden="true" />
 
         <button
           type="button"
-          className="bg-[var(--input-bg)] text-[var(--text-main)] border border-[var(--border-color)] hover:border-[var(--border-focus)] rounded-[3px] py-0.5 px-2 sm:px-2.5 text-[11px] font-semibold cursor-pointer select-none transition-colors shrink-0"
+          className="bg-input text-main border border-border hover:border-border-focus rounded-[3px] py-0.5 px-2 sm:px-2.5 text-[11px] font-semibold cursor-pointer select-none transition-colors shrink-0"
           onClick={toggleDarkMode}
           title="Toggle theme"
           aria-label="Toggle dark/light theme"
@@ -339,7 +339,7 @@ export const Header: React.FC = () => {
         </button>
         <button
           type="button"
-          className="bg-[var(--accent-osdag)] hover:bg-[var(--accent-hover)] text-white border border-[var(--accent-border)] rounded-[3px] py-0.5 px-2 sm:px-2.5 text-[11px] font-semibold cursor-pointer select-none transition-colors shrink-0"
+          className="bg-accent hover:bg-accent-hover text-white border border-accent-border rounded-[3px] py-0.5 px-2 sm:px-2.5 text-[11px] font-semibold cursor-pointer select-none transition-colors shrink-0"
           onClick={runDesign}
           aria-label="Run bridge design"
         >

@@ -16,7 +16,7 @@ export const PercentBarWidget: React.FC<PercentBarWidgetProps> = ({ label, value
     <div className="flex flex-col gap-0.5 mb-1.5">
       {/* Label above */}
       {label && (
-        <span className="text-[11px] text-[var(--text-main)] leading-tight select-none">
+        <span className="text-[11px] text-main leading-tight select-none">
           {label}
         </span>
       )}
@@ -24,7 +24,7 @@ export const PercentBarWidget: React.FC<PercentBarWidgetProps> = ({ label, value
       {/* Bar Row: [ Track with 100% marker ] [ XX% ] */}
       <div className="flex items-center gap-2">
         {/* Track Container */}
-        <div className="flex-1 h-1.5 bg-[var(--border-subtle)] rounded-[3px] relative overflow-visible">
+        <div className="flex-1 h-1.5 bg-border-subtle rounded-[3px] relative overflow-visible">
           {/* Filled Pill */}
           <div
             className={`h-full rounded-[3px] transition-[width] duration-200 ${
@@ -35,13 +35,13 @@ export const PercentBarWidget: React.FC<PercentBarWidgetProps> = ({ label, value
 
           {/* 100% Limit Marker Line */}
           <div
-            className="absolute -top-0.5 -bottom-0.5 w-0.5 bg-[var(--text-main)] left-[66.67%] z-[2] pointer-events-none"
+            className="absolute -top-0.5 -bottom-0.5 w-0.5 bg-main left-[66.67%] z-[2] pointer-events-none"
             title="100% Limit"
           />
         </div>
 
         {/* Value Label (fixed 46px width) */}
-        <span className="w-[46px] text-center text-[11px] font-bold text-[var(--text-main)] select-none tabular-nums">
+        <span className="w-[46px] text-center text-[11px] font-bold text-main select-none tabular-nums">
           {Math.round(clampedValue)}%
         </span>
       </div>

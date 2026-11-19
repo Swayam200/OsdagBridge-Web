@@ -27,11 +27,11 @@ export default function App() {
   }, [darkMode]);
 
   return (
-    <div className="flex flex-col h-screen w-screen border border-[var(--accent-border)] box-border bg-[var(--bg-app)] text-[var(--text-main)] overflow-hidden select-none">
+    <div className="flex flex-col h-screen w-screen border border-accent-border box-border bg-app text-main overflow-hidden select-none">
       {/* Accessibility: skip-nav link */}
       <a
         href="#main-workbench"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[2000] focus:bg-[var(--accent-osdag)] focus:text-white focus:px-2.5 focus:py-1.5 focus:rounded text-xs font-semibold"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[2000] focus:bg-accent focus:text-white focus:px-2.5 focus:py-1.5 focus:rounded text-xs font-semibold"
       >
         Skip to workbench
       </a>
@@ -39,12 +39,16 @@ export default function App() {
       <Header />
 
       {/* Three-column workbench: Input | Center (Log) | Output */}
-      <div id="main-workbench" className="flex flex-1 overflow-hidden" role="main">
+      <div
+        id="main-workbench"
+        className="app-workbench flex flex-col md:flex-row flex-1 overflow-auto md:overflow-hidden"
+        role="main"
+      >
         <InputDock />
 
-        <div className="flex flex-col flex-1 overflow-hidden min-w-0 relative">
+        <div className="app-center flex flex-col flex-1 min-h-[48vh] md:min-h-0 overflow-hidden min-w-0 relative">
           {/* Main workspace canvas area */}
-          <div className="flex-1 min-h-0 w-full relative overflow-hidden bg-[var(--bg-viewport)]" />
+          <div className="main-canvas flex-1 min-h-0 w-full relative overflow-hidden bg-viewport" />
 
           {/* Log Window anchored at bottom of the center workspace */}
           {isLogDockOpen && <LogDock />}
