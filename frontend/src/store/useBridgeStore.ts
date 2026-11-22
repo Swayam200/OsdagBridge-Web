@@ -17,6 +17,7 @@
  *   - No static fallback schema is used; the input dock shows an error state instead.
  */
 import { create } from 'zustand';
+import type { TypicalEdit } from '../services/typicalSection';
 import { UIFieldSchema, BridgeConstants } from '../types/schema';
 import {
   fetchConstants as apiFetchConstants,
@@ -68,6 +69,9 @@ interface BridgeState {
   steelMaterials: SteelMaterial[];
   concreteMaterials: ConcreteMaterial[];
   isLocationModalOpen: boolean;
+  isAdditionalInputsOpen: boolean;
+  savedTypicalSection: { basicInputs: string; edits: TypicalEdit[] } | null;
+  requiredFieldErrors: string[];
 
   // ── UI dock visibility ─────────────────────────────────────────────────────
   isDockCollapsed: boolean;
@@ -105,6 +109,8 @@ interface BridgeState {
   fetchConstants: () => Promise<void>;
   fetchSchema: () => Promise<void>;
   updateField: (key: string, value: any) => void;
+  saveTypicalSection: (basicInputs: string, edits: TypicalEdit[]) => void;
+  setAdditionalInputsOpen: (open: boolean) => void;
   toggleLock: () => void;
   toggleDock: () => void;
   toggleOutputDock: () => void;
@@ -136,7 +142,6 @@ interface BridgeState {
   exportCadImage: () => void;
   runDesign: () => void;
   resetInputs: () => void;
-  setAdditionalInputsOpen: (open: boolean) => void;
   setSteelDesignModalOpen: (open: boolean) => void;
   setTransverseDesignModalOpen: (open: boolean) => void;
   setDeckDesignModalOpen: (open: boolean) => void;
@@ -174,6 +179,9 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   steelMaterials: [],
   concreteMaterials: [],
   isLocationModalOpen: false,
+  isAdditionalInputsOpen: false,
+  savedTypicalSection: null,
+  requiredFieldErrors: [],
 
   // ── Dock state ─────────────────────────────────────────────────────────────
   isDockCollapsed: false,
@@ -310,7 +318,31 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   updateField: (key, value) => {
     set((state) => ({
       inputs: { ...state.inputs, [key]: value },
+      requiredFieldErrors: state.requiredFieldErrors.filter((fieldKey) => fieldKey !== key),
     }));
+  },
+
+  saveTypicalSection: (basicInputs, edits) => set({ savedTypicalSection: { basicInputs, edits } }),
+  setAdditionalInputsOpen: (open) => {
+    if (!open) {
+      set({ isAdditionalInputsOpen: false });
+      return;
+    }
+    const { schema, inputs, showInputErrorDialog } = get();
+    if (!schema.length) {
+      showInputErrorDialog('Load Basic Inputs first.', () => {});
+      return;
+    }
+    // Both entry points use schema-required fields, including the saved Project Location object.
+    const missing = schema.filter((field) => field.required && String(inputs[field.key] ?? '').trim() === '');
+    if (missing.length) {
+      const message = ['Please fill in the required(*) fields before proceeding:',
+        ...missing.map((field) => ' - ' + field.label.replace(/\n/g, ' '))].join('\n');
+      set({ isAdditionalInputsOpen: false, requiredFieldErrors: missing.map((field) => field.key) });
+      showInputErrorDialog(message, () => {}, { title: 'Empty Required Fields', type: 'critical' });
+      return;
+    }
+    set({ requiredFieldErrors: [], isAdditionalInputsOpen: true });
   },
 
   toggleLock: () => set((state) => ({ isLocked: !state.isLocked })),
@@ -389,7 +421,6 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   exportCadImage: () => {},
   runDesign: () => {},
   resetInputs: () => {},
-  setAdditionalInputsOpen: () => {},
   setSteelDesignModalOpen: () => {},
   setTransverseDesignModalOpen: () => {},
   setDeckDesignModalOpen: () => {},

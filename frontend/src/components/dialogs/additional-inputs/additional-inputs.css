@@ -1,0 +1,107 @@
+@reference "../../../index.css";
+
+/* Match the workbench theme while keeping the dialog's schema-sized columns. */
+.additional-dialog {
+  @apply m-auto max-h-[90dvh] w-[min(1024px,94vw)] overflow-hidden rounded-none border border-accent bg-surface p-0 text-xs leading-[1.35] text-main;
+}
+
+.additional-dialog[open] { @apply flex flex-col; }
+.additional-dialog::backdrop { @apply bg-transparent; }
+.additional-dialog button:focus-visible { @apply -outline-offset-2; }
+.additional-body { @apply min-h-0 overflow-auto; }
+.additional-section-body { @apply flex flex-col p-[5px]; }
+
+.additional-tabs { @apply flex shrink-0 overflow-x-auto; }
+.additional-tabs button {
+  @apply min-h-9 min-w-20 shrink-0 cursor-pointer whitespace-nowrap border border-border border-b-0 border-r-0 bg-grouped px-5 py-2 text-[11px] font-semibold text-sub;
+}
+.additional-tabs button:last-child { @apply border-r; }
+.additional-tabs button:hover:not(:disabled):not(.selected) { @apply bg-border; }
+.additional-tabs button:disabled { @apply cursor-not-allowed bg-grouped text-muted; }
+.additional-group-tabs button { @apply bg-surface px-[22px] text-xs font-bold; }
+.additional-group-tabs button:disabled { @apply bg-surface; }
+.additional-tabs button.selected { @apply border-accent bg-accent font-bold text-white; }
+
+.additional-panel { @apply min-h-0 overflow-auto rounded-b-md border border-border px-1 pb-1.5; }
+.additional-primary-fields { @apply px-4 pt-4 pb-3.5; }
+.additional-primary-fields h3 { @apply mb-2.5 text-xs font-semibold; }
+.additional-row {
+  --dialog-field-width: 200px;
+  --dialog-column-gap: 24px;
+  @apply grid gap-y-2.5;
+  grid-template-columns: repeat(2, minmax(0, calc(var(--dialog-label-width, 200px) + var(--dialog-column-gap) + var(--dialog-field-width))));
+  column-gap: var(--dialog-column-gap);
+}
+.additional-row:empty { @apply hidden; }
+.additional-row + .additional-row:not(:empty) { @apply mt-2.5; }
+.additional-field {
+  @apply grid items-center;
+  grid-template-columns: minmax(0, var(--dialog-label-width, 200px)) minmax(0, var(--dialog-field-width, 200px));
+  gap: var(--dialog-column-gap, 24px);
+}
+.additional-field label { @apply text-[11px] [overflow-wrap:anywhere]; }
+.additional-field > div { @apply min-w-0; }
+.additional-subtab { @apply rounded-tr-md rounded-b-md border border-border px-[18px] pt-1.5 pb-3; }
+
+.additional-control {
+  @apply h-7 w-full min-w-0 rounded-[5px] border border-input-border bg-input px-2 py-0.5 text-xs text-main outline-none focus:border-border-focus focus:ring-1 focus:ring-border-focus disabled:cursor-not-allowed disabled:bg-input-disabled disabled:text-sub;
+}
+select.additional-control {
+  @apply cursor-pointer appearance-none bg-[image:var(--select-arrow)] bg-[right_6px_center] bg-[length:16px_16px] bg-no-repeat pr-7;
+}
+.additional-button {
+  @apply cursor-pointer select-none rounded-[5px] border border-input-border bg-surface px-3.5 py-1.5 text-center text-xs font-bold text-main transition-colors enabled:hover:bg-grouped enabled:active:bg-border disabled:cursor-not-allowed disabled:bg-input-disabled disabled:text-muted;
+}
+
+.additional-footer {
+  @apply mx-[5px] mt-px mb-1.5 flex shrink-0 items-center justify-center gap-3 rounded-md border border-border bg-grouped px-[22px] py-2.5 max-[540px]:px-2.5;
+}
+.additional-footer button { @apply min-w-[120px] max-[540px]:min-w-20; }
+.additional-error { @apply my-1.5 text-xs text-danger; }
+.additional-error button { @apply ml-3; }
+
+.additional-reference-panel { @apply flex flex-col; }
+.additional-reference-content { @apply min-h-0 overflow-auto px-[18px] py-4 max-[540px]:p-2.5; }
+.additional-reference-grid { @apply grid gap-3; grid-template-columns: var(--reference-columns); }
+.additional-reference-column { @apply flex min-w-0 flex-col gap-2.5; }
+.additional-reference-wide { @apply col-span-full; }
+.additional-reference-card, .additional-reference-description { @apply rounded-md border border-border p-4; }
+.additional-reference-card { @apply grid gap-2.5; }
+.additional-reference-card h3, .additional-reference-description h3 { @apply text-xs font-bold; }
+.additional-reference-card .additional-field { @apply grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-[18px]; }
+.additional-reference-card .additional-field button { @apply whitespace-normal text-[11px]; }
+.additional-reference-description { @apply min-h-[300px] flex-1 bg-grouped; }
+.additional-reference-description h3 { @apply mb-2.5 text-center; }
+.additional-reference-description p { @apply whitespace-pre-line text-[11px] text-sub; }
+.additional-reference-checkbox { @apply flex items-center justify-between gap-2 text-[11px]; }
+.additional-reference-checkbox input { @apply shrink-0 accent-accent; }
+.additional-reference-checkbox-groups { @apply grid grid-cols-2 gap-4; }
+.additional-reference-checkbox-groups fieldset { @apply grid gap-2 rounded-md border border-border p-3; }
+.additional-reference-checkbox-groups legend { @apply px-1 text-[11px]; }
+.additional-reference-checkbox-groups .additional-reference-checkbox { @apply flex-row-reverse justify-end; }
+.additional-reference-mode { @apply grid gap-1.5; }
+.additional-reference-table { @apply overflow-x-auto; }
+.additional-reference-table table { @apply w-full border-collapse text-[11px] text-muted; }
+.additional-reference-table th, .additional-reference-table td { @apply border border-border p-2 text-left; }
+.additional-reference-table th { @apply bg-grouped font-semibold; }
+.additional-reference-table td { @apply h-12 text-center; }
+
+.additional-typical-reference { @apply border-b border-border p-2; }
+/* The fixed drawings have dark dimension labels, so keep their surface light. */
+.additional-static-diagram { @apply grid justify-items-center gap-1 rounded bg-white p-2; }
+.additional-static-canvas { @apply w-full min-w-0 overflow-x-auto; }
+.additional-static-diagram svg { @apply mx-auto block w-full max-w-[1000px]; }
+.additional-static-typical svg { @apply min-w-[700px]; }
+.additional-static-girder-overview svg, .additional-static-stiffener svg { @apply min-w-[650px]; }
+.additional-static-girder-section svg { @apply max-w-[400px]; }
+.additional-static-bracing svg, .additional-static-angle svg { @apply max-w-[340px]; }
+.additional-static-diagram figcaption { @apply text-center text-[10px] text-[#686868]; }
+.additional-static-member { font: bold 13px Arial, sans-serif; fill: #90af13; }
+
+@media (max-width: 880px) {
+  .additional-row, .additional-reference-grid, .additional-reference-checkbox-groups { @apply grid-cols-1; }
+}
+
+@media (max-width: 540px) {
+  .additional-field, .additional-reference-card .additional-field { @apply grid-cols-1 gap-1; }
+}

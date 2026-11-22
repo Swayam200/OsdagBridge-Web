@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- Fixed Desktop-style examples. Dimensions are labels, not calculated input values. -->
+  <defs>
+    <pattern id="concrete" width="32" height="12" patternUnits="userSpaceOnUse">
+      <rect width="32" height="12" fill="#e4e4e1"/>
+      <path d="M3 2l4 2-2 3zM19 5l5-2 2 5zM12 10l3-2 2 3z" fill="#77796f"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M8 4L0 0v8z" fill="context-stroke"/>
+    </marker>
+    <g id="girder" stroke="#4e5147" stroke-width="1.5" fill="#c5c7bd">
+      <path d="M-12 0h24v6H3v66h9v6h-24v-6h9V6h-9z"/>
+    </g>
+    <g id="bridge">
+      <g stroke="#85877a" stroke-width="2" fill="none">
+        <path d="M149 150H852M149 219H852M149 150l117 69m-117 0 117-69m0 0 117 69m-117 0 117-69m0 0 117 69m-117 0 117-69m0 0 117 69m-117 0 117-69m0 0 117 69m-117 0 117-69m0 0 118 69m-118 0 118-69"/>
+      </g>
+      <use href="#girder" x="149" y="145"/><use href="#girder" x="266" y="145"/>
+      <use href="#girder" x="383" y="145"/><use href="#girder" x="500" y="145"/>
+      <use href="#girder" x="617" y="145"/><use href="#girder" x="734" y="145"/>
+      <use href="#girder" x="852" y="145"/>
+      <g fill="url(#concrete)" stroke="#77796f" stroke-width="1.5">
+        <rect x="90" y="125" width="820" height="12"/>
+        <path d="M90 125l5-45h7l6 45zM892 125l6-45h7l5 45z"/>
+      </g>
+    </g>
+  </defs>
+
+  <symbol id="typical" viewBox="0 0 1000 310">
+    <use href="#bridge"/>
+    <g stroke="#444" stroke-width="1" fill="none">
+      <path d="M113 57V117M887 57V117M90 141v152M910 141v152M149 225v26M266 225v26M383 225v26" stroke-dasharray="2 2"/>
+      <path d="M113 60H887M90 247H149M266 247H383M90 288H910" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <path d="M500 112v25" marker-end="url(#arrow)"/>
+    </g>
+    <g fill="#252525" font-family="Arial, sans-serif" font-size="14" text-anchor="middle">
+      <text x="500" y="48">Carriageway Width = 15.00 m</text>
+      <text x="500" y="106">Deck Thickness = 250 mm</text>
+      <text x="119" y="237">Overhang = 1.14 m</text>
+      <text x="325" y="237">Girder Spacing = 2.27 m</text>
+      <text x="500" y="278">Overall Bridge Width = 15.90 m</text>
+    </g>
+  </symbol>
+
+  <symbol id="girder-overview" viewBox="0 75 1000 165">
+    <use href="#bridge"/>
+    <path d="M137 145h24v6h-9v66h9v6h-24v-6h9v-66h-9z" fill="#a0b51b" stroke="#4e5147" stroke-width="1.5"/>
+  </symbol>
+
+  <symbol id="girder-section" viewBox="0 0 400 310">
+    <path d="M155 65h90v8h-41v182h51v10H145v-10h51V73h-41z" fill="none" stroke="#202020" stroke-width="2.5"/>
+    <g fill="none" stroke="#90af13" stroke-width="1">
+      <path d="M155 48h90M275 65v200M145 284h110" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <path d="M155 42v20M245 42v20M269 65h13M269 265h13M145 273v17M255 273v17"/>
+      <path d="M133 65v8M130 65h23M130 73h23M122 255v10M119 255h24M119 265h24M180 170h16M220 170h-16"/>
+    </g>
+    <g fill="#90af13" font-family="Arial, sans-serif" font-size="12">
+      <text x="200" y="34" text-anchor="middle">t_fw = 420 mm</text>
+      <text x="290" y="171">d = 1390 mm</text>
+      <text x="200" y="305" text-anchor="middle">b_fw = 490 mm</text>
+      <text x="127" y="71" text-anchor="end">t_ft = 18 mm</text>
+      <text x="116" y="264" text-anchor="end">b_ft = 22 mm</text>
+      <text x="176" y="173" text-anchor="end">w_t = 8 mm</text>
+    </g>
+  </symbol>
+
+  <symbol id="stiffener" viewBox="0 0 1000 220">
+    <g fill="#d9d9d9" stroke="#808080" stroke-width="2">
+      <rect x="50" y="50" width="900" height="120"/>
+      <path d="M50 60h900M50 160h900"/>
+    </g>
+    <path d="M60 60v100M70 60v100M80 60v100M130 60v100M210 60v100M290 60v100M370 60v100M450 60v100M530 60v100M610 60v100M690 60v100M770 60v100M850 60v100M920 60v100M930 60v100M940 60v100" fill="none" stroke="#90af13" stroke-width="2"/>
+    <path d="M50 190h900" fill="none" stroke="#555" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <g fill="#444" font-family="Arial, sans-serif" font-size="14" text-anchor="middle">
+      <text x="500" y="35">G1M1</text><text x="500" y="213">Span = 25.0 m</text>
+    </g>
+  </symbol>
+
+  <symbol id="bracing" viewBox="0 0 400 220">
+    <g stroke="#202020" stroke-width="2" fill="none">
+      <path d="M50 30h40v7H73v116h17v7H50v-7h17V37H50zM310 30h40v7h-17v116h17v7h-40v-7h17V37h-17z"/>
+      <path d="M73 50h254M73 143h254M73 50l254 93M73 143 327 50"/>
+    </g>
+    <g fill="#90af13" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle">
+      <text x="70" y="195">Girder G1</text><text x="330" y="195">Girder G2</text>
+    </g>
+  </symbol>
+
+  <symbol id="angle" viewBox="0 0 400 200">
+    <path d="M140 50h120v7h-56v93h-8V57h-56z" fill="none" stroke="#202020" stroke-width="2"/>
+    <g fill="none" stroke="#90af13" stroke-width="1">
+      <path d="M140 30h120M115 50v100" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <path d="M140 25v23M260 25v23M110 50h28M110 150h84M196 155v13M204 155v13M185 163h11M215 163h-11"/>
+    </g>
+    <g fill="#90af13" font-family="Arial, sans-serif" font-size="12">
+      <text x="200" y="19" text-anchor="middle">W = 100 mm</text>
+      <text x="107" y="105" text-anchor="end">H = 100 mm</text>
+      <text x="200" y="188" text-anchor="middle">t = 10 mm</text>
+    </g>
+  </symbol>
+</svg>

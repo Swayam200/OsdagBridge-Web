@@ -50,7 +50,8 @@ function FieldError({ id, error }: { id: string; error?: string }) {
 // ── Field Renderers ────────────────────────────────────────────────────────────
 
 const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const { inputs, isLocked, setLocationModalOpen, constants, darkMode } = useBridgeStore();
+  const { inputs, isLocked, setLocationModalOpen, setAdditionalInputsOpen, constants, darkMode } = useBridgeStore();
+  const missingRequired = useBridgeStore((s) => s.requiredFieldErrors.includes(field.key));
 
   const opensLocationDialog =
     field.action === 'show_project_location_dialog' ||
@@ -81,12 +82,17 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
         <button
           type="button"
           disabled={isLocked}
+          aria-invalid={missingRequired || undefined}
           onClick={() => {
             if (opensLocationDialog) {
               setLocationModalOpen(true);
+            } else if (isAdditionalBtn) {
+              setAdditionalInputsOpen(true);
             }
           }}
-          className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] px-3 text-[11px] font-bold rounded text-center select-none flex items-center justify-center transition-colors border cursor-pointer disabled:opacity-65 disabled:cursor-not-allowed bg-accent hover:bg-accent-hover text-white border-accent-border"
+          className={`w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] px-3 text-[11px] font-bold rounded text-center select-none flex items-center justify-center transition-colors border cursor-pointer disabled:opacity-65 disabled:cursor-not-allowed text-white ${
+            missingRequired ? 'bg-danger border-danger' : 'bg-accent hover:bg-accent-hover border-accent-border'
+          }`}
         >
           <span className="truncate">{buttonText}</span>
         </button>
@@ -116,6 +122,7 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
 
 const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   const { inputs, updateField, isLocked } = useBridgeStore();
+  const missingRequired = useBridgeStore((s) => s.requiredFieldErrors.includes(field.key));
   const value = inputs[field.key] ?? field.default ?? '';
   const options = field.options || [];
   const fieldId = `field-${field.key}`;
@@ -148,11 +155,13 @@ const SelectField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             disabled={isLocked}
             aria-required={field.required || undefined}
             aria-describedby={validationError ? errorId : undefined}
-            aria-invalid={validationError ? true : undefined}
+            aria-invalid={missingRequired || !!validationError || undefined}
             onChange={(e) => handleChange(e.target.value)}
             className={`${
               field.is_material_field ? 'w-[128px] min-w-[128px]' : 'w-full'
-            } h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border border-input-border rounded-[5px] bg-input text-main outline-none focus:border-border-focus focus:ring-1 focus:ring-border-focus cursor-pointer appearance-none bg-[image:var(--select-arrow)] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px] disabled:bg-input-disabled disabled:text-input-disabled-text disabled:cursor-not-allowed`}
+            } h-7 min-h-[28px] py-0.5 pl-2 pr-7 text-xs border rounded-[5px] bg-input text-main outline-none focus:ring-1 cursor-pointer appearance-none bg-[image:var(--select-arrow)] bg-no-repeat bg-[right_6px_center] bg-[length:16px_16px] disabled:bg-input-disabled disabled:text-input-disabled-text disabled:cursor-not-allowed ${
+              missingRequired ? 'border-danger focus:border-danger focus:ring-danger' : 'border-input-border focus:border-border-focus focus:ring-border-focus'
+            }`}
           >
             {field.placeholder && (
               <option value="" disabled className="bg-input text-muted">
@@ -223,6 +232,7 @@ const NoteField: React.FC<{ field: UIFieldSchema }> = ({ field }) => (
 
 const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
   const { inputs, updateField, isLocked, showInputErrorDialog, constants } = useBridgeStore();
+  const missingRequired = useBridgeStore((s) => s.requiredFieldErrors.includes(field.key));
 
   const value = inputs[field.key] ?? field.default ?? '';
   const [localVal, setLocalVal] = useState<string>(
@@ -325,14 +335,16 @@ const TextOrNumberField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
             disabled={isLocked}
             aria-required={field.required || undefined}
             aria-describedby={!isGeometric && validationError ? errorId : undefined}
-            aria-invalid={!isGeometric && validationError ? true : undefined}
+            aria-invalid={missingRequired || (!isGeometric && !!validationError) || undefined}
             onChange={(e) => handleTyping(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             className={`w-full h-7 min-h-[28px] py-0.5 px-2 text-xs border rounded-[5px] bg-input text-main outline-none transition-colors disabled:bg-input-disabled disabled:text-input-disabled-text disabled:cursor-not-allowed ${
               showTrailingUnit ? 'pr-8' : ''
             } ${
-              !isGeometric && validationError
+              missingRequired
+                ? 'border-danger focus:border-danger focus:ring-1 focus:ring-danger'
+                : !isGeometric && validationError
                 ? 'border-[#d32f2f] focus:border-[#d32f2f] focus:ring-1 focus:ring-[#d32f2f]'
                 : 'border-input-border focus:border-border-focus focus:ring-1 focus:ring-border-focus'
             }`}

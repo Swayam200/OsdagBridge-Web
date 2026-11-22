@@ -26,6 +26,7 @@ export const InputDock: React.FC = () => {
     saveInputs,
     runDesign,
     darkMode,
+    setAdditionalInputsOpen,
   } = useBridgeStore();
 
   const [showLockTooltip, setShowLockTooltip] = useState(false);
@@ -129,10 +130,8 @@ export const InputDock: React.FC = () => {
 
                 <button
                   type="button"
-                  disabled
-                  title="Additional inputs will be enabled after basic inputs validation"
-                  aria-label="Additional inputs (available after basic inputs validation)"
-                  className="flex-[1_1_0] min-w-0 bg-grouped text-muted font-bold text-xs border border-border rounded-[5px] p-[6px_8px] text-center whitespace-nowrap overflow-hidden text-ellipsis cursor-not-allowed select-none opacity-60"
+                  onClick={() => setAdditionalInputsOpen(true)}
+                  className="flex-[1_1_0] min-w-0 bg-surface text-main font-bold text-xs border border-input-border rounded-[5px] p-[6px_8px] text-center whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer select-none hover:bg-grouped"
                 >
                   Additional Inputs
                 </button>

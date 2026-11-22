@@ -11,11 +11,13 @@ import { OutputDock } from './components/docks/OutputDock';
 import { LogDock } from './components/docks/LogDock';
 import { ProjectLocationModal } from './components/dialogs/ProjectLocationModal';
 import { InputErrorDialog } from './components/dialogs/InputErrorDialog';
+import { AdditionalInputsDialog } from './components/dialogs/additional-inputs/AdditionalInputsDialog';
 
 export default function App() {
   const darkMode = useBridgeStore((s) => s.darkMode);
   const isLogDockOpen = useBridgeStore((s) => s.isLogDockOpen);
   const fetchConstants = useBridgeStore((s) => s.fetchConstants);
+  const additionalInputsOpen = useBridgeStore((s) => s.isAdditionalInputsOpen);
 
   useEffect(() => {
     fetchConstants();
@@ -60,6 +62,7 @@ export default function App() {
       {/* Modals */}
       <ProjectLocationModal />
       <InputErrorDialog />
+      {additionalInputsOpen && <AdditionalInputsDialog />}
     </div>
   );
 }
