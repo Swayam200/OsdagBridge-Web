@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from app.core.config import settings
 from app.api.router import api_router
 
@@ -17,6 +18,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Compress large responses (India boundary GeoJSON: 6.6 MB -> 1.9 MB). Level 5 compresses
+# in ~0.3 s; the default level 9 takes ~2.5 s per request for <1% smaller output.
+app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
 
 app.include_router(api_router)
 
