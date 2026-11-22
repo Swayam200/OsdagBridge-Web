@@ -49,9 +49,6 @@ def _load_concrete_grade_values_from_db():
     return values
 
 def _load_steel_material_values_from_db():
-    # Lazy import keeps the existing grade-list routes independent of analysis dependencies.
-    from ospgrillage.material import create_material
-
     values = {}
     rows = _execute_resource_query(
         '''
@@ -62,10 +59,12 @@ def _load_steel_material_values_from_db():
     )
     for material_name, fy, fu, e, poisson in rows:
         key = _normalize_steel_material_name(material_name)
-        material = create_material(material="steel", E=float(e), v=float(poisson))
+        e_value = float(e)
+        poisson_value = float(poisson)
         values[key] = {
-            "Fy": float(fy), "Fu": float(fu), "E": float(e), "Poisson": float(poisson),
-            "G": round(material.shear_modulus, 1),
+            "Fy": float(fy), "Fu": float(fu), "E": e_value, "Poisson": poisson_value,
+            # Match Desktop's standard-grade calculation and displayed precision.
+            "G": round(e_value / (2 * (1 + poisson_value)), 1),
         }
     return values
 
