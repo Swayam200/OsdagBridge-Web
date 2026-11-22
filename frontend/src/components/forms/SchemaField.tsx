@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { UIFieldSchema } from '../../types/schema';
+import { ProjectLocation } from '../../types/location';
 import { useBridgeStore } from '../../store/useBridgeStore';
 import { validateField } from '../../services/api';
 import { AlertCircle } from 'lucide-react';
@@ -49,13 +50,7 @@ function FieldError({ id, error }: { id: string; error?: string }) {
 // ── Field Renderers ────────────────────────────────────────────────────────────
 
 const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
-  const {
-    inputs,
-    location,
-    isLocked,
-    setLocationModalOpen,
-    constants,
-  } = useBridgeStore();
+  const { inputs, isLocked, setLocationModalOpen, constants, darkMode } = useBridgeStore();
 
   const opensLocationDialog =
     field.action === 'show_project_location_dialog' ||
@@ -63,11 +58,10 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
 
   const projectLocationKey = constants ? String(constants.KEY_PROJECT_LOCATION ?? '') : '';
 
-  const locationText = location
-    ? `${location.station}, ${location.state}`
-    : (projectLocationKey && inputs[projectLocationKey] ? inputs[projectLocationKey] : null);
-
-  const hasLocation = Boolean(locationText);
+  // Saved dialog result (desktop get_selected_location dict) drives the info row,
+  // as in input_dock._update_project_location_display.
+  const savedLocation: ProjectLocation | undefined =
+    opensLocationDialog && projectLocationKey ? inputs[projectLocationKey] : undefined;
 
   const isAdditionalBtn = Boolean(
     field.key === 'geometry.additional_btn' ||
@@ -76,11 +70,9 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
     (field.label && field.label.toLowerCase().includes('additional geometry'))
   );
 
-  const buttonText = opensLocationDialog
-    ? (locationText || field.button_label || field.label)
-    : (isAdditionalBtn ? (field.button_label || 'Modify Here') : (field.button_label || field.label));
+  const buttonText = isAdditionalBtn ? (field.button_label || 'Modify Here') : (field.button_label || field.label);
 
-  const showPin = field.post_row?.kind === 'info_row' && hasLocation;
+  const showInfoRow = field.post_row?.kind === 'info_row' && Boolean(savedLocation?.show_display);
 
   return (
     <div className="w-full">
@@ -94,16 +86,28 @@ const ButtonField: React.FC<{ field: UIFieldSchema }> = ({ field }) => {
               setLocationModalOpen(true);
             }
           }}
-          className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] px-3 text-[11px] font-bold rounded text-center select-none flex items-center justify-center transition-colors border disabled:opacity-65 disabled:cursor-not-allowed bg-accent hover:bg-accent-hover text-white border-accent-border"
+          className="w-[155px] min-w-[155px] max-w-[155px] shrink-0 h-7 min-h-[28px] px-3 text-[11px] font-bold rounded text-center select-none flex items-center justify-center transition-colors border cursor-pointer disabled:opacity-65 disabled:cursor-not-allowed bg-accent hover:bg-accent-hover text-white border-accent-border"
         >
           <span className="truncate">{buttonText}</span>
         </button>
       </div>
 
-      {showPin && (
-        <div className="flex items-center gap-1.5 mt-1 pl-[122px] text-[11px] text-sub">
-          <span aria-hidden="true">📍</span>
-          <span className="truncate">{locationText}</span>
+      {/* Info row centred under the button (same fixed 155px column) */}
+      {showInfoRow && (
+        <div className="flex justify-end mt-2">
+          <div className="w-[155px] min-w-0 flex items-center justify-center gap-1.5 text-xs text-main">
+            <img
+              src={darkMode ? '/vectors/location_pin_dark.svg' : '/vectors/location_pin.svg'}
+              alt=""
+              width={20}
+              height={20}
+              aria-hidden="true"
+              className="shrink-0"
+            />
+            <span className="truncate" title={savedLocation?.display_text}>
+              {savedLocation?.display_text || 'Location not selected'}
+            </span>
+          </div>
         </div>
       )}
     </div>

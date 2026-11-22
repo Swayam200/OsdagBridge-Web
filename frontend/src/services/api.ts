@@ -8,9 +8,12 @@
  *   - GET  /constants         -> fetchConstants  (KEY_* / TYPE_* from backend)
  *   - GET  /schema            -> fetchBasicSchema (throws on backend failure)
  *   - POST /validate          -> validateField
- *   - GET  /location/states   -> fetchLocationStates
- *   - GET  /location/stations -> fetchLocationStations
- *   - GET  /location/details  -> fetchLocationDetails
+ *   - GET  /location/states      -> fetchLocationStates
+ *   - GET  /location/districts   -> fetchLocationDistricts
+ *   - GET  /location/weather     -> fetchDistrictWeather
+ *   - GET  /location/coordinates -> fetchCoordinateLookup
+ *   - POST /location/validate/*  -> validateCustomWeatherData / validateMapCoordinates
+ *   - GET  /location/boundary    -> fetchIndiaBoundary
  *   - GET  /materials/steel   -> fetchSteelMaterials
  *   - GET  /materials/concrete-> fetchConcreteMaterials
  *   - GET  /sections/rolled   -> fetchRolledSections
@@ -20,7 +23,7 @@
 
 import axios from 'axios';
 import { UIFieldSchema, ValidateFieldResponse, BridgeConstants } from '../types/schema';
-import { LocationData } from '../types/location';
+import { WeatherData, CoordinateLookup } from '../types/location';
 
 export const apiClient = axios.create({
   baseURL: ((import.meta as any).env?.VITE_API_BASE_URL as string) || '/api/v1',
@@ -219,53 +222,53 @@ export async function fetchBasicSchema(constants?: BridgeConstants): Promise<UIF
   }
 }
 
-/**
- * Fetch environmental/weather constraints for a station from GET /api/v1/location/details.
- * Directly queries backend; returns null if unavailable.
- */
-export async function fetchLocationDetails(state = 'Delhi', station = 'New Delhi'): Promise<LocationData | null> {
-  try {
-    const res = await apiClient.get<LocationData>('/location/details', {
-      params: { state, station },
-    });
-    if (res.data && res.data.state && res.data.station) {
-      return res.data;
-    }
-    return null;
-  } catch (error) {
-    console.warn('Backend location details unavailable:', error);
-    return null;
-  }
-}
+// ── Project Location (mirrors desktop ProjectLocationDialog; data from osdagbridge_core) ──
 
-/**
- * Fetch Indian states from GET /api/v1/location/states.
- * Directly queries backend; returns empty list if unavailable.
- */
+/** States, first item is the "Select State" placeholder. */
 export async function fetchLocationStates(): Promise<string[]> {
-  try {
-    const res = await apiClient.get<{ states: string[] }>('/location/states');
-    return res.data?.states || [];
-  } catch (error) {
-    console.warn('Backend states unavailable:', error);
-    return [];
-  }
+  const res = await apiClient.get<{ states: string[] }>('/location/states');
+  return res.data.states;
 }
 
-/**
- * Fetch stations for a given state from GET /api/v1/location/stations.
- * Directly queries backend; returns empty list if unavailable.
- */
-export async function fetchLocationStations(state: string): Promise<string[]> {
-  try {
-    const res = await apiClient.get<{ state: string; stations: string[] }>('/location/stations', {
-      params: { state },
-    });
-    return res.data?.stations || [];
-  } catch (error) {
-    console.warn('Backend stations unavailable:', error);
-    return [];
-  }
+/** Districts with IRC 6 data, first item is the "Select District" placeholder. */
+export async function fetchLocationDistricts(state: string): Promise<string[]> {
+  const res = await apiClient.get<{ state: string; districts: string[] }>('/location/districts', {
+    params: { state },
+  });
+  return res.data.districts;
+}
+
+/** IRC 6 values for a district. */
+export async function fetchDistrictWeather(state: string, district: string): Promise<WeatherData> {
+  const res = await apiClient.get<WeatherData>('/location/weather', { params: { state, district } });
+  return res.data;
+}
+
+/** IRC 6 values and nearest station for a map point. */
+export async function fetchCoordinateLookup(lat: number, lon: number): Promise<CoordinateLookup> {
+  const res = await apiClient.get<CoordinateLookup>('/location/coordinates', { params: { lat, lon } });
+  return res.data;
+}
+
+export async function validateCustomWeatherData(data: {
+  wind_speed: string;
+  zone: string;
+  max_temp: string;
+  min_temp: string;
+}): Promise<ValidateFieldResponse> {
+  const res = await apiClient.post<ValidateFieldResponse>('/location/validate/custom-data', data);
+  return res.data;
+}
+
+export async function validateMapCoordinates(latitude: string, longitude: string): Promise<ValidateFieldResponse> {
+  const res = await apiClient.post<ValidateFieldResponse>('/location/validate/coordinates', { latitude, longitude });
+  return res.data;
+}
+
+/** India boundary GeoJSON (FeatureCollection) drawn over the map. */
+export async function fetchIndiaBoundary(): Promise<any> {
+  const res = await apiClient.get('/location/boundary', { timeout: 30000 });
+  return res.data;
 }
 
 /**

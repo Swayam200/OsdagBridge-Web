@@ -18,7 +18,6 @@
  */
 import { create } from 'zustand';
 import { UIFieldSchema, BridgeConstants } from '../types/schema';
-import { LocationData } from '../types/location';
 import {
   fetchConstants as apiFetchConstants,
   fetchBasicSchema,
@@ -68,7 +67,6 @@ interface BridgeState {
   schemaError: string | null;
   steelMaterials: SteelMaterial[];
   concreteMaterials: ConcreteMaterial[];
-  location: LocationData | null;
   isLocationModalOpen: boolean;
 
   // ── UI dock visibility ─────────────────────────────────────────────────────
@@ -122,7 +120,6 @@ interface BridgeState {
   toggleLogDockCollapse: () => void;
   resetLogs: () => void;
   toggleDarkMode: () => void;
-  setLocation: (loc: LocationData) => void;
   setLocationModalOpen: (open: boolean) => void;
   showInputErrorDialog: (
     message: string,
@@ -176,7 +173,6 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   schemaError: null,
   steelMaterials: [],
   concreteMaterials: [],
-  location: null,
   isLocationModalOpen: false,
 
   // ── Dock state ─────────────────────────────────────────────────────────────
@@ -272,7 +268,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
     set({ schemaLoading: true, schemaError: null });
     try {
       // Failure here propagates to the catch block and leaves the input dock
-      // unloaded (no static fallback). Ancillary endpoints (materials, location)
+      // unloaded (no static fallback). Ancillary endpoints (materials)
       // fall back internally and do not throw.
       const schemaData = await fetchBasicSchema(constants);
 
@@ -372,45 +368,6 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
       const next = !state.darkMode;
       document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
       return { darkMode: next };
-    }),
-
-  setLocation: (loc) =>
-    set((state) => {
-      const constants = state.constants;
-      // Resolve key strings from backend constants.
-      // Guard: if constants aren't loaded yet, we can't map keys — skip the
-      // environmental parameters (the location modal should not be reachable
-      // before constants load, but this is a safe defensive fallback).
-      if (!constants) {
-        console.warn('setLocation called before constants loaded; environmental keys not set.');
-        return {
-          location: loc,
-          inputs: {
-            ...state.inputs,
-          },
-        };
-      }
-
-      const KEY_PROJECT_LOCATION = String(constants.KEY_PROJECT_LOCATION ?? '');
-      const KEY_BASIC_WIND_SPEED = String(constants.KEY_BASIC_WIND_SPEED ?? '');
-      const KEY_SEISMIC_ZONE     = String(constants.KEY_SEISMIC_ZONE     ?? '');
-      const KEY_MAX_TEMPERATURE  = String(constants.KEY_MAX_TEMPERATURE  ?? '');
-      const KEY_MIN_TEMPERATURE  = String(constants.KEY_MIN_TEMPERATURE  ?? '');
-
-      return {
-        location: loc,
-        inputs: {
-          ...state.inputs,
-          // Preserve the display string and all four environmental parameters
-          // returned by /api/v1/location/details (IRC:6 wind, seismic zone,
-          // temperature range). Keys come from backend constants.
-          ...(KEY_PROJECT_LOCATION && { [KEY_PROJECT_LOCATION]: `${loc.station}, ${loc.state}` }),
-          ...(KEY_BASIC_WIND_SPEED && { [KEY_BASIC_WIND_SPEED]: loc.basic_wind_speed }),
-          ...(KEY_SEISMIC_ZONE     && { [KEY_SEISMIC_ZONE]:     loc.seismic_zone }),
-          ...(KEY_MAX_TEMPERATURE  && { [KEY_MAX_TEMPERATURE]:  loc.max_temperature }),
-          ...(KEY_MIN_TEMPERATURE  && { [KEY_MIN_TEMPERATURE]:  loc.min_temperature }),
-        },
-      };
     }),
 
   setLocationModalOpen: (isLocationModalOpen) => set({ isLocationModalOpen }),
