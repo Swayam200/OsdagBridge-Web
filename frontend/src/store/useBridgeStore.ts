@@ -36,6 +36,8 @@ export interface LogEntry {
   message: string;
   level: 'info' | 'error' | 'success' | 'warning' | 'stdout_print';
 }
+export type MessageBoxType = 'warning' | 'critical';
+
 function formatLogTimestamp(): string {
   const now = new Date();
   const pad = (n: number) => n.toString().padStart(2, '0');
@@ -98,7 +100,8 @@ interface BridgeState {
   darkMode: boolean;
 
   // ── Input Error Dialog ─────────────────────────────────────────────────────
-  inputErrorDialog: { message: string; onOk: () => void } | null;
+  /** Mirrors desktop CustomMessageBox; title defaults to "Input Error", type to "warning". */
+  inputErrorDialog: { message: string; onOk: () => void; title?: string; type?: MessageBoxType } | null;
 
   // ── Actions ────────────────────────────────────────────────────────────────
   fetchConstants: () => Promise<void>;
@@ -121,7 +124,11 @@ interface BridgeState {
   toggleDarkMode: () => void;
   setLocation: (loc: LocationData) => void;
   setLocationModalOpen: (open: boolean) => void;
-  showInputErrorDialog: (message: string, onOk: () => void) => void;
+  showInputErrorDialog: (
+    message: string,
+    onOk: () => void,
+    options?: { title?: string; type?: MessageBoxType },
+  ) => void;
   dismissInputErrorDialog: () => void;
 
   // UI-only no-ops (kept so existing JSX references compile)
@@ -408,7 +415,7 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
 
   setLocationModalOpen: (isLocationModalOpen) => set({ isLocationModalOpen }),
 
-  showInputErrorDialog: (message, onOk) => set({ inputErrorDialog: { message, onOk } }),
+  showInputErrorDialog: (message, onOk, options) => set({ inputErrorDialog: { message, onOk, ...options } }),
   dismissInputErrorDialog: () => set({ inputErrorDialog: null }),
 
   setActiveViewportTab: (activeViewportTab) => set({ activeViewportTab }),

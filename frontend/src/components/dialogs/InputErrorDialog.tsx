@@ -3,11 +3,13 @@
  *
  * Modal mirroring desktop CustomMessageBox and CustomTitleBar
  * from osdagbridge.desktop.ui.dialogs.custom_messagebox.
- * Supports Warning (orange) and Critical (red) dialog types.
+ * Title defaults to "Input Error"; type "warning" (default) or "critical"
+ * selects the desktop icon and OK button colours (orange / red).
  */
 
 import React, { useEffect, useCallback } from 'react';
 import { useBridgeStore } from '../../store/useBridgeStore';
+import { CustomTitleBar } from './CustomTitleBar';
 
 export const InputErrorDialog: React.FC = () => {
   const inputErrorDialog = useBridgeStore((s) => s.inputErrorDialog);
@@ -30,6 +32,8 @@ export const InputErrorDialog: React.FC = () => {
 
   if (!inputErrorDialog) return null;
 
+  const isCritical = inputErrorDialog.type === 'critical';
+
   const handleOk = () => {
     inputErrorDialog.onOk();
     dismissInputErrorDialog();
@@ -45,41 +49,19 @@ export const InputErrorDialog: React.FC = () => {
     >
       {/* Dialog card — mirrors CustomMessageBox (1px solid #90AF13 border, white bg) */}
       <div className="bg-surface border border-accent rounded-[4px] min-w-[380px] max-w-[460px] shadow-[0_8px_24px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col">
-        {/* CustomTitleBar — mirrors desktop CustomTitleBar (32px, Osdag_logo.svg, ✕ close button) */}
-        <div className="h-8 bg-header border-b border-border flex items-center justify-between pl-2 select-none">
-          <div className="flex items-center gap-2">
-            <img
-              src="/vectors/Osdag_logo.svg"
-              alt="Osdag"
-              width={20}
-              height={20}
-              className="block"
-            />
-            <span
-              id="input-error-title"
-              className="text-xs font-semibold text-main"
-            >
-              Input Error
-            </span>
-          </div>
-
-          <button
-            type="button"
-            onClick={dismissInputErrorDialog}
-            aria-label="Close"
-            className="w-10 h-8 border-0 bg-transparent hover:bg-[#e81123] text-muted hover:text-white text-[13px] flex items-center justify-center cursor-pointer transition-colors"
-          >
-            ✕
-          </button>
-        </div>
+        <CustomTitleBar
+          title={inputErrorDialog.title ?? 'Input Error'}
+          titleId="input-error-title"
+          onClose={dismissInputErrorDialog}
+        />
 
         {/* ContentWidget — mirrors contentLayout (20px margins, icon, 12px text) */}
         <div className="p-[20px_20px_16px_20px] flex flex-col">
           {/* Inner row: warning/critical icon + text */}
           <div className="flex items-start gap-3.5">
             <img
-              src="/vectors/msg_warning.svg"
-              alt="Alert"
+              src={isCritical ? '/vectors/msg_critical.svg' : '/vectors/msg_warning.svg'}
+              alt={isCritical ? 'Critical' : 'Warning'}
               width={34}
               height={34}
               className="shrink-0 block mt-0.5"
@@ -98,7 +80,11 @@ export const InputErrorDialog: React.FC = () => {
               type="button"
               onClick={handleOk}
               autoFocus
-              className="h-[30px] min-w-[70px] px-[18px] py-[5px] text-white border-0 rounded-[5px] text-xs font-semibold cursor-pointer transition-colors bg-[#FF9800] hover:bg-[#FB8C00] active:bg-[#F57C00]"
+              className={`h-[30px] min-w-[70px] px-[18px] py-[5px] text-white border-0 rounded-[5px] text-xs font-semibold cursor-pointer transition-colors ${
+                isCritical
+                  ? 'bg-[#F44336] hover:bg-[#E53935] active:bg-[#D32F2F]'
+                  : 'bg-[#FF9800] hover:bg-[#FB8C00] active:bg-[#F57C00]'
+              }`}
             >
               OK
             </button>
