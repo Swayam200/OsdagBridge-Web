@@ -51,14 +51,31 @@ class ValidateFieldResponse(BaseModel):
 class LocationStateResponse(BaseModel):
     states: List[str]
 
-class LocationStationResponse(BaseModel):
+class LocationDistrictResponse(BaseModel):
     state: str
-    stations: List[str]
+    districts: List[str]
 
-class LocationDataResponse(BaseModel):
-    state: str
-    station: str
-    basic_wind_speed: float = Field(..., description="V_b in m/s (IRC 6)")
-    seismic_zone: str = Field(..., description="Zone II, III, IV, or V")
-    max_temperature: float = Field(..., description="T_max in °C")
-    min_temperature: float = Field(..., description="T_min in °C")
+class WeatherData(BaseModel):
+    """IRC 6 values in the desktop weather dict format (project.location -> weather_data)."""
+    wind_speed: Optional[float] = Field(None, description="Basic wind speed V_b in m/s")
+    zone: Optional[str] = Field(None, description="Seismic zone II, III, IV or V")
+    z_value: Optional[float] = Field(None, description="Seismic zone factor Z")
+    max_temp: Optional[float] = Field(None, description="Max shade air temperature in °C")
+    min_temp: Optional[float] = Field(None, description="Min shade air temperature in °C")
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+class CoordinateLookupResponse(BaseModel):
+    weather: Optional[WeatherData] = None
+    station: Optional[str] = None
+    state: Optional[str] = None
+
+class CustomWeatherValidateRequest(BaseModel):
+    wind_speed: str
+    zone: str
+    max_temp: str
+    min_temp: str
+
+class CoordinatesValidateRequest(BaseModel):
+    latitude: str
+    longitude: str
